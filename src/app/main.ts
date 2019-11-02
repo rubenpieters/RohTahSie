@@ -98,6 +98,8 @@ function main(): void {
       .on("touchendoutside", onDragEnd)
       .on("mousemove", onDragMove)
       .on("touchmove", onDragMove);
+    (box2 as any).template = template;
+    (box2 as any).templateIndex = i;
     container.addChild(box2);
   });
 
@@ -111,7 +113,7 @@ function update(): void {
   currentTime = new Date().getTime();
   deltaTime = (currentTime - prevTime) / 5;
   advanceState(state, deltaTime);
-  text.text = `Index: ${state.nodeIndex} Time: ${Math.floor(state.timeInNode)} X: ${state.runes.x}`;
+  text.text = `Index: ${state.nodeIndex} Time: ${Math.floor(state.timeInNode)} X: ${state.runes.x} Y: ${state.runes.y}`;
   const timerValue = state.nodeIndex + state.timeInNode / 100;
   bar.x = (timerValue % 7 / 7) * (50 * 7 + 5 * 6) + 50;
   bar.y = Math.floor(timerValue / 7) * 55 + 45;
@@ -131,7 +133,15 @@ function onDragEnd(event: PIXI.interaction.InteractionEvent) {
   if (draggingObj !== undefined) {
     (draggingObj as any).dragData = undefined;
     draggingObj.alpha = 1;
+    if (prevHitIndex !== undefined) {
+      state.layout[prevHitIndex] = (draggingObj as any).template();
+    }
+    draggingObj.x = (draggingObj as any).templateIndex * 55 + 50;
+    draggingObj.y = 500;
     draggingObj = undefined;
+    nodes.forEach(node => {
+      node.alpha = 1;
+    })
   }
 }
 
