@@ -1,3 +1,5 @@
+import { Template } from "./template";
+
 export class GenerateNode {
   public readonly tag: "GenerateNode" = "GenerateNode";
   public readonly size = 1;
@@ -27,6 +29,7 @@ export type GameState = {
   timeInNode: number,
   layout: Layout,
   runes: any,
+  templates: Template[],
 };
 
 export function advanceState(
