@@ -1,6 +1,7 @@
 import * as PIXI from "pixi.js";
 import { Layout, GenerateNode, GameNode, GameState, advanceState } from "../shared/game";
 import { Template, template1, template2 } from "../shared/template";
+import { PixiFps } from "./fps";
 
 // TODO: create load screen with pixi loader https://pixijs.download/dev/docs/PIXI.Loader.html
 
@@ -9,6 +10,8 @@ let draggingObj: PIXI.DisplayObject | undefined;
 let currentTime = new Date().getTime();
 let prevTime = currentTime;
 let deltaTime = 0;
+
+let prevHitIndex: number | undefined;
 
 window.addEventListener("load", main);
 window.requestAnimationFrame(update);
@@ -42,6 +45,8 @@ const layout: Layout = [
   new GenerateNode("x"),
 ];
 
+const nodes: PIXI.Sprite[] = [];
+
 const state: GameState = {
   nodeIndex: 0,
   timeInNode: 0,
@@ -68,6 +73,7 @@ function main(): void {
     box.x = (i % 7) * 55 + 50;
     box.y = Math.floor(i / 7) * 55 + 50;
     container.addChild(box);
+    nodes.push(box);
     i += node.size;
   });
   container.addChild(text);
@@ -94,6 +100,10 @@ function main(): void {
       .on("touchmove", onDragMove);
     container.addChild(box2);
   });
+
+  const fpsCounter = new PixiFps();
+
+  container.addChild(fpsCounter);
 }
 
 function update(): void {
@@ -120,7 +130,7 @@ function onDragStart(event: PIXI.interaction.InteractionEvent) {
 function onDragEnd(event: PIXI.interaction.InteractionEvent) {
   if (draggingObj !== undefined) {
     (draggingObj as any).dragData = undefined;
-    draggingObj!.alpha = 1;
+    draggingObj.alpha = 1;
     draggingObj = undefined;
   }
 }
@@ -128,7 +138,76 @@ function onDragEnd(event: PIXI.interaction.InteractionEvent) {
 function onDragMove(event: PIXI.interaction.InteractionEvent) {
   const tgt = event.currentTarget;
   if ((tgt as any).dragData !== undefined) {    
-    tgt.position.x = event.data.global.x - (tgt as any).dragData.dragX;
-    tgt.position.y = event.data.global.y - (tgt as any).dragData.dragY;
+    tgt.position.x = event.data.global.x + (tgt as any).dragData.dragX;
+    tgt.position.y = event.data.global.y + (tgt as any).dragData.dragY;
+    let hitIndex: number | undefined;
+    for (let i = 0; i < nodes.length; i++) {
+      if (hitTestRectangle(nodes[i], tgt as PIXI.Sprite)) {
+        hitIndex = i;
+        break;
+      }
+    }
+    if (hitIndex !== prevHitIndex) {
+      nodes.forEach((node, i) => {
+        if (i === hitIndex) {
+          node.alpha = 0.5;
+        } else {
+          node.alpha = 1;
+        }
+      });
+    }
+    prevHitIndex = hitIndex;
   }
 }
+
+// https://github.com/kittykatattack/learningPixi#collision
+function hitTestRectangle(r1: PIXI.Sprite, r2: PIXI.Sprite) {
+
+  //Define the variables we'll need to calculate
+  let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+
+  //hit will determine whether there's a collision
+  hit = false;
+
+  //Find the center points of each sprite
+  const r1CenterX = r1.x + r1.width / 2;
+  const r1CenterY = r1.y + r1.height / 2;
+  const r2CenterX = r2.x + r2.width / 2;
+  const r2CenterY = r2.y + r2.height / 2;
+
+  //Find the half-widths and half-heights of each sprite
+  const r1HalfWidth = r1.width / 2;
+  const r1HalfHeight = r1.height / 2;
+  const r2HalfWidth = r2.width / 2;
+  const r2HalfHeight = r2.height / 2;
+
+  //Calculate the distance vector between the sprites
+  vx = r1CenterX - r2CenterX;
+  vy = r1CenterY - r2CenterY;
+
+  //Figure out the combined half-widths and half-heights
+  combinedHalfWidths = r1HalfWidth + r2HalfWidth;
+  combinedHalfHeights = r1HalfHeight + r2HalfHeight;
+
+  //Check for a collision on the x axis
+  if (Math.abs(vx) < combinedHalfWidths) {
+
+    //A collision might be occurring. Check for a collision on the y axis
+    if (Math.abs(vy) < combinedHalfHeights) {
+
+      //There's definitely a collision happening
+      hit = true;
+    } else {
+
+      //There's no collision on the y axis
+      hit = false;
+    }
+  } else {
+
+    //There's no collision on the x axis
+    hit = false;
+  }
+
+  //`hit` will be either `true` or `false`
+  return hit;
+};
