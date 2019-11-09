@@ -1,4 +1,5 @@
 import { Template } from "./template";
+import { CacheValues } from "src/app/main";
 
 export class GenerateNode {
   public readonly tag: "GenerateNode" = "GenerateNode";
@@ -29,7 +30,7 @@ export type GameState = {
   timeInNode: number,
   layout: Layout,
   runes: any,
-  templates: Template[],
+  templates: GameNode[],
 };
 
 export function advanceState(
@@ -66,6 +67,23 @@ export function activateNode(
     }
     case "Empty": {
       break;
+    }
+  }
+}
+
+export function nodeSprite(
+  node: GameNode,
+): CacheValues {
+  switch (node.tag) {
+    case "GenerateNode": {
+      switch (node.rune) {
+        case "x": return "box";
+        case "y": return "box2";
+        default: return "err";
+      }
+    }
+    case "Empty": {
+      return "err";
     }
   }
 }

@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Layout, GenerateNode, GameNode, GameState, advanceState } from "../shared/game";
+import { Layout, GenerateNode, GameNode, GameState, advanceState, nodeSprite } from "../shared/game";
 import { Template, template1, template2 } from "../shared/template";
 import { PixiFps } from "./fps";
 
@@ -53,10 +53,19 @@ const state: GameState = {
   layout,
   runes: {},
   templates: [
-    template1,
-    template2,
+    new GenerateNode("x"),
+    new GenerateNode("y"),
   ],
 };
+
+type Cache = typeof cache;
+export type CacheValues = keyof Cache;
+
+const cache = {
+  "box": PIXI.Texture.from("assets/sprites/box.png"),
+  "box2": PIXI.Texture.from("assets/sprites/box2.png"),
+  "err": PIXI.Texture.from("assets/sprites/err.png"),
+}
 
 function main(): void {
   const app = new PIXI.Application({width: 540, height: 960});
@@ -66,10 +75,9 @@ function main(): void {
   const container = new PIXI.Container();
   app.stage.addChild(container);
 
-  const boxTexture = PIXI.Texture.from("assets/sprites/box.png");
   let i = 0;
   layout.forEach((node: GameNode) => {
-    const box = new PIXI.Sprite(boxTexture);
+    const box = new PIXI.Sprite(cache[nodeSprite(node)]);
     box.x = (i % 7) * 55 + 50;
     box.y = Math.floor(i / 7) * 55 + 50;
     container.addChild(box);
@@ -82,10 +90,8 @@ function main(): void {
   bar.y = 45;
   container.addChild(bar);
 
-  const box2Texture = PIXI.Texture.from("assets/sprites/box2.png");
-
-  state.templates.forEach((template: Template, i) => {
-    const box2 = new PIXI.Sprite(box2Texture);
+  state.templates.forEach((template: GameNode, i) => {
+    const box2 = new PIXI.Sprite(cache[nodeSprite(template)]);
     box2.x = i * 55 + 50;
     box2.y = 500;
     box2.interactive = true;
@@ -134,7 +140,8 @@ function onDragEnd(event: PIXI.interaction.InteractionEvent) {
     (draggingObj as any).dragData = undefined;
     draggingObj.alpha = 1;
     if (prevHitIndex !== undefined) {
-      state.layout[prevHitIndex] = (draggingObj as any).template();
+      state.layout[prevHitIndex] = (draggingObj as any).template;
+      (nodes[prevHitIndex] as PIXI.Sprite).texture = cache[nodeSprite((draggingObj as any).template)];
     }
     draggingObj.x = (draggingObj as any).templateIndex * 55 + 50;
     draggingObj.y = 500;
