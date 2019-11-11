@@ -5,6 +5,8 @@ import { PixiFps } from "./fps";
 
 // TODO: create load screen with pixi loader https://pixijs.download/dev/docs/PIXI.Loader.html
 
+const renderer = PIXI.autoDetectRenderer();
+
 let draggingObj: PIXI.DisplayObject | undefined;
 
 let currentTime = new Date().getTime();
@@ -19,7 +21,6 @@ window.requestAnimationFrame(update);
 const text = new PIXI.Text(`Index: 0 Time: 0`, {
   fontFamily : "Arial",
   fontSize: 24,
-  fill: 0xff1010,
   align: "center",
 });
 text.x = 200;
@@ -62,9 +63,12 @@ type Cache = typeof cache;
 export type CacheValues = keyof Cache;
 
 const cache = {
-  "box": PIXI.Texture.from("assets/sprites/box.png"),
-  "box2": PIXI.Texture.from("assets/sprites/box2.png"),
+  "box": PIXI.Texture.from("assets/sprites/sword.png"),
+  "box2": PIXI.Texture.from("assets/sprites/shield.png"),
   "err": PIXI.Texture.from("assets/sprites/err.png"),
+  "rune": PIXI.Texture.from("assets/sprites/rune.png"),
+  "sword": PIXI.Texture.from("assets/sprites/sword.png"),
+  "shield": PIXI.Texture.from("assets/sprites/shield.png"),
 }
 
 function main(): void {
@@ -74,6 +78,12 @@ function main(): void {
 
   const container = new PIXI.Container();
   app.stage.addChild(container);
+
+  const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
+  bg.width = 540;
+  bg.height = 960;
+  bg.tint = 0xffd300;
+  container.addChild(bg);
 
   let i = 0;
   layout.forEach((node: GameNode) => {
