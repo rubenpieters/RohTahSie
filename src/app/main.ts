@@ -30,20 +30,20 @@ const barTexture = PIXI.Texture.from("assets/sprites/bar.png");
 const bar = new PIXI.Sprite(barTexture);
 
 const layout: Layout = [
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
-  new GenerateNode("x"),
+  new GenerateNode("res_red"),
+  new GenerateNode("res_red"),
+  new GenerateNode("res_red"),
+  new GenerateNode("res_red"),
+  new GenerateNode("res_red"),
+  new GenerateNode("res_red"),
+  new GenerateNode("res_red"),
+  new GenerateNode("res_gre"),
+  new GenerateNode("res_gre"),
+  new GenerateNode("res_gre"),
+  new GenerateNode("res_gre"),
+  new GenerateNode("res_yel"),
+  new GenerateNode("res_yel"),
+  new GenerateNode("res_yel"),
 ];
 
 const nodes: PIXI.Sprite[] = [];
@@ -54,8 +54,11 @@ const state: GameState = {
   layout,
   runes: {},
   templates: [
-    new GenerateNode("x"),
-    new GenerateNode("y"),
+    new GenerateNode("res_red"),
+    new GenerateNode("res_gre"),
+    new GenerateNode("res_yel"),
+    new GenerateNode("sword"),
+    new GenerateNode("shield"),
   ],
 };
 
@@ -63,13 +66,23 @@ type Cache = typeof cache;
 export type CacheValues = keyof Cache;
 
 const cache = {
-  "box": PIXI.Texture.from("assets/sprites/sword.png"),
-  "box2": PIXI.Texture.from("assets/sprites/shield.png"),
+  "box": PIXI.Texture.from("assets/sprites/box.png"),
+  "box2": PIXI.Texture.from("assets/sprites/box2.png"),
   "err": PIXI.Texture.from("assets/sprites/err.png"),
   "rune": PIXI.Texture.from("assets/sprites/rune.png"),
   "sword": PIXI.Texture.from("assets/sprites/sword.png"),
   "shield": PIXI.Texture.from("assets/sprites/shield.png"),
+  "res_red": PIXI.Texture.from("assets/sprites/resource_red.png"),
+  "res_gre": PIXI.Texture.from("assets/sprites/resource_green.png"),
+  "res_yel": PIXI.Texture.from("assets/sprites/resource_yellow.png"),
+  "bar_red": PIXI.Texture.from("assets/sprites/bar_red.png"),
+  "bar_gre": PIXI.Texture.from("assets/sprites/bar_green.png"),
+  "bar_yel": PIXI.Texture.from("assets/sprites/bar_yellow.png"),
 }
+
+const barRed = new PIXI.Sprite(cache["bar_red"]);
+const barGreen = new PIXI.Sprite(cache["bar_gre"]);
+const barYellow = new PIXI.Sprite(cache["bar_yel"]);
 
 function main(): void {
   const app = new PIXI.Application({width: 540, height: 960});
@@ -82,9 +95,10 @@ function main(): void {
   const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
   bg.width = 540;
   bg.height = 960;
-  bg.tint = 0xffd300;
+  bg.tint = 0x00d3ff;
   container.addChild(bg);
 
+  // rotation
   let i = 0;
   layout.forEach((node: GameNode) => {
     const box = new PIXI.Sprite(cache[nodeSprite(node)]);
@@ -94,12 +108,27 @@ function main(): void {
     nodes.push(box);
     i += node.size;
   });
-  container.addChild(text);
+  /*container.addChild(text);*/
 
   bar.x = 50;
   bar.y = 45;
   container.addChild(bar);
 
+  // resource bars
+  barRed.x = 50;
+  barRed.y = 200;
+  barRed.width = 0;
+  container.addChild(barRed);
+  barGreen.x = 50;
+  barGreen.y = 250;
+  barGreen.width = 0;
+  container.addChild(barGreen);
+  barYellow.x = 50;
+  barYellow.y = 300;
+  barYellow.width = 0;
+  container.addChild(barYellow);
+
+  // hotbar
   state.templates.forEach((template: GameNode, i) => {
     const box2 = new PIXI.Sprite(cache[nodeSprite(template)]);
     box2.x = i * 55 + 50;
@@ -129,7 +158,10 @@ function update(): void {
   currentTime = new Date().getTime();
   deltaTime = (currentTime - prevTime) / 5;
   advanceState(state, deltaTime);
-  text.text = `Index: ${state.nodeIndex} Time: ${Math.floor(state.timeInNode)} X: ${state.runes.x} Y: ${state.runes.y}`;
+  //text.text = `Index: ${state.nodeIndex} Time: ${Math.floor(state.timeInNode)} X: ${state.runes.x} Y: ${state.runes.y}`;
+  barRed.width = state.runes["res_red"] / 100 * 140;
+  barGreen.width = state.runes["res_gre"] / 100 * 140;
+  barYellow.width = state.runes["res_yel"] / 100 * 140;
   const timerValue = state.nodeIndex + state.timeInNode / 100;
   bar.x = (timerValue % 7 / 7) * (50 * 7 + 5 * 6) + 50;
   bar.y = Math.floor(timerValue / 7) * 55 + 45;

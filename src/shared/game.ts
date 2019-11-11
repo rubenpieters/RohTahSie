@@ -61,7 +61,9 @@ export function activateNode(
       if (typeof state.runes[node.rune] === "undefined") {
         state.runes[node.rune] = 1;
       } else {
-        state.runes[node.rune] += 1;
+        if (state.runes[node.rune] < 100) {
+          state.runes[node.rune] += 1;
+        }
       }
       break;
     }
@@ -79,6 +81,11 @@ export function nodeSprite(
       switch (node.rune) {
         case "x": return "box";
         case "y": return "box2";
+        case "sword": return "sword";
+        case "shield": return "shield";
+        case "res_red": return "res_red";
+        case "res_gre": return "res_gre";
+        case "res_yel": return "res_yel";
         default: return "err";
       }
     }

@@ -9,7 +9,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/pixi.js": "^5.0.0",
     "browser-sync": "^2.23.6",
     "browser-sync-webpack-plugin": "^2.0.1",
     "clean-webpack-plugin": "^0.1.18",
