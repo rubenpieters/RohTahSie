@@ -1,5 +1,6 @@
 import { Template } from "./template";
 import { CacheValues } from "src/app/main";
+import { EnemyKey, Enemy, allEnemies } from "./enemy";
 
 export class GenerateNode {
   public readonly tag: "GenerateNode" = "GenerateNode";
@@ -7,6 +8,24 @@ export class GenerateNode {
 
   constructor(
     public readonly rune: string,
+  ) {}
+}
+
+export class SummonNode {
+  public readonly tag: "SummonNode" = "SummonNode";
+  public readonly size = 1;
+
+  constructor(
+    public readonly enemyId: EnemyKey,
+  ) {}
+}
+
+export class AttackNode {
+  public readonly tag: "AttackNode" = "AttackNode";
+  public readonly size = 1;
+
+  constructor(
+    public readonly damage: number,
   ) {}
 }
 
@@ -20,6 +39,8 @@ export class Empty {
 
 export type GameNode
   = GenerateNode
+  | SummonNode
+  | AttackNode
   | Empty
   ;
 
@@ -31,6 +52,7 @@ export type GameState = {
   layout: Layout,
   runes: any,
   templates: GameNode[],
+  currentEnemy: Enemy | undefined;
 };
 
 export function advanceState(
@@ -67,6 +89,19 @@ export function activateNode(
       }
       break;
     }
+    case "SummonNode": {
+      state.currentEnemy = allEnemies[node.enemyId];
+      break;
+    }
+    case "AttackNode": {
+      if (state.currentEnemy !== undefined) {
+        state.currentEnemy.red = Math.max(0, state.currentEnemy.red - node.damage);
+        if (state.currentEnemy.red <= 0) {
+          state.currentEnemy = undefined;
+        }
+      }
+      break;
+    }
     case "Empty": {
       break;
     }
@@ -88,6 +123,12 @@ export function nodeSprite(
         case "res_yel": return "res_yel";
         default: return "err";
       }
+    }
+    case "SummonNode": {
+      return "creep";
+    }
+    case "AttackNode": {
+      return "sword";
     }
     case "Empty": {
       return "err";

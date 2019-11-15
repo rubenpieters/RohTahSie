@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { Layout, GenerateNode, GameNode, GameState, advanceState, nodeSprite } from "../shared/game";
+import { Layout, GenerateNode, GameNode, GameState, advanceState, nodeSprite, SummonNode, AttackNode } from "../shared/game";
 import { Template, template1, template2 } from "../shared/template";
 import { PixiFps } from "./fps";
 
@@ -57,9 +57,11 @@ const state: GameState = {
     new GenerateNode("res_red"),
     new GenerateNode("res_gre"),
     new GenerateNode("res_yel"),
-    new GenerateNode("sword"),
+    new AttackNode(1),
     new GenerateNode("shield"),
+    new SummonNode("en1"),
   ],
+  currentEnemy: undefined,
 };
 
 type Cache = typeof cache;
@@ -72,6 +74,7 @@ const cache = {
   "rune": PIXI.Texture.from("assets/sprites/rune.png"),
   "sword": PIXI.Texture.from("assets/sprites/sword.png"),
   "shield": PIXI.Texture.from("assets/sprites/shield.png"),
+  "creep": PIXI.Texture.from("assets/sprites/creep.png"),
   "res_red": PIXI.Texture.from("assets/sprites/resource_red.png"),
   "res_gre": PIXI.Texture.from("assets/sprites/resource_green.png"),
   "res_yel": PIXI.Texture.from("assets/sprites/resource_yellow.png"),
@@ -83,6 +86,10 @@ const cache = {
 const barRed = new PIXI.Sprite(cache["bar_red"]);
 const barGreen = new PIXI.Sprite(cache["bar_gre"]);
 const barYellow = new PIXI.Sprite(cache["bar_yel"]);
+
+const barRedE = new PIXI.Sprite(cache["bar_red"]);
+const barGreenE = new PIXI.Sprite(cache["bar_gre"]);
+const barYellowE = new PIXI.Sprite(cache["bar_yel"]);
 
 function main(): void {
   const app = new PIXI.Application({width: 540, height: 960});
@@ -128,6 +135,23 @@ function main(): void {
   barYellow.width = 0;
   container.addChild(barYellow);
 
+  // resource bars enemy
+  barRedE.x = 300;
+  barRedE.y = 200;
+  barRedE.width = 0;
+  barRedE.visible = false;
+  container.addChild(barRedE);
+  barGreenE.x = 300;
+  barGreenE.y = 250;
+  barGreenE.width = 0;
+  barGreenE.visible = false;
+  container.addChild(barGreenE);
+  barYellowE.x = 300;
+  barYellowE.y = 300;
+  barYellowE.width = 0;
+  barYellowE.visible = false;
+  container.addChild(barYellowE);
+
   // hotbar
   state.templates.forEach((template: GameNode, i) => {
     const box2 = new PIXI.Sprite(cache[nodeSprite(template)]);
@@ -162,6 +186,18 @@ function update(): void {
   barRed.width = state.runes["res_red"] / 100 * 140;
   barGreen.width = state.runes["res_gre"] / 100 * 140;
   barYellow.width = state.runes["res_yel"] / 100 * 140;
+  if (state.currentEnemy !== undefined) {
+    barRedE.visible = true;
+    barGreenE.visible = true;
+    barYellowE.visible = true;
+    barRedE.width = state.currentEnemy.red / 10 * 140;
+    barGreenE.width = state.currentEnemy.green / 10 * 140;
+    barYellowE.width = state.currentEnemy.yellow / 10 * 140;
+  } else {
+    barRedE.visible = false;
+    barGreenE.visible = false;
+    barYellowE.visible = false;
+  }
   const timerValue = state.nodeIndex + state.timeInNode / 100;
   bar.x = (timerValue % 7 / 7) * (50 * 7 + 5 * 6) + 50;
   bar.y = Math.floor(timerValue / 7) * 55 + 45;
