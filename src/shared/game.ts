@@ -1,6 +1,7 @@
 import { Template } from "./template";
 import { CacheValues } from "src/app/main";
 import { EnemyKey, Enemy, allEnemies } from "./enemy";
+import * as lo from "lodash";
 
 export class GenerateNode {
   public readonly tag: "GenerateNode" = "GenerateNode";
@@ -90,7 +91,7 @@ export function activateNode(
       break;
     }
     case "SummonNode": {
-      state.currentEnemy = allEnemies[node.enemyId];
+      state.currentEnemy = lo.cloneDeep(allEnemies[node.enemyId]);
       break;
     }
     case "AttackNode": {
