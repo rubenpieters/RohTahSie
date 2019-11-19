@@ -1,7 +1,8 @@
 import * as PIXI from "pixi.js";
-import { Layout, GenerateNode, GameNode, GameState, advanceState, nodeSprite, SummonNode, AttackNode } from "../shared/game";
+import { Layout, GameState, advanceState, nodeSprite } from "../shared/game";
 import { Template, template1, template2 } from "../shared/template";
 import { PixiFps } from "./fps";
+import { GenerateNode, AttackNode, SummonNode, GameNode } from "../shared/gameNode";
 
 // TODO: create load screen with pixi loader https://pixijs.download/dev/docs/PIXI.Loader.html
 
@@ -57,7 +58,7 @@ const state: GameState = {
     new GenerateNode("res_red"),
     new GenerateNode("res_gre"),
     new GenerateNode("res_yel"),
-    new AttackNode(1),
+    new AttackNode(1, "enemy"),
     new GenerateNode("shield"),
     new SummonNode("en1"),
   ],
