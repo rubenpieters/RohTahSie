@@ -227,7 +227,7 @@ function onDragEnd(event: PIXI.interaction.InteractionEvent) {
     draggingObj = undefined;
     nodes.forEach(node => {
       node.alpha = 1;
-    })
+    });
   }
 }
 
