@@ -48,6 +48,7 @@ const layout: Layout = [
 ];
 
 const nodes: PIXI.Sprite[] = [];
+const eNodes: PIXI.Sprite[] = [];
 
 const state: GameState = {
   nodeIndex: 0,
@@ -92,12 +93,13 @@ const barRedE = new PIXI.Sprite(cache["bar_red"]);
 const barGreenE = new PIXI.Sprite(cache["bar_gre"]);
 const barYellowE = new PIXI.Sprite(cache["bar_yel"]);
 
+const container = new PIXI.Container();
+
 function main(): void {
   const app = new PIXI.Application({width: 540, height: 960});
 
   document.body.appendChild(app.view);
 
-  const container = new PIXI.Container();
   app.stage.addChild(container);
 
   const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
@@ -194,10 +196,35 @@ function update(): void {
     barRedE.width = state.currentEnemy.red / 10 * 140;
     barGreenE.width = state.currentEnemy.green / 10 * 140;
     barYellowE.width = state.currentEnemy.yellow / 10 * 140;
+
+    // add enemy nodes if not added yet
+    if (eNodes.length === 0) {
+      if (state.currentEnemy !== undefined) {
+        let i = 0;
+        state.currentEnemy.layout.forEach((node: GameNode) => {
+          const box = new PIXI.Sprite(cache[nodeSprite(node)]);
+          box.x = (i % 7) * 55 + 50;
+          box.y = Math.floor(i / 7) * 55 + 350;
+          container.addChild(box);
+          eNodes.push(box);
+          i += node.size;
+        });
+      }
+    }
   } else {
     barRedE.visible = false;
     barGreenE.visible = false;
     barYellowE.visible = false;
+
+    // remove enemy nodes if not removed yet
+    if (eNodes.length > 0) {
+      if (state.currentEnemy === undefined) {
+        eNodes.forEach(node => {
+          container.removeChild(node);
+        });
+      }
+      eNodes.length = 0;
+    }
   }
   const timerValue = state.nodeIndex + state.timeInNode / 100;
   bar.x = (timerValue % 7 / 7) * (50 * 7 + 5 * 6) + 50;

@@ -1,4 +1,4 @@
-import { GameNode, GenerateNode } from "./game";
+import { GameNode, GenerateNode } from "./gameNode";
 
 export type Template = () => GameNode;
 
