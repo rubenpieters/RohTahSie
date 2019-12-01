@@ -14,16 +14,30 @@ export class Seq {
   ) {}
 }
 
-export type AnimTarget<A> = {
+export type AnimTarget<A, Prop> = {
   obj: A,
-  target: { [K in keyof A]?: A[K] },
+  target: Prop,
+  set: (a: A, prop: Prop) => void,
+  get: (a: A) => Prop,
 }
 
-export function mkAnimTarget<A, R>(
+export function mkAccessTarget<A, K extends keyof A, R>(
   obj: A,
-  target: { [K in keyof A]?: A[K] },
-): (e: (t: AnimTarget<A>) => R) => R {
-  return k => k({ obj, target }); 
+  key: K,
+  target: A[K],
+): (e: (t: AnimTarget<A, A[K]>) => R) => R {
+  const get = (a: A) => { return a[key]; };
+  const set = (a: A, prop: A[K]) => { a[key] = prop; };
+  return mkAnimTarget(obj, target, set, get);
+}
+
+export function mkAnimTarget<A, Prop, R>(
+  obj: A,
+  target: Prop,
+  set: (a: A, prop: Prop) => void,
+  get: (a: A) => Prop,
+): (e: (t: AnimTarget<A, Prop>) => R) => R {
+  return k => k({ obj, target, get, set }); 
 }
 
 export class TweenTo {
@@ -31,7 +45,7 @@ export class TweenTo {
 
   constructor(
     public readonly duration: number,
-    public readonly k: <R>(e: <A>(t: AnimTarget<A>) => R) => R,
+    public readonly k: <R>(e: <A>(t: AnimTarget<A, number>) => R) => R,
   ) {}
 }
 
@@ -41,17 +55,15 @@ export type Anim
   | TweenTo
   ;
 
-function runAnimation(
+export function runAnimation(
   delta: number,
   anim: Anim,
 ): { remainingAnim: Anim, remainingDelta: "nothing" } | { remainingAnim: "nothing", remainingDelta: number } {
   switch (anim.tag) {
     case "TweenTo": {
       anim.k(x => {
-        for (const key in x.target) {
-          // @ts-ignore
-          x.obj[key] = updateValue(delta, anim.duration, x.target[key], x.obj[key]);
-        }
+        const current = x.get(x.obj);
+        x.set(x.obj, updateValue(delta, anim.duration, x.target, current));
       });
       const newDuration = anim.duration - delta;
       if (newDuration > 0) {
@@ -115,8 +127,8 @@ function updateValue(
 
 const obj: { a: number, b: number } = { a: 0, b: 0 };
 
-const a1 = new TweenTo(1, mkAnimTarget(obj, { a: 10 }));
-const a2 = new TweenTo(1, mkAnimTarget(obj, { b: 10 }));
+const a1 = new TweenTo(1, mkAccessTarget(obj, "a", 10));
+const a2 = new TweenTo(1, mkAccessTarget(obj, "b", 10));
 const a3 = new Seq([a1, a2]);
 const a4 = new Par([a1, a2]);
 

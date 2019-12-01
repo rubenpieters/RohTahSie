@@ -1,4 +1,4 @@
-import { CacheValues } from "src/app/main";
+import { CacheValues } from "../app/main";
 import { Enemy, allEnemies } from "./enemy";
 import * as lo from "lodash";
 import { GameNode } from "./gameNode";
