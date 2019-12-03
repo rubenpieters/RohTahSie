@@ -39,17 +39,17 @@ export function initializeEntity(
   parentContainer: PIXI.Container,
   cache: Cache,
 ): EntityDisplay {
-  const rohBar = new PIXI.Sprite(cache["bar_red"]);
-  const tahBar = new PIXI.Sprite(cache["bar_gre"]);
-  const sieBar = new PIXI.Sprite(cache["bar_yel"]);
   const container = new PIXI.Container();
   Object.assign(container, { x, y });
 
-  Object.assign(rohBar, { x: 0, y: 0, width: 0 });
+  const rohBar = new PIXI.Sprite(cache["bar_red"]);
+  const tahBar = new PIXI.Sprite(cache["bar_gre"]);
+  const sieBar = new PIXI.Sprite(cache["bar_yel"]);
+  Object.assign(rohBar, { x: 0, y: 0, width: 0, height: 25 });
   container.addChild(rohBar);
-  Object.assign(tahBar, { x: 0, y: 50, width: 0 });
+  Object.assign(tahBar, { x: 0, y: 25, width: 0, height: 25 });
   container.addChild(tahBar);
-  Object.assign(sieBar, { x: 0, y: 100, width: 0 });
+  Object.assign(sieBar, { x: 0, y: 50, width: 0, height: 25 });
   container.addChild(sieBar);
 
   if (entity !== undefined) {
@@ -72,4 +72,15 @@ export function updateRoh(
 ): void {
   entity.roh = newValue;
   display.rohBar.width = 100 * entity.roh / entity.maxRoh;
+}
+
+export function playerInitialEntity(): Entity {
+  return {
+    roh: 50,
+    maxRoh: 100,
+    tah: 50,
+    maxTah: 100,
+    sie: 50,
+    maxSie: 100,
+  };
 }

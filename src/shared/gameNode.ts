@@ -6,7 +6,7 @@ export class GenerateNode {
   public readonly size = 1;
 
   constructor(
-    public readonly rune: string,
+    public readonly resource: "roh" | "tah" | "sie",
   ) {}
 }
 

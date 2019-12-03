@@ -2,9 +2,17 @@ import { CacheValues } from "../app/main";
 import { Enemy, allEnemies } from "./enemy";
 import * as lo from "lodash";
 import { GameNode } from "./gameNode";
+import { Layout } from "./layout";
+import { Entity } from "./entity";
 
-export type Layout = GameNode[];
+export type GameState = {
+  player: {
+    entity: Entity,
+    layout: Layout,
+  },
+};
 
+/*
 export type GameState = {
   nodeIndex: number,
   timeInNode: number,
@@ -36,6 +44,7 @@ export function advanceState(
   }
   state.timeInNode = newTimeInNode;
 }
+*/
 
 export function activateNode(
   node: GameNode,
@@ -43,27 +52,23 @@ export function activateNode(
 ): void {
   switch (node.tag) {
     case "GenerateNode": {
-      if (typeof state.runes[node.rune] === "undefined") {
-        state.runes[node.rune] = 1;
-      } else {
-        if (state.runes[node.rune] < 100) {
-          state.runes[node.rune] += 1;
-        }
+      if (state.player.entity[node.resource] < 100) {
+        state.player.entity[node.resource] += 1;
       }
       break;
     }
     case "SummonNode": {
-      state.currentEnemy = lo.cloneDeep(allEnemies[node.enemyId]);
+      //state.currentEnemy = lo.cloneDeep(allEnemies[node.enemyId]);
       break;
     }
     case "AttackNode": {
       if (node.target === "enemy") {
-        if (state.currentEnemy !== undefined) {
+        /*if (state.currentEnemy !== undefined) {
           state.currentEnemy.red = Math.max(0, state.currentEnemy.red - node.damage);
           if (state.currentEnemy.red <= 0) {
             state.currentEnemy = undefined;
           }
-        }
+        }*/
       } else if (node.target === "player") {
         // TODO: implement
       }
@@ -80,14 +85,10 @@ export function nodeSprite(
 ): CacheValues {
   switch (node.tag) {
     case "GenerateNode": {
-      switch (node.rune) {
-        case "x": return "box";
-        case "y": return "box2";
-        case "sword": return "sword";
-        case "shield": return "shield";
-        case "res_red": return "res_red";
-        case "res_gre": return "res_gre";
-        case "res_yel": return "res_yel";
+      switch (node.resource) {
+        case "roh": return "res_red";
+        case "tah": return "res_gre";
+        case "sie": return "res_yel";
         default: return "err";
       }
     }

@@ -1,4 +1,4 @@
-import { Layout } from "./game";
+import { Layout } from "./layout";
 import { GenerateNode } from "./gameNode";
 
 // TODO: make this a class

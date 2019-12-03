@@ -1,5 +1,7 @@
 import { newEntity, initializeEntity, updateRoh, EntityDisplay, Entity } from "../shared/entity";
-import { Anim, TweenTo, mkAnimTarget, runAnimation } from "./animation";
+import { Anim, TweenTo, mkAnimTarget, runAnimation, mkAccessTarget, Seq, Par } from "./animation";
+import { playerInitialLayout, initializeLayout, Layout, LayoutDisplay } from "../shared/layout";
+import { GameState } from "../shared/game";
 
 const renderer = PIXI.autoDetectRenderer();
 
@@ -29,6 +31,7 @@ const cache = {
   "bar_red": PIXI.Texture.from("assets/sprites/bar_red.png"),
   "bar_gre": PIXI.Texture.from("assets/sprites/bar_green.png"),
   "bar_yel": PIXI.Texture.from("assets/sprites/bar_yellow.png"),
+  "bar": PIXI.Texture.from("assets/sprites/bar.png"),
 };
 
 let animations: Anim[] = [];
@@ -44,28 +47,36 @@ function main(): void {
   Object.assign(bg, { width: 540, height: 540, tint: 0x00d3ff });
   appContainer.addChild(bg);
 
-  const state = {
-    entity: newEntity(100, 100, 100),
+  const state: GameState = {
+    player: {
+      entity: newEntity(100, 100, 100),
+      layout: playerInitialLayout(),
+    }
   };
 
   const display = {
-    entity: initializeEntity(state.entity, 50, 50, appContainer, cache),
+    player: {
+      entity: initializeEntity(state.player.entity, 50, 50, appContainer, cache),
+      layout: initializeLayout(state.player.layout, 50, 150, appContainer, cache),
+    }
   };
 
-  const box2 = new PIXI.Sprite(cache["res_red"]);
-  box2.x = 50;
-  box2.y = 500;
-  box2.interactive = true;
-  box2.on("mousedown", () => {
-    console.log("test");
-    animations.push(new TweenTo(1, mkAnimTarget(state.entity, 50, (e, v) => updateRoh(e, display.entity, v), e => e.roh)));
-  });
-  appContainer.addChild(box2);
+  // attach initial animation
+  animations = [
+    new Seq([
+      new TweenTo(1, mkAccessTarget(display.player.layout.bar, "x", display.player.layout.bar.x + 50)),
+      new Par([
+        new TweenTo(0.5, mkAccessTarget(display.player.layout.bar.scale, "x", 2)),
+        new TweenTo(0.5, mkAccessTarget(display.player.layout.bar.scale, "y", 2)),
+        new TweenTo(0.5, mkAccessTarget(display.player.layout.bar, "alpha", 0)),
+      ]),
+    ]),
+  ];
 
   window.requestAnimationFrame(update(state, display));
 }
 
-function update(state: { entity: Entity }, display: { entity: EntityDisplay }): () => void {
+function update(state: GameState, display: { player: { entity: EntityDisplay, layout: LayoutDisplay } }): () => void {
   return () => {
     prevTime = currentTime;
     currentTime = new Date().getTime();

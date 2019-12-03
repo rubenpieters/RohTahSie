@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
-import { Layout, GameState, advanceState, nodeSprite } from "../shared/game";
+import { GameState, advanceState, nodeSprite } from "../shared/game";
+import { Layout } from "../shared/layout";
 import { Template, template1, template2 } from "../shared/template";
 import { PixiFps } from "./fps";
 import { GenerateNode, AttackNode, SummonNode, GameNode } from "../shared/gameNode";
