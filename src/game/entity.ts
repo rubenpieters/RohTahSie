@@ -9,21 +9,6 @@ export type Entity = {
   maxSie: number,
 }
 
-export function newEntity(
-  roh: number,
-  tah: number,
-  sie: number
-): Entity {
-  return {
-    roh,
-    maxRoh: roh,
-    tah,
-    maxTah: tah,
-    sie,
-    maxSie: sie,
-  };
-}
-
 export type EntityDisplay = {
   container: PIXI.Container,
   rohBar: PIXI.Sprite,

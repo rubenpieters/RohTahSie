@@ -1,6 +1,9 @@
 import { GameNode, GenerateNode } from "./gameNode";
 import { Cache } from "../app/main";
-import { nodeSprite } from "./game";
+import { nodeSprite } from "./state";
+
+// the amount of nodes on the x-axis
+const xAmount = 4;
 
 export type Layout = {
   nodes: GameNode[],
@@ -23,8 +26,6 @@ export function initializeLayout(
   const container = new PIXI.Container();
   Object.assign(container, { x, y });
 
-  const xAmount = 4;
-
   let nodes: PIXI.Sprite[] = [];
 
   let i = 0;
@@ -38,14 +39,22 @@ export function initializeLayout(
   });
 
   const bar: PIXI.Sprite = new PIXI.Sprite(cache.bar);
-  bar.x = (layout.currentIndex % xAmount) * 52.5;
-  bar.y = Math.floor(layout.currentIndex / xAmount) * 55 + 22.5;
+  Object.assign(bar, barLocation(layout.currentIndex));
   bar.pivot.set(2.5, 30);
   container.addChild(bar);
 
   parentContainer.addChild(container);
 
   return { container, nodes, bar };
+}
+
+export function barLocation(
+  index: number,
+): { x: number, y: number } {
+  return {
+    x: (index % xAmount) * 52.5,
+    y: Math.floor(index / xAmount) * 55 + 22.5,
+  };
 }
 
 export function playerInitialLayout(): Layout {

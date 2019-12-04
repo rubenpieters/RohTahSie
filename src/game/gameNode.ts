@@ -1,6 +1,5 @@
 import { EnemyKey } from "./enemy";
 
-
 export class GenerateNode {
   public readonly tag: "GenerateNode" = "GenerateNode";
   public readonly size = 1;
