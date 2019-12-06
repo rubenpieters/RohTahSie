@@ -14,9 +14,14 @@ export class Seq {
   ) {}
 }
 
+export type TargetType
+  = "absolute"
+  | "relativeIncrease"
+  | "relativeDecrease"
+  ;
+
 export type AnimTarget<A, Prop> = {
   obj: A,
-  target: Prop,
   set: (a: A, prop: Prop) => void,
   get: (a: A) => Prop,
 }
@@ -24,20 +29,18 @@ export type AnimTarget<A, Prop> = {
 export function mkAccessTarget<A, K extends keyof A, R>(
   obj: A,
   key: K,
-  target: A[K],
 ): (e: (t: AnimTarget<A, A[K]>) => R) => R {
   const get = (a: A) => { return a[key]; };
   const set = (a: A, prop: A[K]) => { a[key] = prop; };
-  return mkAnimTarget(obj, target, set, get);
+  return mkAnimTarget(obj, set, get);
 }
 
 export function mkAnimTarget<A, Prop, R>(
   obj: A,
-  target: Prop,
   set: (a: A, prop: Prop) => void,
   get: (a: A) => Prop,
 ): (e: (t: AnimTarget<A, Prop>) => R) => R {
-  return k => k({ obj, target, get, set }); 
+  return k => k({ obj, get, set }); 
 }
 
 export class TweenTo {
@@ -45,7 +48,17 @@ export class TweenTo {
 
   constructor(
     public readonly duration: number,
+    public readonly target: number,
+    public readonly targetType: TargetType,
     public readonly k: <R>(e: <A>(t: AnimTarget<A, number>) => R) => R,
+  ) {}
+}
+
+export class Eff {
+  public readonly tag: "Eff" = "Eff";
+
+  constructor(
+    public readonly eff: () => void,
   ) {}
 }
 
@@ -53,6 +66,7 @@ export type Anim
   = Par
   | Seq
   | TweenTo
+  | Eff
   ;
 
 export function runAnimation(
@@ -61,13 +75,30 @@ export function runAnimation(
 ): { remainingAnim: Anim, remainingDelta: "nothing" } | { remainingAnim: "nothing", remainingDelta: number } {
   switch (anim.tag) {
     case "TweenTo": {
+      let absoluteTarget = undefined as any;
       anim.k(x => {
         const current = x.get(x.obj);
-        x.set(x.obj, updateValue(delta, anim.duration, x.target, current));
+        // calculate absolute target value
+        switch (anim.targetType) {
+          case "absolute": {
+            absoluteTarget = anim.target;
+            break;
+          }
+          case "relativeIncrease": {
+            absoluteTarget = current + anim.target;
+            break;
+          }
+          case "relativeDecrease": {
+            absoluteTarget = current - anim.target;
+            break;
+          }
+        }
+        // update target value
+        x.set(x.obj, updateValue(delta, anim.duration, absoluteTarget, current));
       });
       const newDuration = anim.duration - delta;
       if (newDuration > 0) {
-        return { remainingAnim: new TweenTo(newDuration, anim.k), remainingDelta: "nothing" };
+        return { remainingAnim: new TweenTo(newDuration, absoluteTarget, "absolute", anim.k), remainingDelta: "nothing" };
       } else {
         return { remainingAnim: "nothing", remainingDelta: -newDuration };
       }
@@ -107,6 +138,10 @@ export function runAnimation(
         return { remainingAnim: new Par(newParList), remainingDelta: "nothing" };
       }
     }
+    case "Eff": {
+      anim.eff();
+      return { remainingAnim: "nothing", remainingDelta: delta };
+    }
   }
 }
 
@@ -127,8 +162,8 @@ function updateValue(
 
 const obj: { a: number, b: number } = { a: 0, b: 0 };
 
-const a1 = new TweenTo(1, mkAccessTarget(obj, "a", 10));
-const a2 = new TweenTo(1, mkAccessTarget(obj, "b", 10));
+const a1 = new TweenTo(1, 10, "absolute", mkAccessTarget(obj, "a"));
+const a2 = new TweenTo(1, 10, "absolute", mkAccessTarget(obj, "b"));
 const a3 = new Seq([a1, a2]);
 const a4 = new Par([a1, a2]);
 

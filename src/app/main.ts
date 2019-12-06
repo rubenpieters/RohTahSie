@@ -1,5 +1,5 @@
-import { newEntity, initializeEntity, updateRoh, EntityDisplay, Entity, playerInitialEntity } from "../game/entity";
-import { Anim, TweenTo, mkAnimTarget, runAnimation, mkAccessTarget, Seq, Par } from "./animation";
+import { initializeEntity, updateRoh, EntityDisplay, Entity, playerInitialEntity } from "../game/entity";
+import { Anim, TweenTo, mkAnimTarget, runAnimation, mkAccessTarget, Seq, Par, Eff } from "./animation";
 import { playerInitialLayout, initializeLayout, Layout, LayoutDisplay, barLocation } from "../game/layout";
 import { GameState } from "../game/state";
 import { PixiFps } from "./fps";
@@ -66,11 +66,11 @@ function main(): void {
   // attach initial animation
   gameAnimations = [
     new Seq([
-      new TweenTo(1, mkAccessTarget(display.player.layout.bar, "x", display.player.layout.bar.x + 50)),
+      new TweenTo(1, 50, "relativeIncrease", mkAccessTarget(display.player.layout.bar, "x")),
       new Par([
-        new TweenTo(0.5, mkAccessTarget(display.player.layout.bar.scale, "x", 2)),
-        new TweenTo(0.5, mkAccessTarget(display.player.layout.bar.scale, "y", 2)),
-        new TweenTo(0.5, mkAccessTarget(display.player.layout.bar, "alpha", 0)),
+        new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "x")),
+        new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "y")),
+        new TweenTo(0.5, 0, "absolute", mkAccessTarget(display.player.layout.bar, "alpha")),
       ]),
     ]),
   ];
@@ -105,18 +105,20 @@ function update(state: GameState, display: { player: { entity: EntityDisplay, la
       }
     });
     if (newAnims.length === 0) {
-      display.player.layout.bar.alpha = 1;
-      display.player.layout.bar.scale.x = 1;
-      display.player.layout.bar.scale.y = 1;
-      state.player.layout.currentIndex += 1;
-      Object.assign(display.player.layout.bar, barLocation(state.player.layout.currentIndex));
       gameAnimations = [
         new Seq([
-          new TweenTo(1, mkAccessTarget(display.player.layout.bar, "x", display.player.layout.bar.x + 50)),
+          new Eff(() => {
+            display.player.layout.bar.alpha = 1;
+            display.player.layout.bar.scale.x = 1;
+            display.player.layout.bar.scale.y = 1;
+            state.player.layout.currentIndex += 1;
+            Object.assign(display.player.layout.bar, barLocation(state.player.layout.currentIndex));
+          }),
+          new TweenTo(1, 50, "relativeIncrease", mkAccessTarget(display.player.layout.bar, "x")),
           new Par([
-            new TweenTo(0.5, mkAccessTarget(display.player.layout.bar.scale, "x", 2)),
-            new TweenTo(0.5, mkAccessTarget(display.player.layout.bar.scale, "y", 2)),
-            new TweenTo(0.5, mkAccessTarget(display.player.layout.bar, "alpha", 0)),
+            new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "x")),
+            new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "y")),
+            new TweenTo(0.5, 0, "absolute", mkAccessTarget(display.player.layout.bar, "alpha")),
           ]),
         ]),
       ];

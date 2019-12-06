@@ -4,6 +4,8 @@ import { nodeSprite } from "./state";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
+// the amount of nodes on the y-axis
+const yAmount = 4;
 
 export type Layout = {
   nodes: GameNode[],
@@ -53,7 +55,7 @@ export function barLocation(
 ): { x: number, y: number } {
   return {
     x: (index % xAmount) * 52.5,
-    y: Math.floor(index / xAmount) * 55 + 22.5,
+    y: (Math.floor(index / xAmount) % yAmount) * 55 + 22.5,
   };
 }
 
