@@ -6,11 +6,13 @@ import { Layout, newLayoutAnim, barLocation } from "./layout";
 import { Entity, updateResourceDisplay, EntityDisplay, newEntityAnim } from "./entity";
 import { Anim, TweenTo, mkAnimTarget, mkAccessTarget, Noop, mkEff, Par } from "../app/animation";
 import { Display } from "./display";
+import { Hotbar } from "./hotbar";
 
 export type GameState = {
   player: {
     entity: Entity,
     layout: Layout,
+    hotbar: Hotbar,
   },
   enemy: {
     entity: Entity,

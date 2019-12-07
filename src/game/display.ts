@@ -4,11 +4,13 @@ import { Anim, Seq, mkEff, Noop, TweenTo, Par, mkAccessTarget } from "../app/ani
 import { GameState, activateNode, activateNodeAnim } from "./state";
 import { GameNode } from "./gameNode";
 import { Cache } from "../app/main";
+import { HotbarDisplay } from "./hotbar";
 
 export type Display = {
   player: {
     entity: EntityDisplay,
     layout: LayoutDisplay,
+    hotbar: HotbarDisplay,
   },
   enemy: {
     entity: EntityDisplay,

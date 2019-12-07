@@ -5,8 +5,12 @@ import { GameState } from "../game/state";
 import { PixiFps } from "./fps";
 import { Display, gameLoopAnimation } from "../game/display";
 import { GameNode } from "../game/gameNode";
+import { initialHotbar, initializeHotbar } from "../game/hotbar";
 
 const renderer = PIXI.autoDetectRenderer();
+
+// TODO: experiment with nicer ways of scaling
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
 window.addEventListener("load", main);
 
@@ -56,6 +60,7 @@ function main(): void {
     player: {
       entity: playerInitialEntity(),
       layout: playerInitialLayout(),
+      hotbar: initialHotbar(),
     },
     enemy: undefined,
   };
@@ -64,6 +69,7 @@ function main(): void {
     player: {
       entity: initializeEntity(state.player.entity, 50, 50, appContainer, cache),
       layout: initializeLayout(state.player.layout, 50, 150, appContainer, cache),
+      hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, cache),
     },
     enemy: {
       entity: initializeEntity(undefined, 320, 50, appContainer, cache),
@@ -112,4 +118,10 @@ function update(state: GameState, display: Display): () => void {
   
     requestAnimationFrame(update(state, display));
   }
+}
+
+export function attachAnimation(
+  anim: Anim
+): void {
+  animations.push(anim);
 }
