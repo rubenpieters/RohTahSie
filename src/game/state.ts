@@ -1,16 +1,20 @@
-import { CacheValues } from "../app/main";
+import { CacheValues, Cache } from "../app/main";
 import { allEnemies } from "./enemy";
 import * as lo from "lodash";
 import { GameNode } from "./gameNode";
-import { Layout } from "./layout";
-import { Entity, updateResourceDisplay, EntityDisplay } from "./entity";
-import { Anim, TweenTo, mkAnimTarget, mkAccessTarget } from "../app/animation";
+import { Layout, newLayoutAnim } from "./layout";
+import { Entity, updateResourceDisplay, EntityDisplay, newEntityAnim } from "./entity";
+import { Anim, TweenTo, mkAnimTarget, mkAccessTarget, Noop, mkEff, Par } from "../app/animation";
 import { Display } from "./display";
 
 export type GameState = {
   player: {
     entity: Entity,
     layout: Layout,
+  },
+  enemy: {
+    entity: Entity | undefined,
+    layout: Layout | undefined,
   },
 };
 
@@ -60,7 +64,7 @@ export function activateNode(
       break;
     }
     case "SummonNode": {
-      //state.currentEnemy = lo.cloneDeep(allEnemies[node.enemyId]);
+      state.enemy = lo.cloneDeep(allEnemies[node.enemyId]);
       break;
     }
     case "AttackNode": {
@@ -86,6 +90,7 @@ export function activateNodeAnim(
   node: GameNode,
   state: GameState,
   display: Display,
+  cache: Cache,
 ): Anim {
   switch (node.tag) {
     case "GenerateNode": {
@@ -94,7 +99,21 @@ export function activateNodeAnim(
       const resourceBar = node.resource + "Bar" as keyof EntityDisplay;
       return new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display.player.entity[resourceBar], "width"));
     }
-    default: return undefined as any;
+    case "SummonNode": {
+      return mkEff({
+        eff: () => {
+          display.enemy.layout.container.visible = true;
+          display.enemy.entity.container.visible = true;
+        },
+        k: () => {
+          return new Par([
+            newLayoutAnim(state.enemy.layout!, display.enemy.layout, cache),
+            newEntityAnim(state.enemy.entity!, display.enemy.entity),
+          ]);
+        },
+      });
+    }
+    default: return new Noop();
   }
 }
 
@@ -107,8 +126,8 @@ export function nodeSprite(
         case "roh": return "res_red";
         case "tah": return "res_gre";
         case "sie": return "res_yel";
-        default: return "err";
       }
+      throw "impossible";
     }
     case "SummonNode": {
       return "creep";

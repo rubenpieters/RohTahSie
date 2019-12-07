@@ -7,12 +7,17 @@ const layout1: Layout = {
     new GenerateNode("roh"),
     new GenerateNode("roh"),
     new GenerateNode("roh"),
+
     new GenerateNode("roh"),
     new GenerateNode("roh"),
     new GenerateNode("roh"),
     new GenerateNode("roh"),
+
     new GenerateNode("roh"),
     new GenerateNode("roh"),
+    new GenerateNode("roh"),
+    new GenerateNode("roh"),
+
     new GenerateNode("roh"),
     new GenerateNode("roh"),
     new GenerateNode("roh"),
@@ -23,12 +28,16 @@ const layout1: Layout = {
 
 type Enemies = typeof allEnemies;
 export type EnemyKey = keyof Enemies;
-// TODO: make immutable
 export const allEnemies = {
   "en1": {
-    red: 10,
-    green: 10,
-    yellow: 10,
+    entity: {
+      roh: 100,
+      maxRoh: 100,
+      tah: 100,
+      maxTah: 100,
+      sie: 100,
+      maxSie: 100,
+    },
     layout: layout1,
-  },
+  }
 }

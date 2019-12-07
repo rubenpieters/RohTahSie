@@ -1,11 +1,14 @@
-import { GameNode, GenerateNode } from "./gameNode";
+import { GameNode, GenerateNode, SummonNode } from "./gameNode";
 import { Cache } from "../app/main";
 import { nodeSprite } from "./state";
+import { mkEff, Noop, Anim } from "../app/animation";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
 // the amount of nodes on the y-axis
 const yAmount = 4;
+// total amount of nodes
+const nodeAmount = xAmount * yAmount;
 
 export type Layout = {
   nodes: GameNode[],
@@ -19,7 +22,7 @@ export type LayoutDisplay = {
 }
 
 export function initializeLayout(
-  layout: Layout,
+  layout: Layout | undefined,
   x: number,
   y: number,
   parentContainer: PIXI.Container,
@@ -30,24 +33,45 @@ export function initializeLayout(
 
   let nodes: PIXI.Sprite[] = [];
 
-  let i = 0;
-  layout.nodes.forEach((node: GameNode) => {
-    const box = new PIXI.Sprite(cache[nodeSprite(node)]);
+  for (let i = 0; i < nodeAmount; i++) {
+    const box =
+      layout !== undefined && layout.nodes[i] !== undefined ?
+      new PIXI.Sprite(cache[nodeSprite(layout.nodes[i])]) :
+      new PIXI.Sprite();
     box.x = (i % xAmount) * 55;
     box.y = Math.floor(i / xAmount) * 55;
     container.addChild(box);
     nodes.push(box);
-    i += node.size;
-  });
+  }
 
   const bar: PIXI.Sprite = new PIXI.Sprite(cache.bar);
-  Object.assign(bar, barLocation(layout.currentIndex));
+  const currIndex = layout !== undefined ? layout.currentIndex : 0;
+  Object.assign(bar, barLocation(currIndex));
   bar.pivot.set(2.5, 30);
   container.addChild(bar);
+
+  if (layout === undefined) {
+    container.visible = false;
+  }
 
   parentContainer.addChild(container);
 
   return { container, nodes, bar };
+}
+
+export function newLayoutAnim(
+  layout: Layout,
+  layoutDisplay: LayoutDisplay,
+  cache: Cache,
+): Anim {
+  return mkEff({
+    eff: () => {
+      for (let i = 0; i < nodeAmount; i++) {
+        layoutDisplay.nodes[i].texture = cache[nodeSprite(layout.nodes[i])];
+      }
+    },
+    k: () => new Noop(),
+  })
 }
 
 export function barLocation(
@@ -62,7 +86,7 @@ export function barLocation(
 export function playerInitialLayout(): Layout {
   return {
     nodes: [
-      new GenerateNode("roh"),
+      new SummonNode("en1"),
       new GenerateNode("roh"),
       new GenerateNode("roh"),
       new GenerateNode("roh"),

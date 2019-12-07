@@ -3,15 +3,20 @@ import { EntityDisplay } from "./entity";
 import { Anim, Seq, mkEff, Noop, TweenTo, Par, mkAccessTarget } from "../app/animation";
 import { GameState, activateNode, activateNodeAnim } from "./state";
 import { GameNode } from "./gameNode";
+import { Cache } from "../app/main";
 
 export type Display = {
   player: {
     entity: EntityDisplay,
     layout: LayoutDisplay,
   },
+  enemy: {
+    entity: EntityDisplay,
+    layout: LayoutDisplay,
+  },
 }
 
-export function gameLoopAnimation(state: GameState, display: Display): Anim {
+export function gameLoopAnimation(state: GameState, display: Display, cache: Cache): Anim {
   return new Seq([
     // advance bar animation
     new TweenTo(1, 50, "relativeIncrease", mkAccessTarget(display.player.layout.bar, "x")),
@@ -24,7 +29,8 @@ export function gameLoopAnimation(state: GameState, display: Display): Anim {
     mkEff({
       eff: () => {
         // activate just completed node
-        activateNode(state.player.layout.nodes[state.player.layout.currentIndex], state);
+        const justCompletedNode = state.player.layout.nodes[state.player.layout.currentIndex];
+        activateNode(justCompletedNode, state);
         // reset bar values
         display.player.layout.bar.alpha = 1;
         display.player.layout.bar.scale.x = 1;
@@ -36,11 +42,11 @@ export function gameLoopAnimation(state: GameState, display: Display): Anim {
         }
         Object.assign(display.player.layout.bar, barLocation(state.player.layout.currentIndex));
         // return just completed node
-        return state.player.layout.nodes[state.player.layout.currentIndex];
+        return justCompletedNode;
       },
       k: (node: GameNode) => {
         // embed node activation animation
-        return activateNodeAnim(node, state, display);
+        return activateNodeAnim(node, state, display, cache);
       },
     }),
   ]);

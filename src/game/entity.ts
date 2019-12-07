@@ -1,5 +1,6 @@
 import { Cache } from "../app/main";
 import { ResourceType } from "./gameNode";
+import { mkEff, Anim, Noop } from "../app/animation";
 
 export type Entity = {
   roh: number,
@@ -44,11 +45,28 @@ export function initializeEntity(
     sieBar.width = 100 * entity.sie / entity.maxSie;
   }
 
+  if (entity === undefined) {
+    container.visible = false;
+  }
+
   parentContainer.addChild(container);
 
   return { container, rohBar, tahBar, sieBar };
 }
 
+export function newEntityAnim(
+  entity: Entity,
+  entityDisplay: EntityDisplay,
+): Anim {
+  return mkEff({
+    eff: () => {
+      entityDisplay.rohBar.width = 100 * entity.roh / entity.maxRoh;
+      entityDisplay.tahBar.width = 100 * entity.tah / entity.maxTah;
+      entityDisplay.sieBar.width = 100 * entity.sie / entity.maxSie;
+    },
+    k: () => new Noop(),
+  })
+}
 
 export function updateResourceDisplay(
   entity: Entity,

@@ -1,7 +1,7 @@
 import { initializeEntity, playerInitialEntity } from "../game/entity";
 import { Anim, TweenTo, runAnimation, mkAccessTarget, Seq, Par, Eff, mkEff, Noop } from "./animation";
 import { playerInitialLayout, initializeLayout, barLocation } from "../game/layout";
-import { GameState, activateNode, activateNodeAnim } from "../game/state";
+import { GameState } from "../game/state";
 import { PixiFps } from "./fps";
 import { Display, gameLoopAnimation } from "../game/display";
 import { GameNode } from "../game/gameNode";
@@ -56,18 +56,26 @@ function main(): void {
     player: {
       entity: playerInitialEntity(),
       layout: playerInitialLayout(),
-    }
+    },
+    enemy: {
+      entity: undefined,
+      layout: undefined,
+    },
   };
 
-  const display = {
+  const display: Display = {
     player: {
       entity: initializeEntity(state.player.entity, 50, 50, appContainer, cache),
       layout: initializeLayout(state.player.layout, 50, 150, appContainer, cache),
+    },
+    enemy: {
+      entity: initializeEntity(undefined, 320, 50, appContainer, cache),
+      layout: initializeLayout(undefined, 320, 150, appContainer, cache),
     }
   };
 
   // attach initial animation
-  gameLoopAnim = gameLoopAnimation(state, display);
+  gameLoopAnim = gameLoopAnimation(state, display, cache);
   gameAnimations = [gameLoopAnim];
 
   // attach fps counter
