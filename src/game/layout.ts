@@ -96,15 +96,15 @@ export function playerInitialLayout(): Layout {
       new GenerateNode("roh"),
       new GenerateNode("roh"),
 
-      new GenerateNode("tah"),
-      new GenerateNode("tah"),
-      new GenerateNode("tah"),
-      new GenerateNode("tah"),
+      new GenerateNode("roh"),
+      new GenerateNode("roh"),
+      new GenerateNode("roh"),
+      new GenerateNode("roh"),
 
-      new GenerateNode("sie"),
-      new GenerateNode("sie"),
-      new GenerateNode("sie"),
-      new GenerateNode("sie"),
+      new GenerateNode("roh"),
+      new GenerateNode("roh"),
+      new GenerateNode("roh"),
+      new GenerateNode("roh"),
     ],
     currentIndex: 0,
   }

@@ -3,25 +3,25 @@ import { GenerateNode } from "./gameNode";
 
 const layout1: Layout = {
   nodes: [
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
 
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
 
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
 
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
-    new GenerateNode("roh"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
+    new GenerateNode("tah"),
   ],
   currentIndex: 0,
 }

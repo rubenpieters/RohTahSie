@@ -57,10 +57,7 @@ function main(): void {
       entity: playerInitialEntity(),
       layout: playerInitialLayout(),
     },
-    enemy: {
-      entity: undefined,
-      layout: undefined,
-    },
+    enemy: undefined,
   };
 
   const display: Display = {

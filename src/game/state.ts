@@ -2,7 +2,7 @@ import { CacheValues, Cache } from "../app/main";
 import { allEnemies } from "./enemy";
 import * as lo from "lodash";
 import { GameNode } from "./gameNode";
-import { Layout, newLayoutAnim } from "./layout";
+import { Layout, newLayoutAnim, barLocation } from "./layout";
 import { Entity, updateResourceDisplay, EntityDisplay, newEntityAnim } from "./entity";
 import { Anim, TweenTo, mkAnimTarget, mkAccessTarget, Noop, mkEff, Par } from "../app/animation";
 import { Display } from "./display";
@@ -13,9 +13,9 @@ export type GameState = {
     layout: Layout,
   },
   enemy: {
-    entity: Entity | undefined,
-    layout: Layout | undefined,
-  },
+    entity: Entity,
+    layout: Layout,
+  } | undefined,
 };
 
 /*
@@ -104,11 +104,14 @@ export function activateNodeAnim(
         eff: () => {
           display.enemy.layout.container.visible = true;
           display.enemy.entity.container.visible = true;
+          // reset bar location
+          state.enemy!.layout.currentIndex = 0;
+          Object.assign(display.enemy.layout.bar, barLocation(state.enemy!.layout.currentIndex));
         },
         k: () => {
           return new Par([
-            newLayoutAnim(state.enemy.layout!, display.enemy.layout, cache),
-            newEntityAnim(state.enemy.entity!, display.enemy.entity),
+            newLayoutAnim(state.enemy!.layout, display.enemy.layout, cache),
+            newEntityAnim(state.enemy!.entity, display.enemy.entity),
           ]);
         },
       });
