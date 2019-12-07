@@ -1,3 +1,5 @@
+import { GameNode } from "../game/gameNode";
+
 export class Par {
   public readonly tag: "Par" = "Par";
 
@@ -53,13 +55,29 @@ export class TweenTo {
     public readonly k: <R>(e: <A>(t: AnimTarget<A, number>) => R) => R,
   ) {}
 }
+type EffK<A> = {
+  eff: () => A,
+  k: (a: A) => Anim,
+}
 
 export class Eff {
   public readonly tag: "Eff" = "Eff";
 
   constructor(
-    public readonly eff: () => void,
+    public readonly f: <R>(f: <A>(effk: EffK<A>) => R) => R
   ) {}
+}
+
+export class Noop {
+  public readonly tag: "Noop" = "Noop";
+
+  constructor() {}
+}
+
+export function mkEff<A>(
+  effk: EffK<A>,
+): Eff {
+  return new Eff(k => k(effk));
 }
 
 export type Anim
@@ -67,6 +85,7 @@ export type Anim
   | Seq
   | TweenTo
   | Eff
+  | Noop
   ;
 
 export function runAnimation(
@@ -110,6 +129,7 @@ export function runAnimation(
       for (const sAnim of anim.list) {
         const result = runAnimation(remainingDelta, sAnim);
         if (result.remainingDelta === "nothing") {
+          // @ts-ignore
           newSeqList = [result.remainingAnim].concat(anim.list.slice(i + 1));
           return { remainingAnim: new Seq(newSeqList), remainingDelta: "nothing" };
         } else {
@@ -126,6 +146,7 @@ export function runAnimation(
       for (const sAnim of anim.list) {
         const result = runAnimation(delta, sAnim);
         if (result.remainingDelta === "nothing") {
+          // @ts-ignore
           newParList[newI] = result.remainingAnim;
           newI++;
         } else if (result.remainingDelta < lowestRemainingDelta) {
@@ -139,7 +160,14 @@ export function runAnimation(
       }
     }
     case "Eff": {
-      anim.eff();
+      let nextAnim: Anim = undefined as any;
+      anim.f(effk => {
+        const value = effk.eff();
+        nextAnim = effk.k(value);
+      });
+      return { remainingAnim: nextAnim, remainingDelta: "nothing" };
+    }
+    case "Noop": {
       return { remainingAnim: "nothing", remainingDelta: delta };
     }
   }

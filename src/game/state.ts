@@ -3,7 +3,9 @@ import { allEnemies } from "./enemy";
 import * as lo from "lodash";
 import { GameNode } from "./gameNode";
 import { Layout } from "./layout";
-import { Entity } from "./entity";
+import { Entity, updateResourceDisplay, EntityDisplay } from "./entity";
+import { Anim, TweenTo, mkAnimTarget, mkAccessTarget } from "../app/animation";
+import { Display } from "./display";
 
 export type GameState = {
   player: {
@@ -53,7 +55,7 @@ export function activateNode(
   switch (node.tag) {
     case "GenerateNode": {
       if (state.player.entity[node.resource] < 100) {
-        state.player.entity[node.resource] += 1;
+        state.player.entity[node.resource] += 10;
       }
       break;
     }
@@ -77,6 +79,22 @@ export function activateNode(
     case "Empty": {
       break;
     }
+  }
+}
+
+export function activateNodeAnim(
+  node: GameNode,
+  state: GameState,
+  display: Display,
+): Anim {
+  switch (node.tag) {
+    case "GenerateNode": {
+      const maxResource = "max" + node.resource.charAt(0).toUpperCase() + node.resource.substring(1) as keyof Entity;
+      const targetValue = 100 * state.player.entity[node.resource] / state.player.entity[maxResource];
+      const resourceBar = node.resource + "Bar" as keyof EntityDisplay;
+      return new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display.player.entity[resourceBar], "width"));
+    }
+    default: return undefined as any;
   }
 }
 

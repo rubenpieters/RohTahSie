@@ -1,4 +1,5 @@
 import { Cache } from "../app/main";
+import { ResourceType } from "./gameNode";
 
 export type Entity = {
   roh: number,
@@ -49,14 +50,13 @@ export function initializeEntity(
 }
 
 
-// update the model and display
-export function updateRoh(
+export function updateResourceDisplay(
   entity: Entity,
   display: EntityDisplay,
-  newValue: number,
+  resourceType: ResourceType,
 ): void {
-  entity.roh = newValue;
-  display.rohBar.width = 100 * entity.roh / entity.maxRoh;
+  const resourceBar = resourceType + "bar" as keyof EntityDisplay;
+  display[resourceBar].width = 100 * entity.roh / entity.maxRoh;
 }
 
 export function playerInitialEntity(): Entity {

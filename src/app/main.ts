@@ -1,8 +1,10 @@
-import { initializeEntity, updateRoh, EntityDisplay, Entity, playerInitialEntity } from "../game/entity";
-import { Anim, TweenTo, mkAnimTarget, runAnimation, mkAccessTarget, Seq, Par, Eff } from "./animation";
-import { playerInitialLayout, initializeLayout, Layout, LayoutDisplay, barLocation } from "../game/layout";
-import { GameState } from "../game/state";
+import { initializeEntity, playerInitialEntity } from "../game/entity";
+import { Anim, TweenTo, runAnimation, mkAccessTarget, Seq, Par, Eff, mkEff, Noop } from "./animation";
+import { playerInitialLayout, initializeLayout, barLocation } from "../game/layout";
+import { GameState, activateNode, activateNodeAnim } from "../game/state";
 import { PixiFps } from "./fps";
+import { Display, gameLoopAnimation } from "../game/display";
+import { GameNode } from "../game/gameNode";
 
 const renderer = PIXI.autoDetectRenderer();
 
@@ -37,6 +39,7 @@ const cache = {
 
 let animations: Anim[] = [];
 let gameAnimations: Anim[] = [];
+let gameLoopAnim: Anim;
 
 function main(): void {
   const app = new PIXI.Application({ width: 540, height: 540 });
@@ -64,16 +67,8 @@ function main(): void {
   };
 
   // attach initial animation
-  gameAnimations = [
-    new Seq([
-      new TweenTo(1, 50, "relativeIncrease", mkAccessTarget(display.player.layout.bar, "x")),
-      new Par([
-        new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "x")),
-        new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "y")),
-        new TweenTo(0.5, 0, "absolute", mkAccessTarget(display.player.layout.bar, "alpha")),
-      ]),
-    ]),
-  ];
+  gameLoopAnim = gameLoopAnimation(state, display);
+  gameAnimations = [gameLoopAnim];
 
   // attach fps counter
   const fpsCounter = new PixiFps();
@@ -82,7 +77,7 @@ function main(): void {
   window.requestAnimationFrame(update(state, display));
 }
 
-function update(state: GameState, display: { player: { entity: EntityDisplay, layout: LayoutDisplay } }): () => void {
+function update(state: GameState, display: Display): () => void {
   return () => {
     prevTime = currentTime;
     currentTime = new Date().getTime();
@@ -105,23 +100,7 @@ function update(state: GameState, display: { player: { entity: EntityDisplay, la
       }
     });
     if (newAnims.length === 0) {
-      gameAnimations = [
-        new Seq([
-          new Eff(() => {
-            display.player.layout.bar.alpha = 1;
-            display.player.layout.bar.scale.x = 1;
-            display.player.layout.bar.scale.y = 1;
-            state.player.layout.currentIndex += 1;
-            Object.assign(display.player.layout.bar, barLocation(state.player.layout.currentIndex));
-          }),
-          new TweenTo(1, 50, "relativeIncrease", mkAccessTarget(display.player.layout.bar, "x")),
-          new Par([
-            new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "x")),
-            new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "y")),
-            new TweenTo(0.5, 0, "absolute", mkAccessTarget(display.player.layout.bar, "alpha")),
-          ]),
-        ]),
-      ];
+      gameAnimations = [gameLoopAnim];
     } else {
       gameAnimations = newAnims;
     }

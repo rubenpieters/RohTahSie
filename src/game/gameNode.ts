@@ -1,11 +1,13 @@
 import { EnemyKey } from "./enemy";
 
+export type ResourceType = "roh" | "tah" | "sie";
+
 export class GenerateNode {
   public readonly tag: "GenerateNode" = "GenerateNode";
   public readonly size = 1;
 
   constructor(
-    public readonly resource: "roh" | "tah" | "sie",
+    public readonly resource: ResourceType,
   ) {}
 }
 
