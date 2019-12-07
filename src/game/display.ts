@@ -13,20 +13,9 @@ export type Display = {
 
 export function gameLoopAnimation(state: GameState, display: Display): Anim {
   return new Seq([
-    mkEff({
-      eff: () => {
-        display.player.layout.bar.alpha = 1;
-        display.player.layout.bar.scale.x = 1;
-        display.player.layout.bar.scale.y = 1;
-        state.player.layout.currentIndex += 1;
-        if (state.player.layout.currentIndex >= state.player.layout.nodes.length) {
-          state.player.layout.currentIndex = 0;
-        }
-        Object.assign(display.player.layout.bar, barLocation(state.player.layout.currentIndex));
-      },
-    k: () => new Noop()
-    }),
+    // advance bar animation
     new TweenTo(1, 50, "relativeIncrease", mkAccessTarget(display.player.layout.bar, "x")),
+    // fade out bar
     new Par([
       new TweenTo(0.25, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "x")),
       new TweenTo(0.25, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "y")),
@@ -34,10 +23,23 @@ export function gameLoopAnimation(state: GameState, display: Display): Anim {
     ]),
     mkEff({
       eff: () => {
+        // activate just completed node
         activateNode(state.player.layout.nodes[state.player.layout.currentIndex], state);
+        // reset bar values
+        display.player.layout.bar.alpha = 1;
+        display.player.layout.bar.scale.x = 1;
+        display.player.layout.bar.scale.y = 1;
+        // advance current node
+        state.player.layout.currentIndex += 1;
+        if (state.player.layout.currentIndex >= state.player.layout.nodes.length) {
+          state.player.layout.currentIndex = 0;
+        }
+        Object.assign(display.player.layout.bar, barLocation(state.player.layout.currentIndex));
+        // return just completed node
         return state.player.layout.nodes[state.player.layout.currentIndex];
       },
       k: (node: GameNode) => {
+        // embed node activation animation
         return activateNodeAnim(node, state, display);
       },
     }),
