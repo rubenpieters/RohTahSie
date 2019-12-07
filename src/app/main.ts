@@ -65,16 +65,15 @@ function main(): void {
     enemy: undefined,
   };
 
-  const display: Display = {
-    player: {
-      entity: initializeEntity(state.player.entity, 50, 50, appContainer, cache),
-      layout: initializeLayout(state.player.layout, 50, 150, appContainer, cache),
-      hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, cache),
-    },
-    enemy: {
-      entity: initializeEntity(undefined, 320, 50, appContainer, cache),
-      layout: initializeLayout(undefined, 320, 150, appContainer, cache),
-    }
+  let display: Display = {} as Display;
+  display.player = {
+    entity: initializeEntity(state.player.entity, 50, 50, appContainer, cache),
+    layout: initializeLayout(state.player.layout, 50, 150, appContainer, state, display, cache, "player"),
+    hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, cache),
+  };
+  display.enemy = {
+    entity: initializeEntity(undefined, 320, 50, appContainer, cache),
+    layout: initializeLayout(undefined, 320, 150, appContainer, state, display, cache, "enemy"),
   };
 
   // attach initial animation

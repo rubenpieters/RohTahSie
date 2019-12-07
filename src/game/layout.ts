@@ -1,7 +1,9 @@
 import { GameNode, GenerateNode, SummonNode } from "./gameNode";
 import { Cache } from "../app/main";
-import { nodeSprite } from "./state";
+import { nodeSprite, GameState } from "./state";
 import { mkEff, Noop, Anim } from "../app/animation";
+import { hotbarSelectedNode } from "./hotbar";
+import { Display } from "./display";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
@@ -26,7 +28,10 @@ export function initializeLayout(
   x: number,
   y: number,
   parentContainer: PIXI.Container,
+  state: GameState,
+  display: Display,
   cache: Cache,
+  type: "player" | "enemy",
 ): LayoutDisplay {
   const container = new PIXI.Container();
   Object.assign(container, { x, y });
@@ -40,6 +45,13 @@ export function initializeLayout(
       new PIXI.Sprite();
     box.x = (i % xAmount) * 55;
     box.y = Math.floor(i / xAmount) * 55;
+
+    if (type === "player") {
+      box.interactive = true;
+  
+      box.on("mousedown", layoutMouseDownCb(state, display, cache, i));
+    }
+
     container.addChild(box);
     nodes.push(box);
   }
@@ -72,6 +84,21 @@ export function newLayoutAnim(
     },
     k: () => new Noop(),
   })
+}
+
+function layoutMouseDownCb(
+  state: GameState,
+  display: Display,
+  cache: Cache,
+  index: number,
+): () => void {
+  return () => {
+    const selectedNode = hotbarSelectedNode(state.player.hotbar);
+    if (selectedNode !== undefined) {
+      state.player.layout.nodes[index] = selectedNode;
+      display.player.layout.nodes[index].texture = cache[nodeSprite(selectedNode)];
+    }
+  };
 }
 
 export function barLocation(

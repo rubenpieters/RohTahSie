@@ -5,12 +5,15 @@ import { Anim, TweenTo, mkAccessTarget, Par } from "../app/animation";
 import { IPoint } from "pixi.js";
 
 export type Hotbar = {
-  nodes: GameNode[],
+  elements: {
+    node: GameNode,
+    selected: boolean,
+  }[],
 }
 
 export type HotbarDisplay = {
   container: PIXI.Container,
-  nodes: PIXI.Sprite[],
+  elements: PIXI.Sprite[],
 }
 
 export function initializeHotbar(
@@ -23,11 +26,11 @@ export function initializeHotbar(
   const container = new PIXI.Container();
   Object.assign(container, { x, y });
 
-  let nodes: PIXI.Sprite[] = [];
+  let elements: PIXI.Sprite[] = [];
 
   let i = 0;
-  for (const node of hotbar.nodes) {
-    const box = new PIXI.Sprite(cache[nodeSprite(node)]);
+  for (const element of hotbar.elements) {
+    const box = new PIXI.Sprite(cache[nodeSprite(element.node)]);
     box.x = i * 55;
     box.pivot.set(25, 25);
 
@@ -36,18 +39,17 @@ export function initializeHotbar(
     box.on("mouseover", () => {
       attachAnimation(hotbarMouseOverAnim(box));
     });
-    box.on("mouseout", () => {
-      attachAnimation(hotbarMouseOutAnim(box));
-    });
+    box.on("mouseout", hotbarMouseOutCb(hotbar, box, i));
+    box.on("mousedown", hotbarMouseDownCb(hotbar, elements, i));
 
     container.addChild(box);
-    nodes.push(box);
+    elements.push(box);
     i++;
   }
 
   parentContainer.addChild(container);
 
-  return { container, nodes };
+  return { container, elements };
 }
 
 function hotbarMouseOverAnim<A extends { scale: IPoint }>(
@@ -68,13 +70,60 @@ function hotbarMouseOutAnim<A extends { scale: IPoint }>(
   ]);
 }
 
+function hotbarMouseOutCb(
+  hotbar: Hotbar,
+  box: PIXI.Sprite,
+  index: number,
+): () => void {
+  return () => {
+    if (! hotbar.elements[index].selected) {
+      attachAnimation(hotbarMouseOutAnim(box));
+    }
+  };
+}
+
+function hotbarMouseDownCb(
+  hotbar: Hotbar,
+  hotbarElements: PIXI.Sprite[],
+  index: number,
+): () => void {
+  return () => {
+    for (let i = 0; i < hotbar.elements.length; i++) {
+      if (i !== index && hotbar.elements[i].selected) {
+        attachAnimation(hotbarMouseOutAnim(hotbarElements[i]));
+        hotbar.elements[i].selected = false;
+      }
+    }
+    hotbar.elements[index].selected = ! hotbar.elements[index].selected;
+  };
+}
+
+export function hotbarSelectedNode(
+  hotbar: Hotbar,
+): GameNode | undefined {
+  const selectedElement = hotbar.elements.find(x => x.selected);
+  return selectedElement === undefined ? undefined : selectedElement.node;
+}
+
 export function initialHotbar(): Hotbar {
   return {
-    nodes: [
-      new GenerateNode("roh"),
-      new GenerateNode("tah"),
-      new GenerateNode("sie"),
-      new SummonNode("en1"),
+    elements: [
+      {
+        node: new GenerateNode("roh"),
+        selected: false,
+      },
+      {
+        node: new GenerateNode("tah"),
+        selected: false,
+      },
+      {
+        node: new GenerateNode("sie"),
+        selected: false,
+      },
+      {
+        node: new SummonNode("en1"),
+        selected: false,
+      },
     ],
   }
 }
