@@ -1,4 +1,5 @@
 import { GameNode } from "../game/gameNode";
+import { linear } from "./interpolation";
 
 export class Par {
   public readonly tag: "Par" = "Par";
@@ -60,6 +61,23 @@ type EffK<A> = {
   k: (a: A) => Anim,
 }
 
+export type FromToType
+  = "setOnFrom"
+  | "onlyTo"
+  ;
+
+export class TweenFromTo {
+  public readonly tag: "TweenFromTo" = "TweenFromTo";
+
+  constructor(
+    public readonly duration: number,
+    public readonly from: number,
+    public readonly to: number,
+    public readonly fromToType: FromToType,
+    public readonly k: <R>(e: <A>(t: AnimTarget<A, number>) => R) => R,
+  ) {}
+}
+
 export class Eff {
   public readonly tag: "Eff" = "Eff";
 
@@ -84,6 +102,7 @@ export type Anim
   = Par
   | Seq
   | TweenTo
+  | TweenFromTo
   | Eff
   | Noop
   ;
@@ -94,32 +113,37 @@ export function runAnimation(
 ): { remainingAnim: Anim, remainingDelta: "nothing" } | { remainingAnim: "nothing", remainingDelta: number } {
   switch (anim.tag) {
     case "TweenTo": {
-      let absoluteTarget = undefined as any;
-      anim.k(x => {
-        const current = x.get(x.obj);
-        // calculate absolute target value
+      const { from, to } = anim.k(x => {
+        const from = x.get(x.obj);
+        let to = undefined as any;
         switch (anim.targetType) {
-          case "absolute": {
-            absoluteTarget = anim.target;
-            break;
-          }
-          case "relativeIncrease": {
-            absoluteTarget = current + anim.target;
-            break;
-          }
-          case "relativeDecrease": {
-            absoluteTarget = current - anim.target;
-            break;
-          }
+          case "absolute": { to = anim.target; break; };
+          case "relativeDecrease": { to = from - anim.target; break; };
+          case "relativeIncrease": { to = from + anim.target; break; };
         }
-        // update target value
-        x.set(x.obj, updateValue(delta, anim.duration, absoluteTarget, current));
+        return { from, to };
       });
-      const newDuration = anim.duration - delta;
-      if (newDuration > 0) {
-        return { remainingAnim: new TweenTo(newDuration, absoluteTarget, "absolute", anim.k), remainingDelta: "nothing" };
+      const newAnim = new TweenFromTo(anim.duration, from, to, "onlyTo", anim.k);
+      return runAnimation(delta, newAnim);
+    }
+    case "TweenFromTo": {
+      const finished = anim.k(x => {
+        if (anim.fromToType === "setOnFrom") {
+          x.set(x.obj, anim.from);
+        }
+        const current = x.get(x.obj);
+        // update target value
+        const currentIndex = (current - anim.from) / (anim.to - anim.from);
+        const newIndex = Math.min(1, currentIndex + (delta / anim.duration));
+        x.set(x.obj, linear(anim.from, anim.to, newIndex));
+        return newIndex >= 1;
+      });
+      const remainingDelta = Math.max(delta - anim.duration - delta);
+      if (finished) {
+        return { remainingAnim: "nothing", remainingDelta };
       } else {
-        return { remainingAnim: "nothing", remainingDelta: -newDuration };
+        const newAnim: TweenFromTo = { ...anim, fromToType: "onlyTo" };
+        return { remainingAnim: newAnim, remainingDelta: "nothing" };
       }
     }
     case "Seq": {
@@ -172,19 +196,3 @@ export function runAnimation(
     }
   }
 }
-
-function updateValue(
-  delta: number,
-  duration: number,
-  target: number,
-  current: number,
-): number {
-  const speed = (target - current) * delta / duration
-  const newValue = current + speed
-  if (target > current) {
-    return Math.min(target, newValue);
-  } else {
-    return Math.max(target, newValue);
-  }
-}
-
