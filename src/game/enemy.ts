@@ -1,12 +1,12 @@
 import { Layout } from "./layout";
-import { GenerateNode } from "./gameNode";
+import { GenerateNode, AttackNode } from "./gameNode";
 
 const layout1: Layout = {
   nodes: [
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
+    new AttackNode(10, "roh", "player"),
+    new AttackNode(10, "roh", "player"),
+    new AttackNode(10, "roh", "player"),
+    new AttackNode(10, "roh", "player"),
 
     new GenerateNode("tah"),
     new GenerateNode("tah"),

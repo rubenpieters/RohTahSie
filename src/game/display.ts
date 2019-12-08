@@ -24,21 +24,28 @@ export function gameLoopAnimation(
   cache: Cache,
 ): Anim {
   return new Seq([
+    mkEff({
+      eff: () => {
+        // reset bar values
+        display.player.layout.bar.alpha = 1;
+        display.player.layout.bar.scale.x = 1;
+        display.player.layout.bar.scale.y = 1;
+        Object.assign(display.player.layout.bar, barLocation(state.player.layout.currentIndex));
+        if (state.enemy !== undefined) {
+          display.enemy.layout.bar.alpha = 1;
+          display.enemy.layout.bar.scale.x = 1;
+          display.enemy.layout.bar.scale.y = 1;
+          Object.assign(display.enemy.layout.bar, barLocation(state.enemy.layout.currentIndex));
+        }
+      },
+      k: () => new Noop(),
+    }),
     new Par([
       // advance player bar animation
       new TweenTo(1, 50, "relativeIncrease", mkAccessTarget(display.player.layout.bar, "x")),
       // advance enemy bar animation
       // TODO: do not move bar if no enemy?
       new TweenTo(1, 50, "relativeIncrease", mkAccessTarget(display.enemy.layout.bar, "x")),
-    ]),
-    // fade out bar
-    new Par([
-      new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "x")),
-      new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "y")),
-      new TweenTo(0.5, 0, "absolute", mkAccessTarget(display.player.layout.bar, "alpha")),
-      new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.enemy.layout.bar.scale, "x")),
-      new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.enemy.layout.bar.scale, "y")),
-      new TweenTo(0.5, 0, "absolute", mkAccessTarget(display.enemy.layout.bar, "alpha")),
     ]),
     mkEff({
       eff: () => {
@@ -47,26 +54,17 @@ export function gameLoopAnimation(
           player: state.player.layout.nodes[state.player.layout.currentIndex],
           enemy: state.enemy === undefined ? undefined : state.enemy.layout.nodes[state.enemy.layout.currentIndex]
         }
-        // reset bar values
-        display.player.layout.bar.alpha = 1;
-        display.player.layout.bar.scale.x = 1;
-        display.player.layout.bar.scale.y = 1;
-        display.enemy.layout.bar.alpha = 1;
-        display.enemy.layout.bar.scale.x = 1;
-        display.enemy.layout.bar.scale.y = 1;
         // advance current node for player
         state.player.layout.currentIndex += 1;
         if (state.player.layout.currentIndex >= state.player.layout.nodes.length) {
           state.player.layout.currentIndex = 0;
         }
-        Object.assign(display.player.layout.bar, barLocation(state.player.layout.currentIndex));
         // advance current node for enemy
         if (state.enemy !== undefined) {
           state.enemy.layout.currentIndex += 1;
           if (state.enemy.layout.currentIndex >= state.enemy.layout.nodes.length) {
             state.enemy.layout.currentIndex = 0;
           }
-          Object.assign(display.enemy.layout.bar, barLocation(state.enemy.layout.currentIndex));
         }
         // return just completed node
         return justCompletedNodes;
@@ -74,8 +72,9 @@ export function gameLoopAnimation(
       k: (completedNodes: { player: GameNode, enemy: GameNode | undefined }) => {
         // embed node activation animation
         return new Seq([
-          activateAndAnimateNode(completedNodes.player, state, display, cache),
-          completedNodes.enemy === undefined ? new Noop() : activateAndAnimateNode(completedNodes.enemy, state, display, cache),
+          activateAndAnimateNode("player", completedNodes.player, state, display, cache),
+          completedNodes.enemy === undefined ? new Noop() :
+            activateAndAnimateNode("enemy", completedNodes.enemy, state, display, cache),
         ]);
       },
     }),
@@ -83,17 +82,23 @@ export function gameLoopAnimation(
 }
 
 function activateAndAnimateNode(
+  source: "player" | "enemy",
   node: GameNode,
   state: GameState,
   display: Display,
   cache: Cache,
 ) {
+  const fadeOutBar = new Par([
+    new TweenTo(0.5, 2, "absolute", mkAccessTarget(display[source].layout.bar.scale, "x")),
+    new TweenTo(0.5, 2, "absolute", mkAccessTarget(display[source].layout.bar.scale, "y")),
+    new TweenTo(0.5, 0, "absolute", mkAccessTarget(display[source].layout.bar, "alpha")),
+  ]);
   return mkEff({
     eff: () => {
       return activateNode(node, state, display, cache);
     },
     k: (anim: Anim) => {
-      return anim;
+      return new Par([fadeOutBar, anim]);
     },
   })
 }
