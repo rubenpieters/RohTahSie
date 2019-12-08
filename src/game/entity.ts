@@ -55,14 +55,19 @@ export function initializeEntity(
 }
 
 export function newEntityAnim(
-  entity: Entity,
+  entity: Entity | undefined,
   entityDisplay: EntityDisplay,
 ): Anim {
   return mkEff({
     eff: () => {
-      entityDisplay.rohBar.width = 100 * entity.roh / entity.maxRoh;
-      entityDisplay.tahBar.width = 100 * entity.tah / entity.maxTah;
-      entityDisplay.sieBar.width = 100 * entity.sie / entity.maxSie;
+      if (entity !== undefined) {
+        entityDisplay.container.visible = true;
+        entityDisplay.rohBar.width = 100 * entity.roh / entity.maxRoh;
+        entityDisplay.tahBar.width = 100 * entity.tah / entity.maxTah;
+        entityDisplay.sieBar.width = 100 * entity.sie / entity.maxSie;
+      } else {
+        entityDisplay.container.visible = false;
+      }
     },
     k: () => new Noop(),
   })

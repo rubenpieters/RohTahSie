@@ -2,11 +2,11 @@ import { CacheValues, Cache } from "../app/main";
 import { allEnemies } from "./enemy";
 import * as lo from "lodash";
 import { GameNode } from "./gameNode";
-import { Layout, newLayoutAnim, barLocation } from "./layout";
-import { Entity, updateResourceDisplay, EntityDisplay, newEntityAnim } from "./entity";
+import { Layout, newLayoutAnim, barLocation, playerInitialLayout } from "./layout";
+import { Entity, updateResourceDisplay, EntityDisplay, newEntityAnim, playerInitialEntity } from "./entity";
 import { Anim, TweenTo, mkAnimTarget, mkAccessTarget, Noop, mkEff, Par, Seq } from "../app/animation";
 import { Display } from "./display";
-import { Hotbar } from "./hotbar";
+import { Hotbar, initialHotbar } from "./hotbar";
 
 export type GameState = {
   player: {
@@ -19,6 +19,15 @@ export type GameState = {
     layout: Layout,
   } | undefined,
 };
+
+export function initializeState(state: GameState): void {
+  state.player = {
+    entity: playerInitialEntity(),
+    layout: playerInitialLayout(),
+    hotbar: initialHotbar(),
+  };
+  state.enemy = undefined;
+}
 
 export function activateNode(
   node: GameNode,
@@ -50,8 +59,8 @@ export function activateNode(
         },
         k: () => {
           return new Par([
-            newLayoutAnim(state.enemy!.layout, display.enemy.layout, cache),
-            newEntityAnim(state.enemy!.entity, display.enemy.entity),
+            newLayoutAnim(state.enemy === undefined ? undefined : state.enemy.layout, display.enemy.layout, cache),
+            newEntityAnim(state.enemy === undefined ? undefined : state.enemy.entity, display.enemy.entity),
           ]);
         },
       });

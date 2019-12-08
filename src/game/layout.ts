@@ -72,14 +72,19 @@ export function initializeLayout(
 }
 
 export function newLayoutAnim(
-  layout: Layout,
+  layout: Layout | undefined,
   layoutDisplay: LayoutDisplay,
   cache: Cache,
 ): Anim {
   return mkEff({
     eff: () => {
-      for (let i = 0; i < nodeAmount; i++) {
-        layoutDisplay.nodes[i].texture = cache[nodeSprite(layout.nodes[i])];
+      if (layout !== undefined) {
+        layoutDisplay.container.visible = true;
+        for (let i = 0; i < nodeAmount; i++) {
+          layoutDisplay.nodes[i].texture = cache[nodeSprite(layout.nodes[i])];
+        }
+      } else {
+        layoutDisplay.container.visible = false;
       }
     },
     k: () => new Noop(),
@@ -114,8 +119,8 @@ export function playerInitialLayout(): Layout {
   return {
     nodes: [
       new SummonNode("en1"),
-      new AttackNode(1, "roh", "enemy"),
-      new AttackNode(1, "roh", "enemy"),
+      new AttackNode(50, "roh", "enemy"),
+      new AttackNode(50, "roh", "enemy"),
       new GenerateNode("roh"),
 
       new GenerateNode("roh"),

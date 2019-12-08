@@ -1,7 +1,7 @@
 import { initializeEntity, playerInitialEntity } from "../game/entity";
 import { Anim, TweenTo, runAnimation, mkAccessTarget, Seq, Par, Eff, mkEff, Noop } from "./animation";
 import { playerInitialLayout, initializeLayout, barLocation } from "../game/layout";
-import { GameState } from "../game/state";
+import { GameState, initializeState } from "../game/state";
 import { PixiFps } from "./fps";
 import { Display, gameLoopAnimation } from "../game/display";
 import { GameNode } from "../game/gameNode";
@@ -56,20 +56,14 @@ function main(): void {
   Object.assign(bg, { width: 540, height: 540, tint: 0x00d3ff });
   appContainer.addChild(bg);
 
-  const state: GameState = {
-    player: {
-      entity: playerInitialEntity(),
-      layout: playerInitialLayout(),
-      hotbar: initialHotbar(),
-    },
-    enemy: undefined,
-  };
+  const state: GameState = {} as GameState;
+  initializeState(state);
 
   let display: Display = {} as Display;
   display.player = {
     entity: initializeEntity(state.player.entity, 50, 50, appContainer, cache),
     layout: initializeLayout(state.player.layout, 50, 150, appContainer, state, display, cache, "player"),
-    hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, cache),
+    hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, state, cache),
   };
   display.enemy = {
     entity: initializeEntity(undefined, 320, 50, appContainer, cache),

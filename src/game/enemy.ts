@@ -3,10 +3,10 @@ import { GenerateNode, AttackNode } from "./gameNode";
 
 const layout1: Layout = {
   nodes: [
-    new AttackNode(10, "roh", "player"),
-    new AttackNode(10, "roh", "player"),
-    new AttackNode(10, "roh", "player"),
-    new AttackNode(10, "roh", "player"),
+    new AttackNode(100, "roh", "player"),
+    new AttackNode(1, "roh", "player"),
+    new AttackNode(1, "roh", "player"),
+    new AttackNode(1, "roh", "player"),
 
     new GenerateNode("tah"),
     new GenerateNode("tah"),

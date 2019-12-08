@@ -1,8 +1,10 @@
 import { GameNode, SummonNode, GenerateNode, AttackNode } from "./gameNode";
 import { Cache, attachAnimation } from "../app/main";
-import { nodeSprite } from "./state";
-import { Anim, TweenTo, mkAccessTarget, Par } from "../app/animation";
+import { nodeSprite, GameState } from "./state";
+import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
 import { IPoint } from "pixi.js";
+
+const hotbarSize = 5;
 
 export type Hotbar = {
   elements: {
@@ -21,6 +23,7 @@ export function initializeHotbar(
   x: number,
   y: number,
   parentContainer: PIXI.Container,
+  state: GameState,
   cache: Cache,
 ): HotbarDisplay {
   const container = new PIXI.Container();
@@ -28,8 +31,8 @@ export function initializeHotbar(
 
   let elements: PIXI.Sprite[] = [];
 
-  let i = 0;
-  for (const element of hotbar.elements) {
+  for (let i = 0; i < hotbarSize; i++) {
+    const element = hotbar.elements[i];
     const box = new PIXI.Sprite(cache[nodeSprite(element.node)]);
     box.x = i * 55;
     box.pivot.set(25, 25);
@@ -39,12 +42,11 @@ export function initializeHotbar(
     box.on("mouseover", () => {
       attachAnimation(hotbarMouseOverAnim(box));
     });
-    box.on("mouseout", hotbarMouseOutCb(hotbar, box, i));
-    box.on("mousedown", hotbarMouseDownCb(hotbar, elements, i));
+    box.on("mouseout", hotbarMouseOutCb(state, box, i));
+    box.on("mousedown", hotbarMouseDownCb(state, elements, i));
 
     container.addChild(box);
     elements.push(box);
-    i++;
   }
 
   parentContainer.addChild(container);
@@ -71,23 +73,24 @@ function hotbarMouseOutAnim<A extends { scale: IPoint }>(
 }
 
 function hotbarMouseOutCb(
-  hotbar: Hotbar,
+  state: GameState,
   box: PIXI.Sprite,
   index: number,
 ): () => void {
   return () => {
-    if (! hotbar.elements[index].selected) {
+    if (! state.player.hotbar.elements[index].selected) {
       attachAnimation(hotbarMouseOutAnim(box));
     }
   };
 }
 
 function hotbarMouseDownCb(
-  hotbar: Hotbar,
+  state: GameState,
   hotbarElements: PIXI.Sprite[],
   index: number,
 ): () => void {
   return () => {
+    const hotbar = state.player.hotbar;
     for (let i = 0; i < hotbar.elements.length; i++) {
       if (i !== index && hotbar.elements[i].selected) {
         attachAnimation(hotbarMouseOutAnim(hotbarElements[i]));
@@ -96,6 +99,21 @@ function hotbarMouseDownCb(
     }
     hotbar.elements[index].selected = ! hotbar.elements[index].selected;
   };
+}
+export function newHotbarAnim(
+  hotbar: Hotbar,
+  hotbarDisplay: HotbarDisplay,
+  cache: Cache,
+): Anim {
+  return mkEff({
+    eff: () => {
+      for (let i = 0; i < hotbarSize; i++) {
+        hotbarDisplay.elements[i].texture = cache[nodeSprite(hotbar.elements[i].node)];
+        Object.assign(hotbarDisplay.elements[i].scale, { x: 1, y: 1 });
+      }
+    },
+    k: () => new Noop(),
+  })
 }
 
 export function hotbarSelectedNode(

@@ -1,10 +1,10 @@
-import { LayoutDisplay, barLocation } from "./layout";
-import { EntityDisplay } from "./entity";
+import { LayoutDisplay, barLocation, newLayoutAnim } from "./layout";
+import { EntityDisplay, newEntityAnim } from "./entity";
 import { Anim, Seq, mkEff, Noop, TweenTo, Par, mkAccessTarget } from "../app/animation";
-import { GameState, activateNode } from "./state";
+import { GameState, activateNode, initializeState } from "./state";
 import { GameNode } from "./gameNode";
 import { Cache } from "../app/main";
-import { HotbarDisplay } from "./hotbar";
+import { HotbarDisplay, newHotbarAnim } from "./hotbar";
 
 export type Display = {
   player: {
@@ -75,10 +75,42 @@ export function gameLoopAnimation(
           activateAndAnimateNode("player", completedNodes.player, state, display, cache),
           completedNodes.enemy === undefined ? new Noop() :
             activateAndAnimateNode("enemy", completedNodes.enemy, state, display, cache),
+          playerCheckDieAnimation(state, display, cache),
         ]);
       },
     }),
   ]);
+}
+
+export function playerCheckDieAnimation(
+  state: GameState,
+  display: Display,
+  cache: Cache,
+): Anim {
+  return mkEff({
+    eff: () => {
+      return state.player.entity.roh <= 0 ||
+      state.player.entity.tah <= 0 ||
+      state.player.entity.sie <= 0;
+    },
+    k: (playerDead: boolean) => {
+      if (! playerDead) {
+        return new Noop();
+      }
+      return mkEff({
+        eff: () => {
+          initializeState(state);
+        },
+        k: () => new Seq([
+          newEntityAnim(state.player.entity, display.player.entity),
+          newEntityAnim(state.enemy === undefined ? undefined : state.enemy.entity, display.enemy.entity),
+          newLayoutAnim(state.player.layout, display.player.layout, cache),
+          newLayoutAnim(state.enemy === undefined ? undefined : state.enemy.layout, display.enemy.layout, cache),
+          newHotbarAnim(state.player.hotbar, display.player.hotbar, cache),
+        ]),
+      });
+    },
+  });
 }
 
 function activateAndAnimateNode(
