@@ -1,4 +1,4 @@
-import { GameNode, GenerateNode, SummonNode } from "./gameNode";
+import { GameNode, GenerateNode, SummonNode, AttackNode } from "./gameNode";
 import { Cache } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { mkEff, Noop, Anim } from "../app/animation";
@@ -114,8 +114,8 @@ export function playerInitialLayout(): Layout {
   return {
     nodes: [
       new SummonNode("en1"),
-      new GenerateNode("roh"),
-      new GenerateNode("roh"),
+      new AttackNode(50, "roh", "enemy"),
+      new AttackNode(50, "roh", "enemy"),
       new GenerateNode("roh"),
 
       new GenerateNode("roh"),

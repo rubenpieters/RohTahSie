@@ -4,7 +4,7 @@ import * as lo from "lodash";
 import { GameNode } from "./gameNode";
 import { Layout, newLayoutAnim, barLocation } from "./layout";
 import { Entity, updateResourceDisplay, EntityDisplay, newEntityAnim } from "./entity";
-import { Anim, TweenTo, mkAnimTarget, mkAccessTarget, Noop, mkEff, Par } from "../app/animation";
+import { Anim, TweenTo, mkAnimTarget, mkAccessTarget, Noop, mkEff, Par, Seq } from "../app/animation";
 import { Display } from "./display";
 import { Hotbar } from "./hotbar";
 
@@ -20,75 +20,7 @@ export type GameState = {
   } | undefined,
 };
 
-/*
-export type GameState = {
-  nodeIndex: number,
-  timeInNode: number,
-  layout: Layout,
-  runes: any,
-  templates: GameNode[],
-  currentEnemy: Enemy | undefined,
-};
-
-export function advanceState(
-  state: GameState,
-  delta: number,
-) {
-  let newTimeInNode = state.timeInNode + delta;
-  // TODO: need to take into account nodes with larger size
-  let activationThreshold = 100; // state.layout[state.nodeIndex].size * 100;
-  while (newTimeInNode > activationThreshold) {
-    // activate node
-    activateNode(state.layout[state.nodeIndex], state);
-    if (state.currentEnemy !== undefined) {
-      activateNode(state.currentEnemy.layout[state.nodeIndex], state);
-    }
-    // update node index
-    state.nodeIndex = state.nodeIndex + state.layout[state.nodeIndex].size;
-    if (state.nodeIndex >= 14) state.nodeIndex -= 14 * (Math.floor(state.nodeIndex / 14));
-    // calculate new threshold and update new time in node
-    activationThreshold = state.layout[state.nodeIndex].size * 100;
-    newTimeInNode = newTimeInNode - activationThreshold;
-  }
-  state.timeInNode = newTimeInNode;
-}
-*/
-
 export function activateNode(
-  node: GameNode,
-  state: GameState,
-): void {
-  switch (node.tag) {
-    case "GenerateNode": {
-      if (state.player.entity[node.resource] < 100) {
-        state.player.entity[node.resource] += 10;
-      }
-      break;
-    }
-    case "SummonNode": {
-      state.enemy = lo.cloneDeep(allEnemies[node.enemyId]);
-      break;
-    }
-    case "AttackNode": {
-      if (node.target === "enemy") {
-        /*if (state.currentEnemy !== undefined) {
-          state.currentEnemy.red = Math.max(0, state.currentEnemy.red - node.damage);
-          if (state.currentEnemy.red <= 0) {
-            state.currentEnemy = undefined;
-          }
-        }*/
-      } else if (node.target === "player") {
-        // TODO: implement
-      }
-      break;
-    }
-    case "Empty": {
-      break;
-    }
-  }
-}
-
-export function activateNodeAnim(
   node: GameNode,
   state: GameState,
   display: Display,
@@ -96,12 +28,18 @@ export function activateNodeAnim(
 ): Anim {
   switch (node.tag) {
     case "GenerateNode": {
+      if (state.player.entity[node.resource] < 100) {
+        state.player.entity[node.resource] += 50;
+      }
+      // increase resource animation
       const maxResource = "max" + node.resource.charAt(0).toUpperCase() + node.resource.substring(1) as keyof Entity;
       const targetValue = 100 * state.player.entity[node.resource] / state.player.entity[maxResource];
       const resourceBar = node.resource + "Bar" as keyof EntityDisplay;
       return new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display.player.entity[resourceBar], "width"));
     }
     case "SummonNode": {
+      state.enemy = lo.cloneDeep(allEnemies[node.enemyId]);
+      // summon enemy animation
       return mkEff({
         eff: () => {
           display.enemy.layout.container.visible = true;
@@ -118,7 +56,35 @@ export function activateNodeAnim(
         },
       });
     }
-    default: return new Noop();
+    case "AttackNode": {
+      const target = node.target === "enemy" ? state.enemy : state.player;
+      if (target !== undefined) {
+        target.entity[node.resource] = Math.max(0, target.entity[node.resource] - node.damage);
+        // decrease resource animation
+        const maxResource = "max" + node.resource.charAt(0).toUpperCase() + node.resource.substring(1) as keyof Entity;
+        const targetValue = 100 * target.entity[node.resource] / target.entity[maxResource];
+        const resourceBar = node.resource + "Bar" as keyof EntityDisplay;
+        const decResourceAnim =
+          new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display[node.target].entity[resourceBar], "width"));
+        if (node.target === "enemy" && target.entity[node.resource] <= 0) {
+          state.enemy = undefined;
+          // enemy death animation
+          const dieAnim: Anim = mkEff({ eff: () => { 
+              display.enemy.layout.container.visible = false;
+              display.enemy.entity.container.visible = false;
+            }, k: () => new Noop () });
+          return new Seq([
+            decResourceAnim,
+            dieAnim,
+          ]);
+        }
+        return decResourceAnim;
+      }
+      return new Noop();
+    }
+    case "Empty": {
+      return new Noop();
+    }
   }
 }
 

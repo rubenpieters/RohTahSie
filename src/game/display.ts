@@ -1,7 +1,7 @@
 import { LayoutDisplay, barLocation } from "./layout";
 import { EntityDisplay } from "./entity";
 import { Anim, Seq, mkEff, Noop, TweenTo, Par, mkAccessTarget } from "../app/animation";
-import { GameState, activateNode, activateNodeAnim } from "./state";
+import { GameState, activateNode } from "./state";
 import { GameNode } from "./gameNode";
 import { Cache } from "../app/main";
 import { HotbarDisplay } from "./hotbar";
@@ -28,16 +28,17 @@ export function gameLoopAnimation(
       // advance player bar animation
       new TweenTo(1, 50, "relativeIncrease", mkAccessTarget(display.player.layout.bar, "x")),
       // advance enemy bar animation
+      // TODO: do not move bar if no enemy?
       new TweenTo(1, 50, "relativeIncrease", mkAccessTarget(display.enemy.layout.bar, "x")),
     ]),
     // fade out bar
     new Par([
-      new TweenTo(0.25, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "x")),
-      new TweenTo(0.25, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "y")),
-      new TweenTo(0.25, 0, "absolute", mkAccessTarget(display.player.layout.bar, "alpha")),
-      new TweenTo(0.25, 2, "absolute", mkAccessTarget(display.enemy.layout.bar.scale, "x")),
-      new TweenTo(0.25, 2, "absolute", mkAccessTarget(display.enemy.layout.bar.scale, "y")),
-      new TweenTo(0.25, 0, "absolute", mkAccessTarget(display.enemy.layout.bar, "alpha")),
+      new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "x")),
+      new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.player.layout.bar.scale, "y")),
+      new TweenTo(0.5, 0, "absolute", mkAccessTarget(display.player.layout.bar, "alpha")),
+      new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.enemy.layout.bar.scale, "x")),
+      new TweenTo(0.5, 2, "absolute", mkAccessTarget(display.enemy.layout.bar.scale, "y")),
+      new TweenTo(0.5, 0, "absolute", mkAccessTarget(display.enemy.layout.bar, "alpha")),
     ]),
     mkEff({
       eff: () => {
@@ -89,10 +90,10 @@ function activateAndAnimateNode(
 ) {
   return mkEff({
     eff: () => {
-      activateNode(node, state);
+      return activateNode(node, state, display, cache);
     },
-    k: () => {
-      return activateNodeAnim(node, state, display, cache)
+    k: (anim: Anim) => {
+      return anim;
     },
   })
 }

@@ -188,27 +188,3 @@ function updateValue(
   }
 }
 
-const obj: { a: number, b: number } = { a: 0, b: 0 };
-
-const a1 = new TweenTo(1, 10, "absolute", mkAccessTarget(obj, "a"));
-const a2 = new TweenTo(1, 10, "absolute", mkAccessTarget(obj, "b"));
-const a3 = new Seq([a1, a2]);
-const a4 = new Par([a1, a2]);
-
-/*
-let result = runAnimation(0.5, a3);
-console.log(JSON.stringify(obj));
-result = runAnimation(0.5, result.remainingAnim as any);
-console.log(JSON.stringify(obj));
-result = runAnimation(0.5, result.remainingAnim as any);
-console.log(JSON.stringify(obj));
-result = runAnimation(0.5, result.remainingAnim as any);
-console.log(JSON.stringify(obj));
-console.log(JSON.stringify(result));
-*/
-
-let result = runAnimation(0.5, a4);
-console.log(JSON.stringify(obj));
-result = runAnimation(0.5, result.remainingAnim as any);
-console.log(JSON.stringify(obj));
-console.log(JSON.stringify(result));

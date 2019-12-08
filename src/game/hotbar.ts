@@ -1,4 +1,4 @@
-import { GameNode, SummonNode, GenerateNode } from "./gameNode";
+import { GameNode, SummonNode, GenerateNode, AttackNode } from "./gameNode";
 import { Cache, attachAnimation } from "../app/main";
 import { nodeSprite } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par } from "../app/animation";
@@ -122,6 +122,10 @@ export function initialHotbar(): Hotbar {
       },
       {
         node: new SummonNode("en1"),
+        selected: false,
+      },
+      {
+        node: new AttackNode(50, "roh", "enemy"),
         selected: false,
       },
     ],
