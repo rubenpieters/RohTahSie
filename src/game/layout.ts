@@ -1,7 +1,7 @@
 import { GameNode, GenerateNode, SummonNode, AttackNode } from "./gameNode";
-import { Cache } from "../app/main";
+import { Cache, attachAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
-import { mkEff, Noop, Anim } from "../app/animation";
+import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq } from "../app/animation";
 import { hotbarSelectedNode } from "./hotbar";
 import { Display } from "./display";
 
@@ -43,13 +43,14 @@ export function initializeLayout(
       layout !== undefined && layout.nodes[i] !== undefined ?
       new PIXI.Sprite(cache[nodeSprite(layout.nodes[i])]) :
       new PIXI.Sprite();
-    box.x = (i % xAmount) * 55;
-    box.y = Math.floor(i / xAmount) * 55;
+    box.x = (i % xAmount) * 55 + 25;
+    box.y = Math.floor(i / xAmount) * 55 + 25;
+    box.pivot.set(25, 25);
 
     if (type === "player") {
       box.interactive = true;
   
-      box.on("mousedown", layoutMouseDownCb(state, display, cache, i));
+      box.on("mousedown", layoutMouseDownCb(state, display, cache, i, type));
     }
 
     container.addChild(box);
@@ -96,12 +97,25 @@ function layoutMouseDownCb(
   display: Display,
   cache: Cache,
   index: number,
+  type: "player" | "enemy",
 ): () => void {
   return () => {
     const selectedNode = hotbarSelectedNode(state.player.hotbar);
     if (selectedNode !== undefined) {
       state.player.layout.nodes[index] = selectedNode;
       display.player.layout.nodes[index].texture = cache[nodeSprite(selectedNode)];
+      attachAnimation(
+        new Seq([
+          new Par([
+            new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x")),
+            new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y")),
+          ]),
+          new Par([
+            new TweenTo(0.15, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x")),
+            new TweenTo(0.15, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y")),
+          ]),
+        ]),
+      );
     }
   };
 }
