@@ -1,5 +1,5 @@
 import { GameNode } from "../game/gameNode";
-import { linear } from "./interpolation";
+import { linear, Interpolation } from "./interpolation";
 
 export class Par {
   public readonly tag: "Par" = "Par";
@@ -54,6 +54,7 @@ export class TweenTo {
     public readonly target: number,
     public readonly targetType: TargetType,
     public readonly k: <R>(e: <A>(t: AnimTarget<A, number>) => R) => R,
+    public readonly interpolation?: Interpolation,
   ) {}
 }
 type EffK<A> = {
@@ -70,11 +71,13 @@ export class TweenFromTo {
   public readonly tag: "TweenFromTo" = "TweenFromTo";
 
   constructor(
+    public readonly timeElapsed: number,
     public readonly duration: number,
     public readonly from: number,
     public readonly to: number,
     public readonly fromToType: FromToType,
     public readonly k: <R>(e: <A>(t: AnimTarget<A, number>) => R) => R,
+    public readonly interpolation: Interpolation,
   ) {}
 }
 
@@ -123,29 +126,33 @@ export function runAnimation(
         }
         return { from, to };
       });
-      const newAnim = new TweenFromTo(anim.duration, from, to, "onlyTo", anim.k);
+      const interpolation = anim.interpolation === undefined ? linear : anim.interpolation;
+      const newAnim = new TweenFromTo(0, anim.duration, from, to, "onlyTo", anim.k, interpolation);
       return runAnimation(delta, newAnim);
     }
     case "TweenFromTo": {
-      if (Math.abs(anim.to - anim.from) < Number.MIN_VALUE) {
+      if (anim.duration < 10 * Number.MIN_VALUE) {
         return { remainingAnim: "nothing", remainingDelta: delta };
       }
-      const finished = anim.k(x => {
+      const { finished, timeSpent } = anim.k(x => {
         if (anim.fromToType === "setOnFrom") {
           x.set(x.obj, anim.from);
         }
-        const current = x.get(x.obj);
         // update target value
-        const currentIndex = (current - anim.from) / (anim.to - anim.from);
+        const currentIndex = anim.timeElapsed / anim.duration;
         const newIndex = Math.min(1, currentIndex + (delta / anim.duration));
-        x.set(x.obj, linear(anim.from, anim.to, newIndex));
-        return newIndex >= 1;
+        const newValue = anim.interpolation(newIndex, anim.from, anim.to, anim.duration);
+        x.set(x.obj, newValue);
+        const timeSpent = (newIndex - currentIndex) * anim.duration;
+        const finished = newIndex >= 1;
+        return { finished, timeSpent };
       });
-      const remainingDelta = Math.max(delta - anim.duration - delta);
+      const remainingDelta = Math.max(0, delta - timeSpent);
+      const newTimeElapsed = Math.min(anim.duration, anim.timeElapsed + timeSpent);
       if (finished) {
         return { remainingAnim: "nothing", remainingDelta };
       } else {
-        const newAnim: TweenFromTo = { ...anim, fromToType: "onlyTo" };
+        const newAnim: TweenFromTo = { ...anim, timeElapsed: newTimeElapsed, fromToType: "onlyTo" };
         return { remainingAnim: newAnim, remainingDelta: "nothing" };
       }
     }
