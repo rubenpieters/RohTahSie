@@ -82,10 +82,10 @@ export function activateNode(
         if (node.target === "enemy" && target.entity[node.resource] <= 0) {
           state.enemy = undefined;
           // enemy death animation
-          const dieAnim: Anim = mkEff({ eff: () => { 
-              display.enemy.layout.container.visible = false;
-              display.enemy.entity.container.visible = false;
-            }, k: () => new Noop () });
+          const dieAnim: Anim = mkEff({ eff: () => {
+            display.enemy.layout.container.visible = false;
+            display.enemy.entity.container.visible = false;
+          }, k: () => new Noop () });
           return new Seq([
             decResourceAnim,
             dieAnim,

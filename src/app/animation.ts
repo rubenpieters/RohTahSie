@@ -127,6 +127,9 @@ export function runAnimation(
       return runAnimation(delta, newAnim);
     }
     case "TweenFromTo": {
+      if (Math.abs(anim.to - anim.from) < Number.MIN_VALUE) {
+        return { remainingAnim: "nothing", remainingDelta: delta };
+      }
       const finished = anim.k(x => {
         if (anim.fromToType === "setOnFrom") {
           x.set(x.obj, anim.from);
