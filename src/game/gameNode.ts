@@ -7,7 +7,9 @@ export class GenerateNode {
   public readonly size = 1;
 
   constructor(
+    public readonly value: number,
     public readonly resource: ResourceType,
+    public readonly target: "player" | "enemy",
   ) {}
 }
 

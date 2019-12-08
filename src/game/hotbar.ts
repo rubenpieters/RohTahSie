@@ -4,7 +4,7 @@ import { nodeSprite, GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
 import { IPoint } from "pixi.js";
 
-const hotbarSize = 5;
+const hotbarSize = 7;
 
 export type Hotbar = {
   elements: {
@@ -127,15 +127,15 @@ export function initialHotbar(): Hotbar {
   return {
     elements: [
       {
-        node: new GenerateNode("roh"),
+        node: new GenerateNode(10, "roh", "player"),
         selected: false,
       },
       {
-        node: new GenerateNode("tah"),
+        node: new GenerateNode(10, "tah", "player"),
         selected: false,
       },
       {
-        node: new GenerateNode("sie"),
+        node: new GenerateNode(10, "sie", "player"),
         selected: false,
       },
       {
@@ -143,7 +143,15 @@ export function initialHotbar(): Hotbar {
         selected: false,
       },
       {
-        node: new AttackNode(50, "roh", "enemy"),
+        node: new AttackNode(10, "roh", "enemy"),
+        selected: false,
+      },
+      {
+        node: new AttackNode(10, "tah", "enemy"),
+        selected: false,
+      },
+      {
+        node: new AttackNode(10, "sie", "enemy"),
         selected: false,
       },
     ],

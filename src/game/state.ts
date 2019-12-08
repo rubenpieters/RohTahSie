@@ -37,14 +37,18 @@ export function activateNode(
 ): Anim {
   switch (node.tag) {
     case "GenerateNode": {
-      if (state.player.entity[node.resource] < 100) {
-        state.player.entity[node.resource] += 50;
+      const target = node.target === "enemy" ? state.enemy : state.player;
+      if (target !== undefined) {
+        if (target.entity[node.resource] < 100) {
+          target.entity[node.resource] = Math.min(100, state.player.entity[node.resource] + node.value);
+        }
+        // increase resource animation
+        const maxResource = "max" + node.resource.charAt(0).toUpperCase() + node.resource.substring(1) as keyof Entity;
+        const targetValue = 100 * target.entity[node.resource] / target.entity[maxResource];
+        const resourceBar = node.resource + "Bar" as keyof EntityDisplay;
+        return new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display[node.target].entity[resourceBar], "width"));
       }
-      // increase resource animation
-      const maxResource = "max" + node.resource.charAt(0).toUpperCase() + node.resource.substring(1) as keyof Entity;
-      const targetValue = 100 * state.player.entity[node.resource] / state.player.entity[maxResource];
-      const resourceBar = node.resource + "Bar" as keyof EntityDisplay;
-      return new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display.player.entity[resourceBar], "width"));
+      return new Noop();
     }
     case "SummonNode": {
       state.enemy = lo.cloneDeep(allEnemies[node.enemyId]);

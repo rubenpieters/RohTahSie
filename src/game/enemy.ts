@@ -3,25 +3,25 @@ import { GenerateNode, AttackNode } from "./gameNode";
 
 const layout1: Layout = {
   nodes: [
-    new AttackNode(100, "roh", "player"),
-    new AttackNode(1, "roh", "player"),
-    new AttackNode(1, "roh", "player"),
-    new AttackNode(1, "roh", "player"),
+    new AttackNode(10, "roh", "player"),
+    new AttackNode(10, "roh", "player"),
+    new AttackNode(10, "roh", "player"),
+    new AttackNode(10, "roh", "player"),
 
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
+    new GenerateNode(10, "roh", "enemy"),
+    new GenerateNode(10, "roh", "enemy"),
+    new GenerateNode(10, "roh", "enemy"),
+    new GenerateNode(10, "roh", "enemy"),
 
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
+    new GenerateNode(10, "roh", "enemy"),
+    new GenerateNode(10, "roh", "enemy"),
+    new GenerateNode(10, "roh", "enemy"),
+    new GenerateNode(10, "roh", "enemy"),
 
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
-    new GenerateNode("tah"),
+    new GenerateNode(10, "roh", "enemy"),
+    new GenerateNode(10, "roh", "enemy"),
+    new GenerateNode(10, "roh", "enemy"),
+    new GenerateNode(10, "roh", "enemy"),
   ],
   currentIndex: 0,
 }
