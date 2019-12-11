@@ -39,6 +39,10 @@ const cache = {
   "bar_gre": PIXI.Texture.from("assets/sprites/bar_green.png"),
   "bar_yel": PIXI.Texture.from("assets/sprites/bar_yellow.png"),
   "bar": PIXI.Texture.from("assets/sprites/bar.png"),
+  "portrait": PIXI.Texture.from("assets/sprites/portrait.png"),
+  "portrait_roh": PIXI.Texture.from("assets/sprites/portrait_roh.png"),
+  "portrait_tah": PIXI.Texture.from("assets/sprites/portrait_tah.png"),
+  "portrait_sie": PIXI.Texture.from("assets/sprites/portrait_sie.png"),
 };
 
 let animations: Anim[] = [];
@@ -62,12 +66,12 @@ function main(): void {
   let display: Display = {} as Display;
   display.player = {
     entity: initializeEntity(state.player.entity, 50, 50, appContainer, cache),
-    layout: initializeLayout(state.player.layout, 50, 150, appContainer, state, display, cache, "player"),
+    layout: initializeLayout(state.player.layout, 50, 200, appContainer, state, display, cache, "player"),
     hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, state, cache),
   };
   display.enemy = {
     entity: initializeEntity(undefined, 320, 50, appContainer, cache),
-    layout: initializeLayout(undefined, 320, 150, appContainer, state, display, cache, "enemy"),
+    layout: initializeLayout(undefined, 320, 200, appContainer, state, display, cache, "enemy"),
   };
 
   // attach initial animation

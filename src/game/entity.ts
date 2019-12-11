@@ -13,6 +13,9 @@ export type Entity = {
 
 export type EntityDisplay = {
   container: PIXI.Container,
+  rohMask: PIXI.Sprite,
+  tahMask: PIXI.Sprite,
+  sieMask: PIXI.Sprite,
   rohBar: PIXI.Sprite,
   tahBar: PIXI.Sprite,
   sieBar: PIXI.Sprite,
@@ -29,20 +32,30 @@ export function initializeEntity(
   const container = new PIXI.Container();
   Object.assign(container, { x, y });
 
-  const rohBar = new PIXI.Sprite(cache["bar_red"]);
-  const tahBar = new PIXI.Sprite(cache["bar_gre"]);
-  const sieBar = new PIXI.Sprite(cache["bar_yel"]);
-  Object.assign(rohBar, { x: 0, y: 0, width: 0, height: 25 });
+  const rohBar = new PIXI.Sprite(cache["portrait_roh"]);
+  const tahBar = new PIXI.Sprite(cache["portrait_tah"]);
+  const sieBar = new PIXI.Sprite(cache["portrait_sie"]);
+
+  const rohMask = new PIXI.Sprite(PIXI.Texture.WHITE);
+  const tahMask = new PIXI.Sprite(PIXI.Texture.WHITE);
+  const sieMask = new PIXI.Sprite(PIXI.Texture.WHITE);
+  Object.assign(rohMask, { width: 0, height: 53 });
+  Object.assign(rohBar, { x: 14, y: 85 });
+  rohBar.mask = rohMask;
+  rohBar.addChild(rohMask);
   container.addChild(rohBar);
-  Object.assign(tahBar, { x: 0, y: 25, width: 0, height: 25 });
+  Object.assign(tahBar, { x: 13, y: 0 });
   container.addChild(tahBar);
-  Object.assign(sieBar, { x: 0, y: 50, width: 0, height: 25 });
+  //Object.assign(sieBar, { x: 0, y: 50, width: 0, height: 25 });
+  Object.assign(sieBar, { x: 43, y: 0 });
   container.addChild(sieBar);
+  const portraitBg = new PIXI.Sprite(cache["portrait"]);
+  container.addChild(portraitBg);
 
   if (entity !== undefined) {
-    rohBar.width = 100 * entity.roh / entity.maxRoh;
-    tahBar.width = 100 * entity.tah / entity.maxTah;
-    sieBar.width = 100 * entity.sie / entity.maxSie;
+    rohMask.width = 119 * entity.roh / entity.maxRoh;
+    tahMask.width = 100 * entity.tah / entity.maxTah;
+    sieMask.width = 100 * entity.sie / entity.maxSie;
   }
 
   if (entity === undefined) {
@@ -51,7 +64,7 @@ export function initializeEntity(
 
   parentContainer.addChild(container);
 
-  return { container, rohBar, tahBar, sieBar };
+  return { container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar };
 }
 
 export function newEntityAnim(
@@ -62,9 +75,9 @@ export function newEntityAnim(
     eff: () => {
       if (entity !== undefined) {
         entityDisplay.container.visible = true;
-        entityDisplay.rohBar.width = 100 * entity.roh / entity.maxRoh;
-        entityDisplay.tahBar.width = 100 * entity.tah / entity.maxTah;
-        entityDisplay.sieBar.width = 100 * entity.sie / entity.maxSie;
+        entityDisplay.rohMask.width = 100 * entity.roh / entity.maxRoh;
+        entityDisplay.tahMask.width = 100 * entity.tah / entity.maxTah;
+        entityDisplay.sieMask.width = 100 * entity.sie / entity.maxSie;
       } else {
         entityDisplay.container.visible = false;
       }

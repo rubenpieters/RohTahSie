@@ -44,8 +44,8 @@ export function activateNode(
         }
         // increase resource animation
         const maxResource = "max" + node.resource.charAt(0).toUpperCase() + node.resource.substring(1) as keyof Entity;
-        const targetValue = 100 * target.entity[node.resource] / target.entity[maxResource];
-        const resourceBar = node.resource + "Bar" as keyof EntityDisplay;
+        const targetValue = 119 * target.entity[node.resource] / target.entity[maxResource];
+        const resourceBar = node.resource + "Mask" as keyof EntityDisplay;
         return new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display[node.target].entity[resourceBar], "width"));
       }
       return new Noop();
@@ -75,8 +75,8 @@ export function activateNode(
         target.entity[node.resource] = Math.max(0, target.entity[node.resource] - node.damage);
         // decrease resource animation
         const maxResource = "max" + node.resource.charAt(0).toUpperCase() + node.resource.substring(1) as keyof Entity;
-        const targetValue = 100 * target.entity[node.resource] / target.entity[maxResource];
-        const resourceBar = node.resource + "Bar" as keyof EntityDisplay;
+        const targetValue = 119 * target.entity[node.resource] / target.entity[maxResource];
+        const resourceBar = node.resource + "Mask" as keyof EntityDisplay;
         const decResourceAnim =
           new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display[node.target].entity[resourceBar], "width"));
         if (node.target === "enemy" && target.entity[node.resource] <= 0) {
