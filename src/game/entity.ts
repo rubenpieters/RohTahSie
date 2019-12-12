@@ -32,30 +32,48 @@ export function initializeEntity(
   const container = new PIXI.Container();
   Object.assign(container, { x, y });
 
-  const rohBar = new PIXI.Sprite(cache["portrait_roh"]);
-  const tahBar = new PIXI.Sprite(cache["portrait_tah"]);
-  const sieBar = new PIXI.Sprite(cache["portrait_sie"]);
+  // initialize bgs
+  const rohBg = new PIXI.Sprite(cache["portrait_roh"]);
+  Object.assign(rohBg, { x: 14, y: 85, tint: 0x777777 });
+  container.addChild(rohBg);
+  const tahBg = new PIXI.Sprite(cache["portrait_tah"]);
+  Object.assign(tahBg, { x: 13, y: 0, tint: 0x777777 });
+  container.addChild(tahBg);
+  const sieBg = new PIXI.Sprite(cache["portrait_sie"]);
+  Object.assign(sieBg, { x: 43, y: 0, tint: 0x777777 });
+  container.addChild(sieBg);
 
+    // initialize bars with mask
+  const rohBar = new PIXI.Sprite(cache["portrait_roh"]);
   const rohMask = new PIXI.Sprite(PIXI.Texture.WHITE);
-  const tahMask = new PIXI.Sprite(PIXI.Texture.WHITE);
-  const sieMask = new PIXI.Sprite(PIXI.Texture.WHITE);
   Object.assign(rohMask, { width: 0, height: 53 });
   Object.assign(rohBar, { x: 14, y: 85 });
   rohBar.mask = rohMask;
   rohBar.addChild(rohMask);
   container.addChild(rohBar);
+  const tahBar = new PIXI.Sprite(cache["portrait_tah"]);
+  const tahMask = new PIXI.Sprite(PIXI.Texture.WHITE);
+  Object.assign(tahMask, { width: 57, height: 0 });
   Object.assign(tahBar, { x: 13, y: 0 });
+  tahBar.mask = tahMask;
+  tahBar.addChild(tahMask);
   container.addChild(tahBar);
-  //Object.assign(sieBar, { x: 0, y: 50, width: 0, height: 25 });
+  const sieBar = new PIXI.Sprite(cache["portrait_sie"]);
+  const sieMask = new PIXI.Sprite(PIXI.Texture.WHITE);
+  Object.assign(sieMask, { width: 95, height: 0 });
   Object.assign(sieBar, { x: 43, y: 0 });
+  sieBar.mask = sieMask;
+  sieBar.addChild(sieMask);
   container.addChild(sieBar);
+
+  // initialize portrait bg
   const portraitBg = new PIXI.Sprite(cache["portrait"]);
   container.addChild(portraitBg);
 
   if (entity !== undefined) {
     rohMask.width = 119 * entity.roh / entity.maxRoh;
-    tahMask.width = 100 * entity.tah / entity.maxTah;
-    sieMask.width = 100 * entity.sie / entity.maxSie;
+    tahMask.height = 121 * entity.tah / entity.maxTah;
+    sieMask.height = 103 * entity.sie / entity.maxSie;
   }
 
   if (entity === undefined) {

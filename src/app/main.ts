@@ -65,12 +65,12 @@ function main(): void {
 
   let display: Display = {} as Display;
   display.player = {
-    entity: initializeEntity(state.player.entity, 50, 50, appContainer, cache),
+    entity: initializeEntity(state.player.entity, 20, 20, appContainer, cache),
     layout: initializeLayout(state.player.layout, 50, 200, appContainer, state, display, cache, "player"),
     hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, state, cache),
   };
   display.enemy = {
-    entity: initializeEntity(undefined, 320, 50, appContainer, cache),
+    entity: initializeEntity(undefined, 300, 20, appContainer, cache),
     layout: initializeLayout(undefined, 320, 200, appContainer, state, display, cache, "enemy"),
   };
 
