@@ -1,6 +1,6 @@
 import { Cache } from "../app/main";
 import { ResourceType } from "./gameNode";
-import { mkEff, Anim, Noop, TweenTo, mkAccessTarget } from "../app/animation";
+import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par } from "../app/animation";
 
 // resource display size configuration
 /*
@@ -21,7 +21,7 @@ const resourceFullSize = {
 const resourceMinSize = {
   roh: 10,
   tah: 5,
-  sie: 10,
+  sie: 0,
 };
 
 const resourceVarSize = {
@@ -31,7 +31,7 @@ const resourceVarSize = {
 };
 
 // TODO: use as const when TS is upgraded
-const displayPropField: {
+const resourceVarField: {
   roh: "width",
   tah: "height",
   sie: "height",
@@ -39,6 +39,16 @@ const displayPropField: {
   roh: "width",
   tah: "height",
   sie: "height",
+};
+
+const resourceVarAxis: {
+  roh: "x",
+  tah: "y",
+  sie: "y",
+} = {
+  roh: "x",
+  tah: "y",
+  sie: "y",
 };
 
 export type Entity = {
@@ -110,9 +120,11 @@ export function initializeEntity(
   container.addChild(portraitBg);
 
   if (entity !== undefined) {
-    rohMask.width = resourceMaskValue("roh", entity);
-    tahMask.height = resourceMaskValue("tah", entity);
-    sieMask.height = resourceMaskValue("sie", entity);
+    rohMask.width = resourceMaskTargets("roh", entity).fieldTarget;
+    tahMask.height = resourceMaskTargets("tah", entity).fieldTarget;
+    const sieTargets = resourceMaskTargets("sie", entity);
+    sieMask.height = sieTargets.fieldTarget;
+    sieMask.y = sieTargets.axisTarget;
   }
 
   if (entity === undefined) {
@@ -132,9 +144,11 @@ export function newEntityAnim(
     eff: () => {
       if (entity !== undefined) {
         entityDisplay.container.visible = true;
-        entityDisplay.rohMask.width = resourceMaskValue("roh", entity);
-        entityDisplay.tahMask.height = resourceMaskValue("tah", entity)
-        entityDisplay.sieMask.height = resourceMaskValue("sie", entity)
+        entityDisplay.rohMask.width = resourceMaskTargets("roh", entity).fieldTarget;
+        entityDisplay.tahMask.height = resourceMaskTargets("tah", entity).fieldTarget;
+        const sieTargets = resourceMaskTargets("sie", entity);
+        entityDisplay.sieMask.height = sieTargets.fieldTarget;
+        entityDisplay.sieMask.y = sieTargets.axisTarget;
       } else {
         entityDisplay.container.visible = false;
       }
@@ -148,11 +162,14 @@ export function updateResourceAnim(
   display: EntityDisplay,
   resourceType: ResourceType,
 ): Anim {
-  const maxResource = resourceMaxField(resourceType);
-  const varProp = displayPropField[resourceType];
-  const targetValue = resourceMaskValue(resourceType, entity);
+  const varField = resourceVarField[resourceType];
+  const { fieldTarget, axisTarget } = resourceMaskTargets(resourceType, entity);
+  const varAxis = resourceVarAxis[resourceType];
   const resourceBar = resourceMaskSprite(resourceType);
-  return new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display[resourceBar], varProp));
+  return new Par([
+    new TweenTo(0.1, fieldTarget, "absolute", mkAccessTarget(display[resourceBar], varField)),
+    new TweenTo(0.1, axisTarget, "absolute", mkAccessTarget(display[resourceBar], varAxis)),
+  ]);
 }
 
 function resourceMaxField<T extends ResourceType>(
@@ -169,16 +186,39 @@ function resourceMaskSprite<T extends ResourceType>(
   return resourceType + "Mask";
 }
 
-function resourceMaskValue(
+function resourceMaskTargets(
   resourceType: ResourceType,
   entity: Entity,
-): number {
+): { fieldTarget: number, axisTarget: number } {
   const maxResource = resourceMaxField(resourceType);
   const percentage = entity[resourceType] / entity[maxResource];
-  if (percentage >= 100) {
-    return resourceFullSize[resourceType];
+  if (resourceType === "roh" || resourceType === "tah") {
+    if (percentage >= 0.99) {
+      return {
+        fieldTarget: resourceFullSize[resourceType],
+        axisTarget: 0,
+      };
+    }
+    return {
+      fieldTarget: resourceMinSize[resourceType] + resourceVarSize[resourceType] * percentage,
+      axisTarget: 0,
+    };
+  } else {
+    
+    const maxResource = resourceMaxField(resourceType);
+    const invPercentage = 1 - (entity[resourceType] / entity[maxResource]);
+    if (invPercentage <= 0.01) {
+      return {
+        fieldTarget: resourceFullSize[resourceType],
+        axisTarget: 0,
+      };
+    }
+    const axisTarget = resourceMinSize[resourceType] + resourceVarSize[resourceType] * invPercentage;
+    return {
+      fieldTarget: resourceFullSize[resourceType] - axisTarget,
+      axisTarget,
+    };
   }
-  return resourceMinSize[resourceType] + resourceVarSize[resourceType] * entity[resourceType] / entity[maxResource];
 }
 
 export function playerInitialEntity(): Entity {
