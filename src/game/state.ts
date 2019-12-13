@@ -3,7 +3,7 @@ import { allEnemies } from "./enemy";
 import * as lo from "lodash";
 import { GameNode } from "./gameNode";
 import { Layout, newLayoutAnim, barLocation, playerInitialLayout } from "./layout";
-import { Entity, updateResourceDisplay, EntityDisplay, newEntityAnim, playerInitialEntity } from "./entity";
+import { Entity, updateResourceAnim, EntityDisplay, newEntityAnim, playerInitialEntity } from "./entity";
 import { Anim, TweenTo, mkAnimTarget, mkAccessTarget, Noop, mkEff, Par, Seq } from "../app/animation";
 import { Display } from "./display";
 import { Hotbar, initialHotbar } from "./hotbar";
@@ -43,10 +43,7 @@ export function activateNode(
           target.entity[node.resource] = Math.min(100, state.player.entity[node.resource] + node.value);
         }
         // increase resource animation
-        const maxResource = "max" + node.resource.charAt(0).toUpperCase() + node.resource.substring(1) as keyof Entity;
-        const targetValue = 119 * target.entity[node.resource] / target.entity[maxResource];
-        const resourceBar = node.resource + "Mask" as keyof EntityDisplay;
-        return new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display[node.target].entity[resourceBar], "width"));
+        return updateResourceAnim(target.entity, display[node.target].entity, node.resource);
       }
       return new Noop();
     }
@@ -74,11 +71,7 @@ export function activateNode(
       if (target !== undefined) {
         target.entity[node.resource] = Math.max(0, target.entity[node.resource] - node.damage);
         // decrease resource animation
-        const maxResource = "max" + node.resource.charAt(0).toUpperCase() + node.resource.substring(1) as keyof Entity;
-        const targetValue = 119 * target.entity[node.resource] / target.entity[maxResource];
-        const resourceBar = node.resource + "Mask" as keyof EntityDisplay;
-        const decResourceAnim =
-          new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display[node.target].entity[resourceBar], "width"));
+        const decResourceAnim = updateResourceAnim(target.entity, display[node.target].entity, node.resource);
         if (node.target === "enemy" && target.entity[node.resource] <= 0) {
           state.enemy = undefined;
           // enemy death animation
