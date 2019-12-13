@@ -43,6 +43,7 @@ const cache = {
   "portrait_roh": PIXI.Texture.from("assets/sprites/portrait_roh.png"),
   "portrait_tah": PIXI.Texture.from("assets/sprites/portrait_tah.png"),
   "portrait_sie": PIXI.Texture.from("assets/sprites/portrait_sie.png"),
+  "bg": PIXI.Texture.from("assets/sprites/bg.jpg"),
 };
 
 let animations: Anim[] = [];
@@ -56,8 +57,8 @@ function main(): void {
   const appContainer = new PIXI.Container();
   app.stage.addChild(appContainer);
 
-  const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
-  Object.assign(bg, { width: 540, height: 540, tint: 0x00d3ff });
+  const bg = new PIXI.Sprite(cache["bg"]);
+  Object.assign(bg, { width: 540, height: 540 });
   appContainer.addChild(bg);
 
   const state: GameState = {} as GameState;
