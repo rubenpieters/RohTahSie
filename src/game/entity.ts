@@ -2,10 +2,32 @@ import { Cache } from "../app/main";
 import { ResourceType } from "./gameNode";
 import { mkEff, Anim, Noop, TweenTo, mkAccessTarget } from "../app/animation";
 
-const displayPropSize = {
+// resource display size configuration
+/*
+  <------------> fullSize
+  <--> minSize
+     <------> varSize
+  |--|------|--|
+   ^ always present
+       ^ present depending on resource %
+             ^ present when >= 100%
+*/
+const resourceFullSize = {
   roh: 119,
   tah: 121,
   sie: 103,
+};
+
+const resourceMinSize = {
+  roh: 10,
+  tah: 5,
+  sie: 10,
+};
+
+const resourceVarSize = {
+  roh: 99,
+  tah: 90,
+  sie: 83,
 };
 
 // TODO: use as const when TS is upgraded
@@ -88,9 +110,9 @@ export function initializeEntity(
   container.addChild(portraitBg);
 
   if (entity !== undefined) {
-    rohMask.width = displayPropSize["roh"] * entity.roh / entity.maxRoh;
-    tahMask.height = displayPropSize["tah"] * entity.tah / entity.maxTah;
-    sieMask.height = displayPropSize["sie"] * entity.sie / entity.maxSie;
+    rohMask.width = resourceMaskValue("roh", entity);
+    tahMask.height = resourceMaskValue("tah", entity);
+    sieMask.height = resourceMaskValue("sie", entity);
   }
 
   if (entity === undefined) {
@@ -110,9 +132,9 @@ export function newEntityAnim(
     eff: () => {
       if (entity !== undefined) {
         entityDisplay.container.visible = true;
-        entityDisplay.rohMask.width = displayPropSize["roh"] * entity.roh / entity.maxRoh;
-        entityDisplay.tahMask.height = displayPropSize["tah"] * entity.tah / entity.maxTah;
-        entityDisplay.sieMask.height = displayPropSize["sie"] * entity.sie / entity.maxSie;
+        entityDisplay.rohMask.width = resourceMaskValue("roh", entity);
+        entityDisplay.tahMask.height = resourceMaskValue("tah", entity)
+        entityDisplay.sieMask.height = resourceMaskValue("sie", entity)
       } else {
         entityDisplay.container.visible = false;
       }
@@ -128,7 +150,7 @@ export function updateResourceAnim(
 ): Anim {
   const maxResource = resourceMaxField(resourceType);
   const varProp = displayPropField[resourceType];
-  const targetValue = displayPropSize[resourceType] * entity[resourceType] / entity[maxResource];
+  const targetValue = resourceMaskValue(resourceType, entity);
   const resourceBar = resourceMaskSprite(resourceType);
   return new TweenTo(0.1, targetValue, "absolute", mkAccessTarget(display[resourceBar], varProp));
 }
@@ -145,6 +167,18 @@ function resourceMaskSprite<T extends ResourceType>(
 ): { roh: "rohMask", tah: "tahMask", sie: "sieMask" }[T] {
   // @ts-ignore
   return resourceType + "Mask";
+}
+
+function resourceMaskValue(
+  resourceType: ResourceType,
+  entity: Entity,
+): number {
+  const maxResource = resourceMaxField(resourceType);
+  const percentage = entity[resourceType] / entity[maxResource];
+  if (percentage >= 100) {
+    return resourceFullSize[resourceType];
+  }
+  return resourceMinSize[resourceType] + resourceVarSize[resourceType] * entity[resourceType] / entity[maxResource];
 }
 
 export function playerInitialEntity(): Entity {
