@@ -3,6 +3,8 @@ import { Cache, attachAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
 import { IPoint } from "pixi.js";
+import { Display } from "./display";
+import { showNodeExpl, NodeExplDisplay, hideNodeExpl } from "./nodeExpl";
 
 const hotbarSize = 7;
 
@@ -24,6 +26,7 @@ export function initializeHotbar(
   y: number,
   parentContainer: PIXI.Container,
   state: GameState,
+  display: Display,
   cache: Cache,
 ): HotbarDisplay {
   const container = new PIXI.Container();
@@ -41,8 +44,9 @@ export function initializeHotbar(
 
     box.on("mouseover", () => {
       attachAnimation(hotbarMouseOverAnim(box));
+      attachAnimation(showNodeExpl(state.player.hotbar.elements[i].node, display.player.nodeExpl));
     });
-    box.on("mouseout", hotbarMouseOutCb(state, box, i));
+    box.on("mouseout", hotbarMouseOutCb(state, box, display, i));
     box.on("mousedown", hotbarMouseDownCb(state, elements, i));
 
     container.addChild(box);
@@ -75,12 +79,14 @@ function hotbarMouseOutAnim<A extends { scale: IPoint }>(
 function hotbarMouseOutCb(
   state: GameState,
   box: PIXI.Sprite,
+  display: Display,
   index: number,
 ): () => void {
   return () => {
     if (! state.player.hotbar.elements[index].selected) {
       attachAnimation(hotbarMouseOutAnim(box));
     }
+    attachAnimation(hideNodeExpl(display.player.nodeExpl));
   };
 }
 

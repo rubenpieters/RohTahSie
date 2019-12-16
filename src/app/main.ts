@@ -6,6 +6,7 @@ import { PixiFps } from "./fps";
 import { Display, gameLoopAnimation } from "../game/display";
 import { GameNode } from "../game/gameNode";
 import { initialHotbar, initializeHotbar } from "../game/hotbar";
+import { initializeNodeExpl } from "../game/nodeExpl";
 
 const renderer = PIXI.autoDetectRenderer();
 
@@ -44,6 +45,7 @@ const cache = {
   "portrait_tah": PIXI.Texture.from("assets/sprites/portrait_tah.png"),
   "portrait_sie": PIXI.Texture.from("assets/sprites/portrait_sie.png"),
   "bg": PIXI.Texture.from("assets/sprites/bg.jpg"),
+  "node_expl_bg": PIXI.Texture.from("assets/sprites/node_expl_bg.png"),
 };
 
 let animations: Anim[] = [];
@@ -68,12 +70,14 @@ function main(): void {
   display.player = {
     entity: initializeEntity(state.player.entity, 20, 20, appContainer, cache),
     layout: initializeLayout(state.player.layout, 50, 200, appContainer, state, display, cache, "player"),
-    hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, state, cache),
+    hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, state, display, cache),
+    nodeExpl: undefined as any,
   };
   display.enemy = {
     entity: initializeEntity(undefined, 300, 20, appContainer, cache),
     layout: initializeLayout(undefined, 320, 200, appContainer, state, display, cache, "enemy"),
   };
+  display.player.nodeExpl = initializeNodeExpl(appContainer, cache);
 
   // attach initial animation
   gameLoopAnim = gameLoopAnimation(state, display, cache);

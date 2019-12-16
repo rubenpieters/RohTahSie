@@ -5,12 +5,14 @@ import { GameState, activateNode, initializeState } from "./state";
 import { GameNode } from "./gameNode";
 import { Cache } from "../app/main";
 import { HotbarDisplay, newHotbarAnim } from "./hotbar";
+import { NodeExplDisplay } from "./nodeExpl";
 
 export type Display = {
   player: {
     entity: EntityDisplay,
     layout: LayoutDisplay,
     hotbar: HotbarDisplay,
+    nodeExpl: NodeExplDisplay,
   },
   enemy: {
     entity: EntityDisplay,
