@@ -40,7 +40,7 @@ export function activateNode(
       const target = node.target === "enemy" ? state.enemy : state.player;
       if (target !== undefined) {
         if (target.entity[node.resource] < 100) {
-          target.entity[node.resource] = Math.min(100, state.player.entity[node.resource] + node.value);
+          target.entity[node.resource] = Math.min(100, target.entity[node.resource] + node.value);
         }
         // increase resource animation
         return updateResourceAnim(target.entity, display[node.target].entity, node.resource);
