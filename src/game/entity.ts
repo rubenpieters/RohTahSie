@@ -1,6 +1,7 @@
 import { Cache } from "../app/main";
 import { ResourceType } from "./gameNode";
-import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par } from "../app/animation";
+import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq } from "../app/animation";
+import { Display } from "./display";
 
 // resource display size configuration
 /*
@@ -68,14 +69,18 @@ export type EntityDisplay = {
   rohBar: PIXI.Sprite,
   tahBar: PIXI.Sprite,
   sieBar: PIXI.Sprite,
+  rohText: PIXI.BitmapText,
+  tahText: PIXI.BitmapText,
+  sieText: PIXI.BitmapText,
 }
 
-// initialize: a function which takes a display and initialiezes it on the PIXI app
+// initialize: a function which takes a display and initializes it on the PIXI app
 export function initializeEntity(
   entity: Entity | undefined,
   x: number,
   y: number,
   parentContainer: PIXI.Container,
+  display: Display,
   cache: Cache,
 ): EntityDisplay {
   const container = new PIXI.Container();
@@ -117,7 +122,59 @@ export function initializeEntity(
 
   // initialize portrait bg
   const portraitBg = new PIXI.Sprite(cache["portrait"]);
+  portraitBg.interactive = true;
+
   container.addChild(portraitBg);
+
+  // initialize resource text  
+  const rohText = new PIXI.BitmapText("-", {
+    font: {
+      name: "Bahnschrift",
+      size: 28,
+    },
+    align: "center",
+    tint: 0x000000,
+  });
+  Object.assign(rohText, { x: 110, y: 100, visible: false });
+  container.addChild(rohText);
+  const tahText = new PIXI.BitmapText("-", {
+    font: {
+      name: "Bahnschrift",
+      size: 28,
+    },
+    align: "center",
+    tint: 0x000000,
+  });
+  Object.assign(tahText, { x: -25, y: 0, visible: false });
+  container.addChild(tahText);
+  const sieText = new PIXI.BitmapText("-", {
+    font: {
+      name: "Bahnschrift",
+      size: 28,
+    },
+    align: "center",
+    tint: 0x000000,
+  });
+  Object.assign(sieText, { x: 110, y: 0, visible: false });
+  container.addChild(sieText);
+
+  
+  portraitBg.on("mouseover", () => {
+    display.player.entity.rohText.visible = true;
+    display.player.entity.tahText.visible = true;
+    display.player.entity.sieText.visible = true;
+    display.enemy.entity.rohText.visible = true;
+    display.enemy.entity.tahText.visible = true;
+    display.enemy.entity.sieText.visible = true;
+  });
+  portraitBg.on("mouseout", () => {
+    display.player.entity.rohText.visible = false;
+    display.player.entity.tahText.visible = false;
+    display.player.entity.sieText.visible = false;
+    display.enemy.entity.rohText.visible = false;
+    display.enemy.entity.tahText.visible = false;
+    display.enemy.entity.sieText.visible = false;
+  });
 
   if (entity !== undefined) {
     rohMask.width = resourceMaskTargets("roh", entity).fieldTarget;
@@ -125,6 +182,9 @@ export function initializeEntity(
     const sieTargets = resourceMaskTargets("sie", entity);
     sieMask.height = sieTargets.fieldTarget;
     sieMask.y = sieTargets.axisTarget;
+    rohText.text = `${entity.roh}\n(${entity.maxRoh})`;
+    tahText.text = `${entity.tah}\n(${entity.maxTah})`;
+    sieText.text = `${entity.sie}\n(${entity.maxSie})`;
   }
 
   if (entity === undefined) {
@@ -133,7 +193,7 @@ export function initializeEntity(
 
   parentContainer.addChild(container);
 
-  return { container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar };
+  return { container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar, rohText, tahText, sieText };
 }
 
 export function newEntityAnim(
@@ -149,6 +209,9 @@ export function newEntityAnim(
         const sieTargets = resourceMaskTargets("sie", entity);
         entityDisplay.sieMask.height = sieTargets.fieldTarget;
         entityDisplay.sieMask.y = sieTargets.axisTarget;
+        entityDisplay.rohText.text = `${entity.roh}\n(${entity.maxRoh})`;
+        entityDisplay.tahText.text = `${entity.tah}\n(${entity.maxTah})`;
+        entityDisplay.sieText.text = `${entity.sie}\n(${entity.maxSie})`;
       } else {
         entityDisplay.container.visible = false;
       }
@@ -166,9 +229,19 @@ export function updateResourceAnim(
   const { fieldTarget, axisTarget } = resourceMaskTargets(resourceType, entity);
   const varAxis = resourceVarAxis[resourceType];
   const resourceBar = resourceMaskSprite(resourceType);
-  return new Par([
-    new TweenTo(0.1, fieldTarget, "absolute", mkAccessTarget(display[resourceBar], varField)),
-    new TweenTo(0.1, axisTarget, "absolute", mkAccessTarget(display[resourceBar], varAxis)),
+  return new Seq([
+    mkEff({
+      eff: () => {
+        display.rohText.text = `${entity.roh}\n(${entity.maxRoh})`;
+        display.tahText.text = `${entity.tah}\n(${entity.maxTah})`;
+        display.sieText.text = `${entity.sie}\n(${entity.maxSie})`;
+      },
+      k: () => new Noop(),
+    }),
+    new Par([
+      new TweenTo(0.1, fieldTarget, "absolute", mkAccessTarget(display[resourceBar], varField)),
+      new TweenTo(0.1, axisTarget, "absolute", mkAccessTarget(display[resourceBar], varAxis)),
+    ]),
   ]);
 }
 

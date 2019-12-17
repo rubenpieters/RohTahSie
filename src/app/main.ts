@@ -78,13 +78,13 @@ function main(): void {
 
   let display: Display = {} as Display;
   display.player = {
-    entity: initializeEntity(state.player.entity, 40, 40, appContainer, cache),
+    entity: initializeEntity(state.player.entity, 40, 40, appContainer, display, cache),
     layout: initializeLayout(state.player.layout, 50, 200, appContainer, state, display, cache, "player"),
     hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, state, display, cache),
     nodeExpl: undefined as any,
   };
   display.enemy = {
-    entity: initializeEntity(undefined, 270, 40, appContainer, cache),
+    entity: initializeEntity(undefined, 270, 40, appContainer, display, cache),
     layout: initializeLayout(undefined, 280, 200, appContainer, state, display, cache, "enemy"),
   };
   display.player.nodeExpl = initializeNodeExpl(appContainer, cache);

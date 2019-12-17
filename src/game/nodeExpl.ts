@@ -20,6 +20,7 @@ export function initializeNodeExpl(
   const nodeExplBg = new PIXI.Sprite(cache["node_expl_bg"]);
   container.addChild(nodeExplBg);
 
+  // initialize title text
   const title = new PIXI.BitmapText("", {
     font: {
       name: "Bahnschrift",
@@ -30,6 +31,7 @@ export function initializeNodeExpl(
   Object.assign(title, { x: 30, y: 10 });
   container.addChild(title);
 
+  // intialize effect text
   const effects = new PIXI.BitmapText("", {
     font: {
       name: "Bahnschrift",
