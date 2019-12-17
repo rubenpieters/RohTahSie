@@ -46,6 +46,7 @@ const cache = {
 };
 
 let animations: Anim[] = [];
+let explWindowAnimations: Anim[] = [];
 let gameAnimations: Anim[] = [];
 let gameLoopAnim: Anim;
 
@@ -115,6 +116,15 @@ function update(state: GameState, display: Display): () => void {
     animations = newAnims;
   
     newAnims = [];
+    explWindowAnimations.forEach(anim => {
+      const result = runAnimation(deltaTime, anim);
+      if (result.remainingAnim !== "nothing") {
+        newAnims.push(result.remainingAnim);
+      }
+    });
+    explWindowAnimations = newAnims;
+  
+    newAnims = [];
     gameAnimations.forEach(anim => {
       const result = runAnimation(deltaTime, anim);
       if (result.remainingAnim !== "nothing") {
@@ -135,4 +145,14 @@ export function attachAnimation(
   anim: Anim
 ): void {
   animations.push(anim);
+}
+
+export function attachExplWindowAnimation(
+  anim: Anim
+): void {
+  explWindowAnimations.push(anim);
+}
+
+export function clearExplWindowAnimation(): void {
+  explWindowAnimations = [];
 }

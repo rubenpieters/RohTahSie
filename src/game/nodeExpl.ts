@@ -71,13 +71,18 @@ export function hideNodeExpl(
   return new Seq([
     new TweenTo(0.1, 0, "absolute", mkAccessTarget(display.container, "alpha")),
     mkEff({
-      eff: () => {
-        display.container.visible = false;
-        display.container.y = 15;
-      },
+      eff: () => resetNodeExpl(display),
       k: () => new Noop(),
     }),
   ]);
+}
+
+export function resetNodeExpl(
+  display: NodeExplDisplay,
+) {
+  display.container.visible = false;
+  display.container.y = 15;
+  display.container.alpha = 0;
 }
 
 function nodeEffects(

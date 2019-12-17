@@ -1,10 +1,10 @@
 import { GameNode, SummonNode, GenerateNode, AttackNode } from "./gameNode";
-import { Cache, attachAnimation } from "../app/main";
+import { Cache, attachAnimation, attachExplWindowAnimation, clearExplWindowAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
 import { IPoint } from "pixi.js";
 import { Display } from "./display";
-import { showNodeExpl, NodeExplDisplay, hideNodeExpl } from "./nodeExpl";
+import { showNodeExpl, NodeExplDisplay, hideNodeExpl, resetNodeExpl } from "./nodeExpl";
 
 const hotbarSize = 7;
 
@@ -44,7 +44,9 @@ export function initializeHotbar(
 
     box.on("mouseover", () => {
       attachAnimation(hotbarMouseOverAnim(box));
-      attachAnimation(showNodeExpl(state.player.hotbar.elements[i].node, display.player.nodeExpl));
+      clearExplWindowAnimation();
+      resetNodeExpl(display.player.nodeExpl);
+      attachExplWindowAnimation(showNodeExpl(state.player.hotbar.elements[i].node, display.player.nodeExpl));
     });
     box.on("mouseout", hotbarMouseOutCb(state, box, display, i));
     box.on("mousedown", hotbarMouseDownCb(state, elements, i));
@@ -86,7 +88,7 @@ function hotbarMouseOutCb(
     if (! state.player.hotbar.elements[index].selected) {
       attachAnimation(hotbarMouseOutAnim(box));
     }
-    attachAnimation(hideNodeExpl(display.player.nodeExpl));
+    attachExplWindowAnimation(hideNodeExpl(display.player.nodeExpl));
   };
 }
 
