@@ -4,7 +4,6 @@ import { nodeSprite, GameState } from "./state";
 import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq } from "../app/animation";
 import { hotbarSelectedNode } from "./hotbar";
 import { Display } from "./display";
-import { testInterpolation } from "../app/interpolation";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
@@ -106,9 +105,15 @@ function layoutMouseDownCb(
       state.player.layout.nodes[index] = selectedNode;
       display.player.layout.nodes[index].texture = cache[nodeSprite(selectedNode)];
       attachAnimation(
-        new Par([
-          new TweenTo(0.1, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x"), testInterpolation),
-          new TweenTo(0.1, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y"), testInterpolation),
+        new Seq([
+          new Par([
+            new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x")),
+            new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y")),
+          ]),
+          new Par([
+            new TweenTo(0.1, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x")),
+            new TweenTo(0.1, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y")),
+          ]),
         ]),
       );
     }

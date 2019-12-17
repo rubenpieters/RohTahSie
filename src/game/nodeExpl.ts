@@ -1,6 +1,7 @@
 import { GameNode } from "./gameNode";
 import { Cache } from "../app/main";
 import { mkAccessTarget, TweenTo, Par, Seq, mkEff, Noop, Anim } from "../app/animation";
+import { easeOutQuint } from "../app/interpolation";
 
 export type NodeExplDisplay = {
   container: PIXI.Container,
@@ -61,8 +62,8 @@ export function showNodeExpl(
       k: () => new Noop(),
     }),
     new Par([
-      new TweenTo(0.1, 45, "absolute", mkAccessTarget(display.container, "y")),
-      new TweenTo(0.1, 1, "absolute", mkAccessTarget(display.container, "alpha")),
+      new TweenTo(0.1, 45, "absolute", mkAccessTarget(display.container, "y"), easeOutQuint),
+      new TweenTo(0.1, 1, "absolute", mkAccessTarget(display.container, "alpha"), easeOutQuint),
     ]),
   ]);
 }
@@ -71,7 +72,7 @@ export function hideNodeExpl(
   display: NodeExplDisplay,
 ): Anim {
   return new Seq([
-    new TweenTo(0.1, 0, "absolute", mkAccessTarget(display.container, "alpha")),
+    new TweenTo(0.1, 0, "absolute", mkAccessTarget(display.container, "alpha"), easeOutQuint),
     mkEff({
       eff: () => resetNodeExpl(display),
       k: () => new Noop(),

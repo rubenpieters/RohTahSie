@@ -1,9 +1,10 @@
-export type Interpolation = (t: number, from: number, to: number, duration: number) => number;
+export type Interpolation = (pctComplete: number, from: number, to: number, duration: number) => number;
 
-export function linear(t: number, from: number, to: number, duration: number): number {
-  return from + (to - from) * t;
+export function linear(pctComplete: number, from: number, to: number, duration: number): number {
+  return from + (to - from) * pctComplete;
 }
 
-export function testInterpolation(t: number, from: number, to: number, duration: number): number {
-  return t*t*t*t*t;
+export function easeOutQuint(pctComplete: number, from: number, to: number, duration: number): number {
+  const t = pctComplete - 1;
+  return (to - from)*(t*t*t*t*t + 1) + from;
 }
