@@ -6,6 +6,7 @@ export type NodeExplDisplay = {
   container: PIXI.Container,
   bg: PIXI.Sprite,
   title: PIXI.BitmapText,
+  effects: PIXI.BitmapText,
 }
 
 export function initializeNodeExpl(
@@ -19,7 +20,7 @@ export function initializeNodeExpl(
   const nodeExplBg = new PIXI.Sprite(cache["node_expl_bg"]);
   container.addChild(nodeExplBg);
 
-  const title = new PIXI.BitmapText("test", {
+  const title = new PIXI.BitmapText("", {
     font: {
       name: "Bahnschrift",
       size: 32,
@@ -29,9 +30,19 @@ export function initializeNodeExpl(
   Object.assign(title, { x: 30, y: 10 });
   container.addChild(title);
 
+  const effects = new PIXI.BitmapText("", {
+    font: {
+      name: "Bahnschrift",
+      size: 32,
+    },
+    tint: 0xFF0000,
+  });
+  Object.assign(effects, { x: 30, y: 80 });
+  container.addChild(effects);
+
   parentContainer.addChild(container);
 
-  return { container, bg: nodeExplBg, title };
+  return { container, bg: nodeExplBg, title, effects };
 }
 
 export function showNodeExpl(
@@ -42,6 +53,8 @@ export function showNodeExpl(
     mkEff({
       eff: () => {
         display.container.visible = true;
+        display.title.text = node.tag;
+        display.effects.text = nodeEffects(node);
       },
       k: () => new Noop(),
     }),
@@ -65,4 +78,15 @@ export function hideNodeExpl(
       k: () => new Noop(),
     }),
   ]);
+}
+
+function nodeEffects(
+  node: GameNode,
+) {
+  switch (node.tag) {
+    case "AttackNode": return `-${node.damage} ${node.resource} to ${node.target}`;
+    case "SummonNode": return `summon ${node.enemyId}`;
+    case "GenerateNode": return `+${node.value} ${node.resource} to ${node.target}`;
+    case "Empty": return `no effect`
+  }
 }
