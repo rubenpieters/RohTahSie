@@ -1,7 +1,8 @@
 import { Cache } from "../app/main";
 import { ResourceType } from "./gameNode";
-import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq } from "../app/animation";
+import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, Particle, mkParticle } from "../app/animation";
 import { Display } from "./display";
+import { Pool, mkPool } from "../app/pool";
 
 // resource display size configuration
 /*
@@ -72,6 +73,7 @@ export type EntityDisplay = {
   rohText: PIXI.BitmapText,
   tahText: PIXI.BitmapText,
   sieText: PIXI.BitmapText,
+  textParticlePool: Pool<PIXI.BitmapText>,
 }
 
 // initialize: a function which takes a display and initializes it on the PIXI app
@@ -158,7 +160,19 @@ export function initializeEntity(
   Object.assign(sieText, { x: 110, y: 0, visible: false });
   container.addChild(sieText);
 
-  
+  // initialize text particle pool
+  const textParticlePool = mkPool(() => {
+    return new PIXI.BitmapText("", {
+      font: {
+        name: "Bahnschrift",
+        size: 28,
+      },
+      align: "center",
+      tint: 0x000000,
+    });
+  }, 3, "textParticlePool");
+
+  // portrait mouseover/out
   portraitBg.on("mouseover", () => {
     display.player.entity.rohText.visible = true;
     display.player.entity.tahText.visible = true;
@@ -193,7 +207,11 @@ export function initializeEntity(
 
   parentContainer.addChild(container);
 
-  return { container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar, rohText, tahText, sieText };
+  return {
+    container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar,
+    rohText, tahText, sieText,
+    textParticlePool,
+  };
 }
 
 export function newEntityAnim(
@@ -241,6 +259,13 @@ export function updateResourceAnim(
     new Par([
       new TweenTo(0.1, fieldTarget, "absolute", mkAccessTarget(display[resourceBar], varField)),
       new TweenTo(0.1, axisTarget, "absolute", mkAccessTarget(display[resourceBar], varAxis)),
+      mkParticle({
+        animation: (particle) => {
+          return new TweenTo(1, 230, "absolute", mkAccessTarget(particle, "y"));
+        },
+        pool: display.textParticlePool,
+        props: { text: "test", x: 250, y: 250 },
+      }),
     ]),
   ]);
 }

@@ -1,5 +1,6 @@
 import { GameNode } from "../game/gameNode";
 import { linear, Interpolation } from "./interpolation";
+import { Pool, newParticle } from "./pool";
 
 export class Par {
   public readonly tag: "Par" = "Par";
@@ -57,10 +58,6 @@ export class TweenTo {
     public readonly interpolation?: Interpolation,
   ) {}
 }
-type EffK<A> = {
-  eff: () => A,
-  k: (a: A) => Anim,
-}
 
 export type FromToType
   = "setOnFrom"
@@ -81,12 +78,37 @@ export class TweenFromTo {
   ) {}
 }
 
+type EffK<A> = {
+  eff: () => A,
+  k: (a: A) => Anim,
+}
+
 export class Eff {
   public readonly tag: "Eff" = "Eff";
 
   constructor(
-    public readonly f: <R>(f: <A>(effk: EffK<A>) => R) => R
+    public readonly f: <R>(f: <A>(effk: EffK<A>) => R) => R,
   ) {}
+}
+
+type ParticleK<A> = {
+  animation: (particle: A) => Anim,
+  pool: Pool<A>,
+  props: { [K in keyof A]?: A[K] },
+}
+
+export class Particle {
+  public readonly tag: "Particle" = "Particle";
+
+  constructor(
+    public readonly f: <R>(f: <A>(particlek: ParticleK<A>) => R) => R,
+  ) {}
+}
+
+export function mkParticle<A>(
+  particlek: ParticleK<A>,
+): Particle {
+  return new Particle(k => k(particlek));
 }
 
 export class Noop {
@@ -108,6 +130,7 @@ export type Anim
   | TweenFromTo
   | Eff
   | Noop
+  | Particle
   ;
 
 export function runAnimation(
@@ -194,12 +217,24 @@ export function runAnimation(
       }
     }
     case "Eff": {
-      let nextAnim: Anim = undefined as any;
-      anim.f(effk => {
+      const nextAnim: Anim = anim.f(effk => {
         const value = effk.eff();
-        nextAnim = effk.k(value);
+        return effk.k(value);
       });
-      return { remainingAnim: nextAnim, remainingDelta: "nothing" };
+      return runAnimation(delta, nextAnim);
+    }
+    case "Particle": {
+      const nextAnim = anim.f(particlek => {
+        const particle = newParticle(particlek.pool, particlek.props);
+        return new Seq([
+          particlek.animation(particle.a),
+          mkEff({
+            eff: () => particle.alive = false,
+            k: () => new Noop(),
+          }),
+        ]);
+      });
+      return runAnimation(delta, nextAnim);
     }
     case "Noop": {
       return { remainingAnim: "nothing", remainingDelta: delta };
