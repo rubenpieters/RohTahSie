@@ -1,27 +1,27 @@
 import { Layout } from "./layout";
-import { GenerateNode, AttackNode } from "./gameNode";
+import { GenerateNode, AttackNode, Empty } from "./gameNode";
 
 const layout1: Layout = {
   nodes: [
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
+    new Empty,
+    new Empty,
+    new Empty,
+    new Empty,
 
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
+    new Empty,
+    new Empty,
+    new Empty,
+    new Empty,
 
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
+    new Empty,
+    new Empty,
+    new Empty,
+    new Empty,
 
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
-    new GenerateNode(10, "roh", "enemy"),
+    new Empty,
+    new Empty,
+    new Empty,
+    new Empty,
   ],
   currentIndex: 0,
 }

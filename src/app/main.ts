@@ -43,6 +43,7 @@ const cache = {
   "portrait_sie": PIXI.Texture.from("assets/sprites/portrait_sie.png"),
   "bg": PIXI.Texture.from("assets/sprites/bg.jpg"),
   "node_expl_bg": PIXI.Texture.from("assets/sprites/node_expl_bg.png"),
+  "skip": PIXI.Texture.from("assets/sprites/skip.png"),
 };
 
 let animations: Anim[] = [];

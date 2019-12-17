@@ -113,7 +113,7 @@ export function nodeSprite(
       return "sword";
     }
     case "Empty": {
-      return "err";
+      return "skip";
     }
   }
 }
