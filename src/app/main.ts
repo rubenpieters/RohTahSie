@@ -13,7 +13,7 @@ const renderer = PIXI.autoDetectRenderer();
 // TODO: experiment with nicer ways of scaling
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
-window.addEventListener("load", main);
+window.addEventListener("load", load);
 
 let currentTime = new Date().getTime();
 let prevTime = currentTime;
@@ -21,9 +21,6 @@ let deltaTime = 0;
 
 export type Cache = typeof cache;
 export type CacheValues = keyof Cache;
-
-// TODO: create load screen with pixi loader https://pixijs.download/dev/docs/PIXI.Loader.html
-// add loading of cache in this loading part
 
 const cache = {
   "box": PIXI.Texture.from("assets/sprites/box.png"),
@@ -52,6 +49,18 @@ let animations: Anim[] = [];
 let gameAnimations: Anim[] = [];
 let gameLoopAnim: Anim;
 
+function load(): void {
+  // TODO: create load screen with pixi loader https://pixijs.download/dev/docs/PIXI.Loader.html
+  // add loading of cache in this loading part
+  const loader = new PIXI.Loader();
+  loader
+    .add("test", "assets/fonts/test.fnt")
+    .load(() => {
+      console.log("loading done");
+      main();
+    });
+}
+
 function main(): void {
   const app = new PIXI.Application({ width: 540, height: 540 });
   document.body.appendChild(app.view);
@@ -68,14 +77,14 @@ function main(): void {
 
   let display: Display = {} as Display;
   display.player = {
-    entity: initializeEntity(state.player.entity, 20, 20, appContainer, cache),
+    entity: initializeEntity(state.player.entity, 40, 40, appContainer, cache),
     layout: initializeLayout(state.player.layout, 50, 200, appContainer, state, display, cache, "player"),
     hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, state, display, cache),
     nodeExpl: undefined as any,
   };
   display.enemy = {
-    entity: initializeEntity(undefined, 300, 20, appContainer, cache),
-    layout: initializeLayout(undefined, 320, 200, appContainer, state, display, cache, "enemy"),
+    entity: initializeEntity(undefined, 270, 40, appContainer, cache),
+    layout: initializeLayout(undefined, 280, 200, appContainer, state, display, cache, "enemy"),
   };
   display.player.nodeExpl = initializeNodeExpl(appContainer, cache);
 

@@ -1,0 +1,8 @@
+program: bmFont
+
+Options -> export settings
+- Font descriptor: XML
+- bits: 32
+- Presets: White text with alpha
+
+- https://github.com/pixijs/pixi.js/issues/4293

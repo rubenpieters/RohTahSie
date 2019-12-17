@@ -5,6 +5,7 @@ import { mkAccessTarget, TweenTo, Par, Seq, mkEff, Noop, Anim } from "../app/ani
 export type NodeExplDisplay = {
   container: PIXI.Container,
   bg: PIXI.Sprite,
+  title: PIXI.BitmapText,
 }
 
 export function initializeNodeExpl(
@@ -12,15 +13,25 @@ export function initializeNodeExpl(
   cache: Cache,
 ): NodeExplDisplay {
   const container = new PIXI.Container();
-  Object.assign(container, { x: 30, alpha: 0 });
+  Object.assign(container, { x: 70, y: 15, alpha: 0 });
 
   // initialize bgs
   const nodeExplBg = new PIXI.Sprite(cache["node_expl_bg"]);
   container.addChild(nodeExplBg);
 
+  const title = new PIXI.BitmapText("test", {
+    font: {
+      name: "Bahnschrift",
+      size: 32,
+    },
+    tint: 0xFF0000,
+  });
+  Object.assign(title, { x: 30, y: 10 });
+  container.addChild(title);
+
   parentContainer.addChild(container);
 
-  return { container, bg: nodeExplBg };
+  return { container, bg: nodeExplBg, title };
 }
 
 export function showNodeExpl(
@@ -35,7 +46,7 @@ export function showNodeExpl(
       k: () => new Noop(),
     }),
     new Par([
-      new TweenTo(0.1, 60, "absolute", mkAccessTarget(display.container, "y")),
+      new TweenTo(0.1, 45, "absolute", mkAccessTarget(display.container, "y")),
       new TweenTo(0.1, 1, "absolute", mkAccessTarget(display.container, "alpha")),
     ]),
   ]);
@@ -49,7 +60,7 @@ export function hideNodeExpl(
     mkEff({
       eff: () => {
         display.container.visible = false;
-        display.container.y = 30;
+        display.container.y = 15;
       },
       k: () => new Noop(),
     }),
