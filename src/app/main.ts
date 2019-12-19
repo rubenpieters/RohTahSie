@@ -7,6 +7,7 @@ import { Display, gameLoopAnimation } from "../game/display";
 import { GameNode } from "../game/gameNode";
 import { initialHotbar, initializeHotbar } from "../game/hotbar";
 import { initializeNodeExpl } from "../game/nodeExpl";
+import { initializePools } from "./pool";
 
 const renderer = PIXI.autoDetectRenderer();
 
@@ -88,6 +89,7 @@ function main(): void {
     entity: initializeEntity(undefined, 270, 40, appContainer, display, cache),
     layout: initializeLayout(undefined, 280, 200, appContainer, state, display, cache, "enemy"),
   };
+  display.pools = initializePools(appContainer);
   display.player.nodeExpl = initializeNodeExpl(appContainer, cache);
 
   // attach initial animation

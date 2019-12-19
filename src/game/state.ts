@@ -39,11 +39,11 @@ export function activateNode(
     case "GenerateNode": {
       const target = node.target === "enemy" ? state.enemy : state.player;
       if (target !== undefined) {
-        if (target.entity[node.resource] < 100) {
-          target.entity[node.resource] = Math.min(100, target.entity[node.resource] + node.value);
-        }
+        const prevValue = target.entity[node.resource];
+        target.entity[node.resource] = Math.min(100, target.entity[node.resource] + node.value);
+        const valueChange = target.entity[node.resource] - prevValue;
         // increase resource animation
-        return updateResourceAnim(target.entity, display[node.target].entity, node.resource);
+        return updateResourceAnim(target.entity, display, node.resource, node.target, `+${valueChange}`);
       }
       return new Noop();
     }
@@ -69,9 +69,11 @@ export function activateNode(
     case "AttackNode": {
       const target = node.target === "enemy" ? state.enemy : state.player;
       if (target !== undefined) {
+        const prevValue = target.entity[node.resource];
         target.entity[node.resource] = Math.max(0, target.entity[node.resource] - node.damage);
+        const valueChange = prevValue - target.entity[node.resource];
         // decrease resource animation
-        const decResourceAnim = updateResourceAnim(target.entity, display[node.target].entity, node.resource);
+        const decResourceAnim = updateResourceAnim(target.entity, display, node.resource, node.target, `-${valueChange}`);
         if (node.target === "enemy" && target.entity[node.resource] <= 0) {
           state.enemy = undefined;
           // enemy death animation

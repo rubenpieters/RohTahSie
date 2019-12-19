@@ -6,6 +6,7 @@ import { GameNode } from "./gameNode";
 import { Cache } from "../app/main";
 import { HotbarDisplay, newHotbarAnim } from "./hotbar";
 import { NodeExplDisplay } from "./nodeExpl";
+import { Pools } from "../app/pool";
 
 export type Display = {
   player: {
@@ -18,6 +19,7 @@ export type Display = {
     entity: EntityDisplay,
     layout: LayoutDisplay,
   },
+  pools: Pools,
 }
 
 export function gameLoopAnimation(

@@ -1,6 +1,6 @@
 import { GameNode } from "../game/gameNode";
 import { linear, Interpolation } from "./interpolation";
-import { Pool, newParticle } from "./pool";
+import { Pool, newParticle, killParticle } from "./pool";
 
 export class Par {
   public readonly tag: "Par" = "Par";
@@ -91,7 +91,7 @@ export class Eff {
   ) {}
 }
 
-type ParticleK<A> = {
+type ParticleK<A extends PIXI.DisplayObject> = {
   animation: (particle: A) => Anim,
   pool: Pool<A>,
   props: { [K in keyof A]?: A[K] },
@@ -101,11 +101,11 @@ export class Particle {
   public readonly tag: "Particle" = "Particle";
 
   constructor(
-    public readonly f: <R>(f: <A>(particlek: ParticleK<A>) => R) => R,
+    public readonly f: <R>(f: <A extends PIXI.DisplayObject>(particlek: ParticleK<A>) => R) => R,
   ) {}
 }
 
-export function mkParticle<A>(
+export function mkParticle<A extends PIXI.DisplayObject>(
   particlek: ParticleK<A>,
 ): Particle {
   return new Particle(k => k(particlek));
@@ -229,7 +229,7 @@ export function runAnimation(
         return new Seq([
           particlek.animation(particle.a),
           mkEff({
-            eff: () => particle.alive = false,
+            eff: () => killParticle(particle),
             k: () => new Noop(),
           }),
         ]);

@@ -1,5 +1,5 @@
 import { Cache } from "../app/main";
-import { ResourceType } from "./gameNode";
+import { ResourceType, TargetType } from "./gameNode";
 import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, Particle, mkParticle } from "../app/animation";
 import { Display } from "./display";
 import { Pool, mkPool } from "../app/pool";
@@ -73,7 +73,6 @@ export type EntityDisplay = {
   rohText: PIXI.BitmapText,
   tahText: PIXI.BitmapText,
   sieText: PIXI.BitmapText,
-  textParticlePool: Pool<PIXI.BitmapText>,
 }
 
 // initialize: a function which takes a display and initializes it on the PIXI app
@@ -160,18 +159,6 @@ export function initializeEntity(
   Object.assign(sieText, { x: 110, y: 0, visible: false });
   container.addChild(sieText);
 
-  // initialize text particle pool
-  const textParticlePool = mkPool(() => {
-    return new PIXI.BitmapText("", {
-      font: {
-        name: "Bahnschrift",
-        size: 28,
-      },
-      align: "center",
-      tint: 0x000000,
-    });
-  }, 3, "textParticlePool");
-
   // portrait mouseover/out
   portraitBg.on("mouseover", () => {
     display.player.entity.rohText.visible = true;
@@ -210,7 +197,6 @@ export function initializeEntity(
   return {
     container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar,
     rohText, tahText, sieText,
-    textParticlePool,
   };
 }
 
@@ -240,34 +226,50 @@ export function newEntityAnim(
 
 export function updateResourceAnim(
   entity: Entity,
-  display: EntityDisplay,
+  display: Display,
   resourceType: ResourceType,
+  target: TargetType,
+  text: string,
 ): Anim {
+  const entityDisplay = display[target].entity;
   const varField = resourceVarField[resourceType];
   const { fieldTarget, axisTarget } = resourceMaskTargets(resourceType, entity);
   const varAxis = resourceVarAxis[resourceType];
   const resourceBar = resourceMaskSprite(resourceType);
+  const textParticleX = target === "player" ? 90 : 320;
+  const textParticleY = 110;
+  const textParticleTint = resourceTint(resourceType);
   return new Seq([
     mkEff({
       eff: () => {
-        display.rohText.text = `${entity.roh}\n(${entity.maxRoh})`;
-        display.tahText.text = `${entity.tah}\n(${entity.maxTah})`;
-        display.sieText.text = `${entity.sie}\n(${entity.maxSie})`;
+        entityDisplay.rohText.text = `${entity.roh}\n(${entity.maxRoh})`;
+        entityDisplay.tahText.text = `${entity.tah}\n(${entity.maxTah})`;
+        entityDisplay.sieText.text = `${entity.sie}\n(${entity.maxSie})`;
       },
       k: () => new Noop(),
     }),
     new Par([
-      new TweenTo(0.1, fieldTarget, "absolute", mkAccessTarget(display[resourceBar], varField)),
-      new TweenTo(0.1, axisTarget, "absolute", mkAccessTarget(display[resourceBar], varAxis)),
+      new TweenTo(0.5, fieldTarget, "absolute", mkAccessTarget(entityDisplay[resourceBar], varField)),
+      new TweenTo(0.5, axisTarget, "absolute", mkAccessTarget(entityDisplay[resourceBar], varAxis)),
       mkParticle({
         animation: (particle) => {
-          return new TweenTo(1, 230, "absolute", mkAccessTarget(particle, "y"));
+          return new TweenTo(0.5, textParticleY - 25, "absolute", mkAccessTarget(particle, "y"));
         },
-        pool: display.textParticlePool,
-        props: { text: "test", x: 250, y: 250 },
+        pool: display.pools.textParticlePool,
+        props: { text, x: textParticleX, y: textParticleY, tint: textParticleTint },
       }),
     ]),
   ]);
+}
+
+function resourceTint(
+  resourceType: ResourceType
+) {
+  switch (resourceType) {
+    case "roh": return 0xDC143C;
+    case "tah": return 0x32CD32;
+    case "sie": return 0xFFFF66;
+  }
 }
 
 function resourceMaxField<T extends ResourceType>(

@@ -2,6 +2,8 @@ import { EnemyKey } from "./enemy";
 
 export type ResourceType = "roh" | "tah" | "sie";
 
+export type TargetType = "player" | "enemy";
+
 export class GenerateNode {
   public readonly tag: "GenerateNode" = "GenerateNode";
   public readonly size = 1;
@@ -9,7 +11,7 @@ export class GenerateNode {
   constructor(
     public readonly value: number,
     public readonly resource: ResourceType,
-    public readonly target: "player" | "enemy",
+    public readonly target: TargetType,
   ) {}
 }
 
@@ -29,7 +31,7 @@ export class AttackNode {
   constructor(
     public readonly damage: number,
     public readonly resource: ResourceType,
-    public readonly target: "player" | "enemy",
+    public readonly target: TargetType,
   ) {}
 }
 
