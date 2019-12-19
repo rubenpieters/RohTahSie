@@ -85,7 +85,7 @@ function main(): void {
   display.player = {
     entity: initializeEntity(state.player.entity, 40, 40, appContainer, display, cache),
     layout: initializeLayout(state.player.layout, 50, 200, appContainer, state, display, cache, "player"),
-    hotbar: initializeHotbar(state.player.hotbar, 100, 480, appContainer, state, display, cache),
+    hotbar: initializeHotbar(state.player.hotbar, 100, 455, appContainer, state, display, cache),
     nodeExpl: undefined as any,
   };
   display.enemy = {

@@ -1,4 +1,4 @@
-import { GameNode, SummonNode, GenerateNode, AttackNode } from "./gameNode";
+import { GameNode, SummonNode, GenerateNode, AttackNode, ShieldNode } from "./gameNode";
 import { Cache, attachAnimation, attachExplWindowAnimation, clearExplWindowAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
@@ -6,7 +6,9 @@ import { IPoint } from "pixi.js";
 import { Display } from "./display";
 import { showNodeExpl, NodeExplDisplay, hideNodeExpl, resetNodeExpl } from "./nodeExpl";
 
-const hotbarSize = 7;
+const hotbarSize = 14;
+const xAmount = 7;
+const yAmount = 2;
 
 export type Hotbar = {
   elements: {
@@ -37,7 +39,8 @@ export function initializeHotbar(
   for (let i = 0; i < hotbarSize; i++) {
     const element = hotbar.elements[i];
     const box = new PIXI.Sprite(cache[nodeSprite(element.node)]);
-    box.x = i * 55;
+    box.x = (i % xAmount) * 55;
+    box.y = Math.floor(i / xAmount) * 55;
     box.pivot.set(25, 25);
 
     box.interactive = true;
@@ -144,6 +147,34 @@ export function initialHotbar(): Hotbar {
       },
       {
         node: new GenerateNode(10, "sie", "player"),
+        selected: false,
+      },
+      {
+        node: new SummonNode("en1"),
+        selected: false,
+      },
+      {
+        node: new AttackNode(10, "roh", "enemy"),
+        selected: false,
+      },
+      {
+        node: new AttackNode(10, "tah", "enemy"),
+        selected: false,
+      },
+      {
+        node: new AttackNode(10, "sie", "enemy"),
+        selected: false,
+      },
+      {
+        node: new ShieldNode("roh", "player"),
+        selected: false,
+      },
+      {
+        node: new ShieldNode("tah", "player"),
+        selected: false,
+      },
+      {
+        node: new ShieldNode("sie", "player"),
         selected: false,
       },
       {
