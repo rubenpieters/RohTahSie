@@ -133,8 +133,8 @@ export function playerInitialLayout(): Layout {
   return {
     nodes: [
       new SummonNode("en1"),
-      new AttackNode(10, "roh", "enemy"),
-      new AttackNode(10, "roh", "enemy"),
+      new AttackNode(10, "enemy"),
+      new AttackNode(10, "enemy"),
       new GenerateNode(10, "roh", "player"),
 
       new GenerateNode(10, "roh", "player"),

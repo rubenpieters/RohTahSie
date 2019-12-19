@@ -7,12 +7,12 @@ const layout1: Layout = {
     new ShieldNode("tah", "enemy"),
     new ShieldNode("sie", "enemy"),
     new ShieldNode("roh", "enemy"),
-    new Empty,
+    new ShieldNode("tah", "enemy"),
 
-    new Empty,
-    new Empty,
-    new Empty,
-    new Empty,
+    new ShieldNode("tah", "enemy"),
+    new ShieldNode("sie", "enemy"),
+    new ShieldNode("roh", "enemy"),
+    new ShieldNode("tah", "enemy"),
 
     new Empty,
     new Empty,

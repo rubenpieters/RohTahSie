@@ -69,12 +69,13 @@ export function activateNode(
     case "AttackNode": {
       const target = node.target === "enemy" ? state.enemy : state.player;
       if (target !== undefined) {
-        const prevValue = target.entity[node.resource];
-        target.entity[node.resource] = Math.max(0, target.entity[node.resource] - node.damage);
-        const valueChange = prevValue - target.entity[node.resource];
+        const shieldType = target.entity.shield;
+        const prevValue = target.entity[shieldType];
+        target.entity[shieldType] = Math.max(0, target.entity[shieldType] - node.damage);
+        const valueChange = prevValue - target.entity[shieldType];
         // decrease resource animation
-        const decResourceAnim = updateResourceAnim(target.entity, display, node.resource, node.target, `-${valueChange}`);
-        if (node.target === "enemy" && target.entity[node.resource] <= 0) {
+        const decResourceAnim = updateResourceAnim(target.entity, display, shieldType, node.target, `-${valueChange}`);
+        if (node.target === "enemy" && target.entity[shieldType] <= 0) {
           state.enemy = undefined;
           // enemy death animation
           const dieAnim: Anim = mkEff({ eff: () => {

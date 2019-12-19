@@ -30,7 +30,6 @@ export class AttackNode {
 
   constructor(
     public readonly damage: number,
-    public readonly resource: ResourceType,
     public readonly target: TargetType,
   ) {}
 }

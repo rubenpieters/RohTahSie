@@ -92,7 +92,7 @@ function nodeEffects(
   node: GameNode,
 ): string {
   switch (node.tag) {
-    case "AttackNode": return `-${node.damage} ${node.resource} to ${node.target}`;
+    case "AttackNode": return `-${node.damage} to ${node.target}`;
     case "SummonNode": return `summon ${node.enemyId}`;
     case "GenerateNode": return `+${node.value} ${node.resource} to ${node.target}`;
     case "ShieldNode": return `change shield to ${node.resource} for ${node.target}`;

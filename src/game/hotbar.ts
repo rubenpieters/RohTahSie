@@ -1,4 +1,4 @@
-import { GameNode, SummonNode, GenerateNode, AttackNode, ShieldNode } from "./gameNode";
+import { GameNode, SummonNode, GenerateNode, AttackNode, ShieldNode, Empty } from "./gameNode";
 import { Cache, attachAnimation, attachExplWindowAnimation, clearExplWindowAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
@@ -154,15 +154,15 @@ export function initialHotbar(): Hotbar {
         selected: false,
       },
       {
-        node: new AttackNode(10, "roh", "enemy"),
+        node: new AttackNode(10, "enemy"),
         selected: false,
       },
       {
-        node: new AttackNode(10, "tah", "enemy"),
+        node: new AttackNode(10, "enemy"),
         selected: false,
       },
       {
-        node: new AttackNode(10, "sie", "enemy"),
+        node: new AttackNode(10, "enemy"),
         selected: false,
       },
       {
@@ -178,19 +178,19 @@ export function initialHotbar(): Hotbar {
         selected: false,
       },
       {
-        node: new SummonNode("en1"),
+        node: new Empty,
         selected: false,
       },
       {
-        node: new AttackNode(10, "roh", "enemy"),
+        node: new Empty,
         selected: false,
       },
       {
-        node: new AttackNode(10, "tah", "enemy"),
+        node: new Empty,
         selected: false,
       },
       {
-        node: new AttackNode(10, "sie", "enemy"),
+        node: new Empty,
         selected: false,
       },
     ],

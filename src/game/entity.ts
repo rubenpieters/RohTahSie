@@ -129,6 +129,10 @@ export function initializeEntity(
 
   container.addChild(portraitBg);
 
+  // initialize shield
+  const shield = new PIXI.Sprite();
+  container.addChild(shield);
+
   // initialize resource text  
   const rohText = new PIXI.BitmapText("-", {
     font: {
@@ -160,10 +164,6 @@ export function initializeEntity(
   });
   Object.assign(sieText, { x: 110, y: 0, visible: false });
   container.addChild(sieText);
-
-  // initialize shield
-  const shield = new PIXI.Sprite();
-  container.addChild(shield);
 
   // portrait mouseover/out
   portraitBg.on("mouseover", () => {
