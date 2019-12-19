@@ -22,7 +22,7 @@ const layout1: Layout = {
     new Empty,
     new Empty,
     new Empty,
-    new Empty,
+    new AttackNode(10, "player"),
   ],
   currentIndex: 0,
 }
@@ -35,6 +35,7 @@ const enemy1: Entity = {
   sie: 100,
   maxSie: 100,
   shield: "roh",
+  dirty: false,
 };
 
 type Enemies = typeof allEnemies;

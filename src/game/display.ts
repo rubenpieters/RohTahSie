@@ -40,6 +40,9 @@ export function gameLoopAnimation(
           display.enemy.layout.bar.scale.x = 1;
           display.enemy.layout.bar.scale.y = 1;
           Object.assign(display.enemy.layout.bar, barLocation(state.enemy.layout.currentIndex));
+          
+          // reset enemy dirty status
+          state.enemy.entity.dirty = false;
         }
       },
       k: () => new Noop(),
@@ -53,10 +56,11 @@ export function gameLoopAnimation(
     ]),
     mkEff({
       eff: () => {
-        // capture just completed player node
-        const justCompletedNodes = {
+        // capture info of just completed nodes
+        const justCompletedInfo = {
           player: state.player.layout.nodes[state.player.layout.currentIndex],
-          enemy: state.enemy === undefined ? undefined : state.enemy.layout.nodes[state.enemy.layout.currentIndex]
+          enemy: state.enemy === undefined ? undefined : state.enemy.layout.nodes[state.enemy.layout.currentIndex],
+          enemyDefined: state.enemy !== undefined,
         }
         // advance current node for player
         state.player.layout.currentIndex += 1;
@@ -70,16 +74,24 @@ export function gameLoopAnimation(
             state.enemy.layout.currentIndex = 0;
           }
         }
-        // return just completed node
-        return justCompletedNodes;
+        return justCompletedInfo;
       },
-      k: (completedNodes: { player: GameNode, enemy: GameNode | undefined }) => {
+      k: (info: { player: GameNode, enemy: GameNode | undefined, enemyDefined: boolean }) => {
         // embed node activation animation
         return new Seq([
-          activateAndAnimateNode("player", completedNodes.player, state, display, cache),
-          completedNodes.enemy === undefined ? new Noop() :
-            activateAndAnimateNode("enemy", completedNodes.enemy, state, display, cache),
-          playerCheckDieAnimation(state, display, cache),
+          activateAndAnimateNode("player", info.player, state, display, cache),
+          mkEff({
+            eff: () => {
+              return state.enemy === undefined ? info.enemyDefined : state.enemy.entity.dirty;
+            },
+            k: (enemyChanged: boolean) => {
+              return new Seq([
+                info.enemy === undefined || enemyChanged ? new Noop() :
+                  activateAndAnimateNode("enemy", info.enemy, state, display, cache),
+                playerCheckDieAnimation(state, display, cache),
+              ]);
+            }
+          }),
         ]);
       },
     }),

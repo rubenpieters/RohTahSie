@@ -61,6 +61,7 @@ export type Entity = {
   sie: number,
   maxSie: number,
   shield: ResourceType,
+  dirty: boolean,
 }
 
 export type EntityDisplay = {
@@ -235,6 +236,7 @@ export function newEntityAnim(
         entityDisplay.tahText.text = `${entity.tah}\n(${entity.maxTah})`;
         entityDisplay.sieText.text = `${entity.sie}\n(${entity.maxSie})`;
         updateEntityShieldDisplay(entity, entityDisplay.shield, cache);
+        entity.dirty = true;
       } else {
         entityDisplay.container.visible = false;
       }
@@ -372,5 +374,6 @@ export function playerInitialEntity(): Entity {
     sie: 50,
     maxSie: 100,
     shield: "roh",
+    dirty: false,
   };
 }
