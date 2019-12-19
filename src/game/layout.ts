@@ -1,4 +1,4 @@
-import { GameNode, GenerateNode, SummonNode, AttackNode } from "./gameNode";
+import { Ability, GenerateNode, SummonNode, AttackNode } from "./definitions/ability";
 import { Cache, attachAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq } from "../app/animation";
@@ -13,7 +13,7 @@ const yAmount = 4;
 const nodeAmount = xAmount * yAmount;
 
 export type Layout = {
-  nodes: GameNode[],
+  nodes: Ability[],
   currentIndex: number,
 };
 

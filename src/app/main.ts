@@ -4,7 +4,7 @@ import { playerInitialLayout, initializeLayout, barLocation } from "../game/layo
 import { GameState, initializeState } from "../game/state";
 import { PixiFps } from "./fps";
 import { Display, gameLoopAnimation } from "../game/display";
-import { GameNode } from "../game/gameNode";
+import { Ability } from "../game/definitions/ability";
 import { initialHotbar, initializeHotbar } from "../game/hotbar";
 import { initializeNodeExpl } from "../game/nodeExpl";
 import { initializePools } from "./pool";

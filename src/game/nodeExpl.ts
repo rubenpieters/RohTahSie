@@ -1,4 +1,4 @@
-import { GameNode } from "./gameNode";
+import { Ability } from "./definitions/ability";
 import { Cache } from "../app/main";
 import { mkAccessTarget, TweenTo, Par, Seq, mkEff, Noop, Anim } from "../app/animation";
 import { easeOutQuint } from "../app/interpolation";
@@ -49,7 +49,7 @@ export function initializeNodeExpl(
 }
 
 export function showNodeExpl(
-  node: GameNode,
+  node: Ability,
   display: NodeExplDisplay,
 ): Anim {
   return new Seq([
@@ -89,7 +89,7 @@ export function resetNodeExpl(
 }
 
 function nodeEffects(
-  node: GameNode,
+  node: Ability,
 ): string {
   switch (node.tag) {
     case "AttackNode": return `-${node.damage} to ${node.target}`;

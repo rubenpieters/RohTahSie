@@ -1,8 +1,6 @@
-import { EnemyKey } from "./enemy";
-
-export type ResourceType = "roh" | "tah" | "sie";
-
-export type TargetType = "player" | "enemy";
+import { EnemyKey } from "../enemy";
+import { Action, Damage, Regen, ChangeShield, Summon } from "./action";
+import { ResourceType, TargetType } from "../types";
 
 export class GenerateNode {
   public readonly tag: "GenerateNode" = "GenerateNode";
@@ -52,10 +50,11 @@ export class Empty {
   ) {}
 }
 
-export type GameNode
+export type Ability
   = GenerateNode
   | SummonNode
   | AttackNode
   | ShieldNode
   | Empty
   ;
+  

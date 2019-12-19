@@ -1,12 +1,13 @@
 import { LayoutDisplay, barLocation, newLayoutAnim } from "./layout";
 import { EntityDisplay, newEntityAnim } from "./entity";
 import { Anim, Seq, mkEff, Noop, TweenTo, Par, mkAccessTarget } from "../app/animation";
-import { GameState, activateNode, initializeState } from "./state";
-import { GameNode } from "./gameNode";
+import { GameState, initializeState } from "./state";
+import { Ability } from "./definitions/ability";
 import { Cache } from "../app/main";
 import { HotbarDisplay, newHotbarAnim } from "./hotbar";
 import { NodeExplDisplay } from "./nodeExpl";
 import { Pools } from "../app/pool";
+import { applyAbility } from "./ability";
 
 export type Display = {
   player: {
@@ -76,7 +77,7 @@ export function gameLoopAnimation(
         }
         return justCompletedInfo;
       },
-      k: (info: { player: GameNode, enemy: GameNode | undefined, enemyDefined: boolean }) => {
+      k: (info: { player: Ability, enemy: Ability | undefined, enemyDefined: boolean }) => {
         // embed node activation animation
         return new Seq([
           activateAndAnimateNode("player", info.player, state, display, cache),
@@ -131,7 +132,7 @@ export function playerCheckDieAnimation(
 
 function activateAndAnimateNode(
   source: "player" | "enemy",
-  node: GameNode,
+  ability: Ability,
   state: GameState,
   display: Display,
   cache: Cache,
@@ -143,7 +144,7 @@ function activateAndAnimateNode(
   ]);
   return mkEff({
     eff: () => {
-      return activateNode(node, state, display, cache);
+      return applyAbility(ability, state, display, cache);
     },
     k: (anim: Anim) => {
       return new Par([fadeOutBar, anim]);

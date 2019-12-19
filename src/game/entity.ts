@@ -1,5 +1,5 @@
 import { Cache } from "../app/main";
-import { ResourceType, TargetType } from "./gameNode";
+import { ResourceType, TargetType } from "./types";
 import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, Particle, mkParticle } from "../app/animation";
 import { Display } from "./display";
 import { Pool, mkPool } from "../app/pool";

@@ -1,5 +1,5 @@
 import { Layout } from "./layout";
-import { GenerateNode, AttackNode, Empty, ShieldNode } from "./gameNode";
+import { GenerateNode, AttackNode, Empty, ShieldNode } from "./definitions/ability";
 import { Entity } from "./entity";
 
 const layout1: Layout = {

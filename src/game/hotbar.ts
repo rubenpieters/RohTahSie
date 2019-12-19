@@ -1,4 +1,4 @@
-import { GameNode, SummonNode, GenerateNode, AttackNode, ShieldNode, Empty } from "./gameNode";
+import { Ability, SummonNode, GenerateNode, AttackNode, ShieldNode, Empty } from "./definitions/ability";
 import { Cache, attachAnimation, attachExplWindowAnimation, clearExplWindowAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
@@ -12,7 +12,7 @@ const yAmount = 2;
 
 export type Hotbar = {
   elements: {
-    node: GameNode,
+    node: Ability,
     selected: boolean,
   }[],
 }
@@ -129,7 +129,7 @@ export function newHotbarAnim(
 
 export function hotbarSelectedNode(
   hotbar: Hotbar,
-): GameNode | undefined {
+): Ability | undefined {
   const selectedElement = hotbar.elements.find(x => x.selected);
   return selectedElement === undefined ? undefined : selectedElement.node;
 }

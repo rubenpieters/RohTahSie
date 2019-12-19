@@ -1,4 +1,4 @@
-import { GameNode } from "../game/gameNode";
+import { Ability } from "../game/definitions/ability";
 import { linear, Interpolation } from "./interpolation";
 import { Pool, newParticle, killParticle } from "./pool";
 
