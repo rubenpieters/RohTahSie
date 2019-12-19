@@ -3,7 +3,7 @@ import { allEnemies } from "./enemy";
 import * as lo from "lodash";
 import { GameNode } from "./gameNode";
 import { Layout, newLayoutAnim, barLocation, playerInitialLayout } from "./layout";
-import { Entity, updateResourceAnim, EntityDisplay, newEntityAnim, playerInitialEntity } from "./entity";
+import { Entity, updateResourceAnim, EntityDisplay, newEntityAnim, playerInitialEntity, changeShieldAnim } from "./entity";
 import { Anim, TweenTo, mkAnimTarget, mkAccessTarget, Noop, mkEff, Par, Seq } from "../app/animation";
 import { Display } from "./display";
 import { Hotbar, initialHotbar } from "./hotbar";
@@ -90,6 +90,17 @@ export function activateNode(
       }
       return new Noop();
     }
+    case "ShieldNode": {
+      const target = node.target === "enemy" ? state.enemy : state.player;
+      if (
+        target !== undefined &&
+        target.entity.shield !== node.resource
+      ) {
+        target.entity.shield = node.resource;
+        return changeShieldAnim(display[node.target].entity, node.target, node.resource, cache);
+      }
+      return new Noop();
+    }
     case "Empty": {
       return new Noop();
     }
@@ -113,6 +124,9 @@ export function nodeSprite(
     }
     case "AttackNode": {
       return "sword";
+    }
+    case "ShieldNode": {
+      return "shield";
     }
     case "Empty": {
       return "skip";

@@ -35,6 +35,16 @@ export class AttackNode {
   ) {}
 }
 
+export class ShieldNode {
+  public readonly tag: "ShieldNode" = "ShieldNode";
+  public readonly size = 1;
+
+  constructor(
+    public readonly resource: ResourceType,
+    public readonly target: TargetType,
+  ) {}
+}
+
 export class Empty {
   public readonly tag: "Empty" = "Empty";
   public readonly size = 1;
@@ -47,5 +57,6 @@ export type GameNode
   = GenerateNode
   | SummonNode
   | AttackNode
+  | ShieldNode
   | Empty
   ;

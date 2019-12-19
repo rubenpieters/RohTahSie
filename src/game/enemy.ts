@@ -1,12 +1,12 @@
 import { Layout } from "./layout";
-import { GenerateNode, AttackNode, Empty } from "./gameNode";
+import { GenerateNode, AttackNode, Empty, ShieldNode } from "./gameNode";
 import { Entity } from "./entity";
 
 const layout1: Layout = {
   nodes: [
-    new Empty,
-    new Empty,
-    new Empty,
+    new ShieldNode("tah", "enemy"),
+    new ShieldNode("sie", "enemy"),
+    new ShieldNode("roh", "enemy"),
     new Empty,
 
     new Empty,

@@ -281,6 +281,22 @@ export function updateResourceAnim(
   ]);
 }
 
+export function changeShieldAnim(
+  entityDisplay: EntityDisplay,
+  target: TargetType,
+  newShieldType: ResourceType,
+  cache: Cache,
+) {
+  return new Seq([
+    new TweenTo(0.25, 0, "absolute", mkAccessTarget(entityDisplay.shield, "alpha")),
+    mkEff({
+      eff: () => entityDisplay.shield.texture = cache[resourceShieldTexture(newShieldType)],
+      k: () => new Noop(),
+    }),
+    new TweenTo(0.25, 1, "absolute", mkAccessTarget(entityDisplay.shield, "alpha")),
+  ])
+}
+
 function resourceTint(
   resourceType: ResourceType
 ) {
