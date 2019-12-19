@@ -106,8 +106,8 @@ export function playerCheckDieAnimation(
           initializeState(state);
         },
         k: () => new Seq([
-          newEntityAnim(state.player.entity, display.player.entity),
-          newEntityAnim(state.enemy === undefined ? undefined : state.enemy.entity, display.enemy.entity),
+          newEntityAnim(state.player.entity, display.player.entity, cache),
+          newEntityAnim(state.enemy === undefined ? undefined : state.enemy.entity, display.enemy.entity, cache),
           newLayoutAnim(state.player.layout, display.player.layout, cache),
           newLayoutAnim(state.enemy === undefined ? undefined : state.enemy.layout, display.enemy.layout, cache),
           newHotbarAnim(state.player.hotbar, display.player.hotbar, cache),

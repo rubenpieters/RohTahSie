@@ -61,7 +61,7 @@ export function activateNode(
         k: () => {
           return new Par([
             newLayoutAnim(state.enemy === undefined ? undefined : state.enemy.layout, display.enemy.layout, cache),
-            newEntityAnim(state.enemy === undefined ? undefined : state.enemy.entity, display.enemy.entity),
+            newEntityAnim(state.enemy === undefined ? undefined : state.enemy.entity, display.enemy.entity, cache),
           ]);
         },
       });

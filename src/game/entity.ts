@@ -60,6 +60,7 @@ export type Entity = {
   maxTah: number,
   sie: number,
   maxSie: number,
+  shield: ResourceType,
 }
 
 export type EntityDisplay = {
@@ -73,6 +74,7 @@ export type EntityDisplay = {
   rohText: PIXI.BitmapText,
   tahText: PIXI.BitmapText,
   sieText: PIXI.BitmapText,
+  shield: PIXI.Sprite,
 }
 
 // initialize: a function which takes a display and initializes it on the PIXI app
@@ -159,6 +161,10 @@ export function initializeEntity(
   Object.assign(sieText, { x: 110, y: 0, visible: false });
   container.addChild(sieText);
 
+  // initialize shield
+  const shield = new PIXI.Sprite();
+  container.addChild(shield);
+
   // portrait mouseover/out
   portraitBg.on("mouseover", () => {
     display.player.entity.rohText.visible = true;
@@ -186,6 +192,7 @@ export function initializeEntity(
     rohText.text = `${entity.roh}\n(${entity.maxRoh})`;
     tahText.text = `${entity.tah}\n(${entity.maxTah})`;
     sieText.text = `${entity.sie}\n(${entity.maxSie})`;
+    updateEntityShieldDisplay(entity, shield, cache);
   }
 
   if (entity === undefined) {
@@ -197,12 +204,23 @@ export function initializeEntity(
   return {
     container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar,
     rohText, tahText, sieText,
+    shield,
   };
+}
+
+function updateEntityShieldDisplay(
+  entity: Entity,
+  shieldSprite: PIXI.Sprite,
+  cache: Cache,
+): void {
+  const texture = resourceShieldTexture(entity.shield);
+  shieldSprite.texture = cache[texture];
 }
 
 export function newEntityAnim(
   entity: Entity | undefined,
   entityDisplay: EntityDisplay,
+  cache: Cache,
 ): Anim {
   return mkEff({
     eff: () => {
@@ -216,6 +234,7 @@ export function newEntityAnim(
         entityDisplay.rohText.text = `${entity.roh}\n(${entity.maxRoh})`;
         entityDisplay.tahText.text = `${entity.tah}\n(${entity.maxTah})`;
         entityDisplay.sieText.text = `${entity.sie}\n(${entity.maxSie})`;
+        updateEntityShieldDisplay(entity, entityDisplay.shield, cache);
       } else {
         entityDisplay.container.visible = false;
       }
@@ -286,6 +305,13 @@ function resourceMaskSprite<T extends ResourceType>(
   return resourceType + "Mask";
 }
 
+function resourceShieldTexture<T extends ResourceType>(
+  resourceType: T,
+): { roh: "shield_roh", tah: "shield_tah", sie: "shield_sie" }[T] {
+  // @ts-ignore
+  return "shield_" + resourceType;
+}
+
 function resourceMaskTargets(
   resourceType: ResourceType,
   entity: Entity,
@@ -329,5 +355,6 @@ export function playerInitialEntity(): Entity {
     maxTah: 100,
     sie: 50,
     maxSie: 100,
+    shield: "roh",
   };
 }
