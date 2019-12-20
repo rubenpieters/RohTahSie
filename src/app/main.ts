@@ -9,12 +9,16 @@ import { initialHotbar, initializeHotbar } from "../game/hotbar";
 import { initializeNodeExpl } from "../game/nodeExpl";
 import { initializePools } from "./pool";
 
+const WIDTH = 540;
+const HEIGHT = 540;
+
 const renderer = PIXI.autoDetectRenderer();
 
 // TODO: experiment with nicer ways of scaling
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 
 window.addEventListener("load", load);
+window.addEventListener("resize", resize);
 
 let currentTime = new Date().getTime();
 let prevTime = currentTime;
@@ -65,18 +69,22 @@ function load(): void {
     .load(() => {
       console.log("loading done");
       main();
+      resize();
     });
 }
 
+let app: PIXI.Application = undefined as any;
+let appContainer: PIXI.Container = undefined as any;
+
 function main(): void {
-  const app = new PIXI.Application({ width: 540, height: 540 });
+  app = new PIXI.Application({ width: WIDTH, height: HEIGHT });
   document.body.appendChild(app.view);
 
-  const appContainer = new PIXI.Container();
+  appContainer = new PIXI.Container();
   app.stage.addChild(appContainer);
 
   const bg = new PIXI.Sprite(cache["bg"]);
-  Object.assign(bg, { width: 540, height: 540 });
+  Object.assign(bg, { width: WIDTH, height: HEIGHT });
   appContainer.addChild(bg);
 
   const state: GameState = {} as GameState;
@@ -162,4 +170,17 @@ export function attachExplWindowAnimation(
 
 export function clearExplWindowAnimation(): void {
   explWindowAnimations = [];
+}
+
+function resize() {
+  const ratio = Math.min(window.innerWidth / WIDTH, window.innerHeight / HEIGHT);
+
+  if (app !== undefined) {
+    app.renderer.resize(WIDTH * ratio, HEIGHT * ratio);
+  }
+
+  if (appContainer !== undefined) {
+    appContainer.scale.x = ratio;
+    appContainer.scale.y = ratio;
+  }
 }
