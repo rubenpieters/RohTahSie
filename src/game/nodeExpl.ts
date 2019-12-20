@@ -92,11 +92,11 @@ function nodeEffects(
   node: Ability,
 ): string {
   switch (node.tag) {
-    case "AttackNode": return `-${node.damage} to ${node.target}`;
+    case "AttackNode": return `-${node.damage} to ${node.target.tag}`;
     case "SummonNode": return `summon ${node.enemyId}`;
-    case "GenerateNode": return `+${node.value} ${node.resource} to ${node.target}`;
-    case "ShieldNode": return `change shield to ${node.resource} for ${node.target}`;
-    case "AddArmor": return `add armor for ${node.target}`;
+    case "GenerateNode": return `+${node.value} ${node.resource} to ${node.target.tag}`;
+    case "ShieldNode": return `change shield to ${node.resource} for ${node.target.tag}`;
+    case "AddArmor": return `add armor for ${node.target.tag}`;
     case "Empty": return `no effect`;
   }
 }

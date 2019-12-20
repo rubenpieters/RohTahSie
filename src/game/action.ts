@@ -1,8 +1,8 @@
 import * as lo from "lodash";
-import { GameState } from "./state";
+import { GameState, findStatus } from "./state";
 import { Anim, Noop, mkEff, Par, Seq } from "../app/animation";
 import { Display } from "./display";
-import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay } from "./entity";
+import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim } from "./entity";
 import { barLocation, newLayoutAnim } from "./layout";
 import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
@@ -33,7 +33,6 @@ export function applyAction(
           const animation = updateResourceAnim(targetEntity, display, action.resource, target, `+${valueChange}`)
           return { animation, newActions: [] };
         }
-        return { animation: new Noop(), newActions: [] };
       }
       return { animation: new Noop(), newActions: [] };
     }
@@ -76,8 +75,6 @@ export function applyAction(
             newActions = [new Death(new EnemyTarget())];
           }
           return { animation, newActions };
-        } else {
-          return { animation: new Noop(), newActions: [] };
         }
       }
       return { animation: new Noop(), newActions: [] };
@@ -97,7 +94,6 @@ export function applyAction(
           const animation = changeShieldAnim(targetEntityDisplay, action.target, action.resource, cache);
           return { animation, newActions: [] };
         }
-        return { animation: new Noop(), newActions: [] };
       }
       return { animation: new Noop(), newActions: [] };
     }
@@ -112,11 +108,10 @@ export function applyAction(
           targetEntity !== undefined &&
           targetEntity.statuses.length < statusAmount
         ) {
-          const stateStatus = lo.cloneDeep(action.status);
           const id = state.idCounter;
+          const stateStatus = { ...action.status, id };
           state.idCounter++;
-          Object.assign(stateStatus, { id })
-          targetEntity.statuses.push();
+          targetEntity.statuses.push(stateStatus);
           const animation = mkEff({
             eff: () => {
               updateEntityStatusDisplay(targetEntity, targetEntityDisplay.statusSprites, cache);
@@ -125,7 +120,6 @@ export function applyAction(
           });
           return { animation, newActions: [] };
         }
-        return { animation: new Noop(), newActions: [] };
       }
       return { animation: new Noop(), newActions: [] };
     }
@@ -138,6 +132,14 @@ export function applyAction(
           display.enemy.entity.container.visible = false;
         }, k: () => new Noop () });
         return { animation, newActions: [] };
+      } else if (action.target.tag === "StatusTarget") {
+        const status = findStatus(state, action.target.id);
+        if (status !== undefined) {
+          // if a status is found on enemy, then it is not undefined
+          const targetEntity = state[status.owner]!.entity;
+          const animation = removeStatusAnim(targetEntity, display[status.owner].entity, status.statusIndex, cache);
+          return { animation, newActions: [] };
+        }
       }
       return { animation: new Noop(), newActions: [] };
     }
@@ -158,10 +160,11 @@ export function applyActions(
     return new Noop();
   }
   const action = actions[0];
-  const afterStatusesAction = applyStatuses(action, origin, state);
-  const { animation, newActions } = applyAction(afterStatusesAction, state, display, cache);
+  const applyStatusResult = applyStatuses(action, origin, state);
+  const applyActionResult = applyAction(applyStatusResult.transformed, state, display, cache);
+  const newActions = applyStatusResult.newActions.concat(applyActionResult.newActions).concat(actions.slice(1));
   return new Seq([
-    animation,
-    applyActions(newActions.concat(actions.slice(1)), origin, state, display, cache),
+    applyActionResult.animation,
+    applyActions(newActions, origin, state, display, cache),
   ]);
 }

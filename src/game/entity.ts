@@ -236,6 +236,14 @@ export function initializeEntity(
   };
 }
 
+export function entityFindStatus(
+  entity: Entity,
+  statusId: number,
+): number | undefined {
+  const statusIndex = entity.statuses.findIndex(x => x.id === statusId);
+  return statusIndex === -1 ? undefined : statusIndex;
+}
+
 function updateEntityShieldDisplay(
   entity: Entity,
   shieldSprite: PIXI.Sprite,
@@ -252,6 +260,7 @@ export function updateEntityStatusDisplay(
 ) {
   for (let i = 0; i < statusAmount; i++) {
     const status: Status | undefined = entity.statuses[i];
+    statusSprites[i].alpha = 1;
     if (status === undefined) {
       statusSprites[i].texture = PIXI.Texture.EMPTY;
     } else {
@@ -340,6 +349,24 @@ export function changeShieldAnim(
     }),
     new TweenTo(0.25, 1, "absolute", mkAccessTarget(entityDisplay.shield, "alpha")),
   ])
+}
+
+export function removeStatusAnim(
+  entity: Entity,
+  entityDisplay: EntityDisplay,
+  statusId: number,
+  cache: Cache,
+) {
+  return new Seq([
+    new TweenTo(0.25, 0, "absolute", mkAccessTarget(entityDisplay.statusSprites[statusId], "alpha")),
+    mkEff({
+      eff: () => {
+        entity.statuses.splice(statusId, 1);
+        updateEntityStatusDisplay(entity, entityDisplay.statusSprites, cache);
+      },
+      k: () => new Noop(),
+    }),
+  ]);
 }
 
 function resourceTint(
