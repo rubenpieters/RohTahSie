@@ -1,5 +1,6 @@
 import { EnemyKey } from "../enemy";
-import { TargetType, ResourceType } from "../types";
+import { ResourceType } from "../types";
+import { TargetType } from "./target";
 import { Status } from "./status";
 
 export class Regen {

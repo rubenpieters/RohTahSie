@@ -1,5 +1,6 @@
 import { Cache } from "../app/main";
-import { ResourceType, TargetType } from "./types";
+import { ResourceType } from "./types";
+import { TargetType } from "./definitions/target";
 import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, Particle, mkParticle } from "../app/animation";
 import { Display } from "./display";
 import { Pool, mkPool } from "../app/pool";
@@ -59,6 +60,10 @@ const resourceVarAxis: {
   sie: "y",
 };
 
+export type StateStatus = Status & {
+  id: number,
+}
+
 export type Entity = {
   roh: number,
   maxRoh: number,
@@ -68,7 +73,7 @@ export type Entity = {
   maxSie: number,
   shield: ResourceType,
   dirty: boolean,
-  statuses: Status[],
+  statuses: StateStatus[],
 }
 
 export type EntityDisplay = {
@@ -287,7 +292,7 @@ export function updateResourceAnim(
   entity: Entity,
   display: Display,
   resourceType: ResourceType,
-  target: TargetType,
+  target: "player" | "enemy",
   text: string,
 ): Anim {
   const entityDisplay = display[target].entity;

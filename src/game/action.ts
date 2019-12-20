@@ -8,7 +8,8 @@ import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
 import { allEnemies } from "./enemy";
 import { applyStatuses } from "./status";
-import { TargetType } from "./types";
+import { TargetType, EnemyTarget } from "./definitions/target";
+import { targetToEntity, targetToEntityDisplay } from "./target";
 
 export function applyAction(
   action: Action,
@@ -18,14 +19,21 @@ export function applyAction(
 ): { animation: Anim, newActions: Action[] } {
   switch (action.tag) {
     case "Regen": {
-      const target = action.target === "enemy" ? state.enemy : state.player;
-      if (target !== undefined) {
-        const prevValue = target.entity[action.resource];
-        target.entity[action.resource] = Math.min(100, target.entity[action.resource] + action.value);
-        const valueChange = target.entity[action.resource] - prevValue;
-        // increase resource animation
-        const animation = updateResourceAnim(target.entity, display, action.resource, action.target, `+${valueChange}`)
-        return { animation, newActions: [] };
+      if (
+        action.target.tag === "PlayerTarget" ||
+        action.target.tag === "EnemyTarget"
+      ) {
+        const targetEntity = targetToEntity(action.target, state);
+        if (targetEntity !== undefined) {
+          const prevValue = targetEntity[action.resource];
+          targetEntity[action.resource] = Math.min(100, targetEntity[action.resource] + action.value);
+          const valueChange = targetEntity[action.resource] - prevValue;
+          // increase resource animation
+          const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
+          const animation = updateResourceAnim(targetEntity, display, action.resource, target, `+${valueChange}`)
+          return { animation, newActions: [] };
+        }
+        return { animation: new Noop(), newActions: [] };
       }
       return { animation: new Noop(), newActions: [] };
     }
@@ -50,53 +58,79 @@ export function applyAction(
       return { animation, newActions: [] };
     }
     case "Damage": {
-      const target = action.target === "enemy" ? state.enemy : state.player;
-      if (target !== undefined) {
-        const shieldType = target.entity.shield;
-        const prevValue = target.entity[shieldType];
-        target.entity[shieldType] = Math.max(0, target.entity[shieldType] - action.value);
-        const valueChange = prevValue - target.entity[shieldType];
-        // decrease resource animation
-        const animation = updateResourceAnim(target.entity, display, shieldType, action.target, `-${valueChange}`);
-        let newActions: Action[] = [];
-        if (action.target === "enemy" && target.entity[shieldType] <= 0) {
-          newActions = [new Death("enemy")];
+      if (
+        action.target.tag === "PlayerTarget" ||
+        action.target.tag === "EnemyTarget"
+      ) {
+        const targetEntity = targetToEntity(action.target, state);
+        if (targetEntity !== undefined) {
+          const shieldType = targetEntity.shield;
+          const prevValue = targetEntity[shieldType];
+          targetEntity[shieldType] = Math.max(0, targetEntity[shieldType] - action.value);
+          const valueChange = prevValue - targetEntity[shieldType];
+          // decrease resource animation
+          const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
+          const animation = updateResourceAnim(targetEntity, display, shieldType, target, `-${valueChange}`);
+          let newActions: Action[] = [];
+          if (action.target.tag === "EnemyTarget" && targetEntity[shieldType] <= 0) {
+            newActions = [new Death(new EnemyTarget())];
+          }
+          return { animation, newActions };
+        } else {
+          return { animation: new Noop(), newActions: [] };
         }
-        return { animation, newActions };
       }
       return { animation: new Noop(), newActions: [] };
     }
     case "ChangeShield": {
-      const target = action.target === "enemy" ? state.enemy : state.player;
       if (
-        target !== undefined &&
-        target.entity.shield !== action.resource
+        action.target.tag === "PlayerTarget" ||
+        action.target.tag === "EnemyTarget"
       ) {
-        target.entity.shield = action.resource;
-        const animation = changeShieldAnim(display[action.target].entity, action.target, action.resource, cache);
-        return { animation, newActions: [] };
+        const targetEntity = targetToEntity(action.target, state);
+        const targetEntityDisplay = targetToEntityDisplay(action.target, display);
+        if (
+          targetEntity !== undefined &&
+          targetEntity.shield !== action.resource
+        ) {
+          targetEntity.shield = action.resource;
+          const animation = changeShieldAnim(targetEntityDisplay, action.target, action.resource, cache);
+          return { animation, newActions: [] };
+        }
+        return { animation: new Noop(), newActions: [] };
       }
       return { animation: new Noop(), newActions: [] };
     }
     case "AddStatus": {
-      const target = action.target === "enemy" ? state.enemy : state.player;
       if (
-        target !== undefined &&
-        target.entity.statuses.length < statusAmount
+        action.target.tag === "PlayerTarget" ||
+        action.target.tag === "EnemyTarget"
       ) {
-        target.entity.statuses.push(lo.cloneDeep(action.status));
-        const animation = mkEff({
-          eff: () => {
-            updateEntityStatusDisplay(target.entity, display[action.target].entity.statusSprites, cache);
-          },
-          k: () => new Noop(),
-        });
-        return { animation, newActions: [] };
+        const targetEntity = targetToEntity(action.target, state);
+        const targetEntityDisplay = targetToEntityDisplay(action.target, display);
+        if (
+          targetEntity !== undefined &&
+          targetEntity.statuses.length < statusAmount
+        ) {
+          const stateStatus = lo.cloneDeep(action.status);
+          const id = state.idCounter;
+          state.idCounter++;
+          Object.assign(stateStatus, { id })
+          targetEntity.statuses.push();
+          const animation = mkEff({
+            eff: () => {
+              updateEntityStatusDisplay(targetEntity, targetEntityDisplay.statusSprites, cache);
+            },
+            k: () => new Noop(),
+          });
+          return { animation, newActions: [] };
+        }
+        return { animation: new Noop(), newActions: [] };
       }
       return { animation: new Noop(), newActions: [] };
     }
     case "Death": {
-      if (action.target === "enemy") {
+      if (action.target.tag === "EnemyTarget") {
         state.enemy = undefined;
         // enemy death animation
         const animation: Anim = mkEff({ eff: () => {

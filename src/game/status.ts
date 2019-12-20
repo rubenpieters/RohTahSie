@@ -2,7 +2,8 @@ import { Status } from "./definitions/status";
 import { CacheValues } from "../app/main";
 import { GameState } from "./state";
 import { Action, Damage, NoAction } from "./definitions/action";
-import { TargetType } from "./types";
+import { TargetType, PlayerTarget, EnemyTarget } from "./definitions/target";
+import { eqTarget } from "./target";
 
 
 export function statusSprite(
@@ -20,8 +21,8 @@ export function applyStatuses(
   origin: TargetType,
   state: GameState,
 ) {
-  const pStatuses = state.player.entity.statuses.map(x => Object.assign(x, { owner: "player" as TargetType }));
-  const eStatuses = state.enemy === undefined ? [] : state.enemy.entity.statuses.map(x => Object.assign(x, { owner: "enemy" as TargetType }));
+  const pStatuses = state.player.entity.statuses.map(x => Object.assign(x, { owner: new PlayerTarget() as TargetType }));
+  const eStatuses = state.enemy === undefined ? [] : state.enemy.entity.statuses.map(x => Object.assign(x, { owner: new EnemyTarget() as TargetType }));
   const statuses = pStatuses.concat(eStatuses);
   let transformed = action;
   for (const status of statuses) {
@@ -40,7 +41,7 @@ function applyStatus(
     case "Armor": {
       if (
         action.tag === "Damage" &&
-        status.owner === action.target
+        eqTarget(status.owner, action.target)
       ) {
         const newValue = action.value - status.value;
         return newValue <= 0 ?

@@ -1,28 +1,29 @@
 import { Layout } from "./layout";
 import { GenerateNode, AttackNode, Empty, ShieldNode } from "./definitions/ability";
 import { Entity } from "./entity";
+import { EnemyTarget, PlayerTarget } from "./definitions/target";
 
 const layout1: Layout = {
   nodes: [
-    new ShieldNode("tah", "enemy"),
-    new AttackNode(10, "player"),
-    new AttackNode(10, "player"),
-    new AttackNode(10, "player"),
+    new ShieldNode("tah", new EnemyTarget()),
+    new AttackNode(10, new PlayerTarget()),
+    new AttackNode(10, new PlayerTarget()),
+    new AttackNode(10, new PlayerTarget()),
 
-    new AttackNode(10, "player"),
-    new AttackNode(10, "player"),
-    new AttackNode(10, "player"),
-    new AttackNode(10, "player"),
-
-    new Empty,
-    new Empty,
-    new Empty,
-    new Empty,
+    new AttackNode(10, new PlayerTarget()),
+    new AttackNode(10, new PlayerTarget()),
+    new AttackNode(10, new PlayerTarget()),
+    new AttackNode(10, new PlayerTarget()),
 
     new Empty,
     new Empty,
     new Empty,
-    new AttackNode(10, "player"),
+    new Empty,
+
+    new Empty,
+    new Empty,
+    new Empty,
+    new AttackNode(10, new PlayerTarget()),
   ],
   currentIndex: 0,
 }

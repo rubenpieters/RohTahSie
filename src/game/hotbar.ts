@@ -6,6 +6,7 @@ import { IPoint } from "pixi.js";
 import { Display } from "./display";
 import { showNodeExpl, NodeExplDisplay, hideNodeExpl, resetNodeExpl } from "./nodeExpl";
 import { AddStatus } from "./definitions/action";
+import { PlayerTarget, EnemyTarget } from "./definitions/target";
 
 const hotbarSize = 14;
 const xAmount = 7;
@@ -139,15 +140,15 @@ export function initialHotbar(): Hotbar {
   return {
     elements: [
       {
-        node: new GenerateNode(10, "roh", "player"),
+        node: new GenerateNode(10, "roh", new PlayerTarget()),
         selected: false,
       },
       {
-        node: new GenerateNode(10, "tah", "player"),
+        node: new GenerateNode(10, "tah", new PlayerTarget()),
         selected: false,
       },
       {
-        node: new GenerateNode(10, "sie", "player"),
+        node: new GenerateNode(10, "sie", new PlayerTarget()),
         selected: false,
       },
       {
@@ -155,27 +156,27 @@ export function initialHotbar(): Hotbar {
         selected: false,
       },
       {
-        node: new AttackNode(10, "enemy"),
+        node: new AttackNode(10, new EnemyTarget()),
         selected: false,
       },
       {
-        node: new AddArmor("player"),
+        node: new AddArmor(new PlayerTarget()),
         selected: false,
       },
       {
-        node: new AddArmor("enemy"),
+        node: new AddArmor(new EnemyTarget()),
         selected: false,
       },
       {
-        node: new ShieldNode("roh", "player"),
+        node: new ShieldNode("roh", new PlayerTarget()),
         selected: false,
       },
       {
-        node: new ShieldNode("tah", "player"),
+        node: new ShieldNode("tah", new PlayerTarget()),
         selected: false,
       },
       {
-        node: new ShieldNode("sie", "player"),
+        node: new ShieldNode("sie", new PlayerTarget()),
         selected: false,
       },
       {

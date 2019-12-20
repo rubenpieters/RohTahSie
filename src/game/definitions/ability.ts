@@ -1,5 +1,6 @@
 import { EnemyKey } from "../enemy";
-import { ResourceType, TargetType } from "../types";
+import { ResourceType } from "../types";
+import { TargetType } from "./target";
 
 export class GenerateNode {
   public readonly tag: "GenerateNode" = "GenerateNode";

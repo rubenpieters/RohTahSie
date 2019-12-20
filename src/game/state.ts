@@ -1,13 +1,8 @@
-import * as lo from "lodash";
-import { CacheValues, Cache } from "../app/main";
-import { allEnemies } from "./enemy";
+import { CacheValues } from "../app/main";
 import { Ability } from "./definitions/ability";
-import { Layout, newLayoutAnim, barLocation, playerInitialLayout } from "./layout";
-import { Entity, updateResourceAnim, EntityDisplay, newEntityAnim, playerInitialEntity, changeShieldAnim } from "./entity";
-import { Anim, TweenTo, mkAnimTarget, mkAccessTarget, Noop, mkEff, Par, Seq } from "../app/animation";
-import { Display } from "./display";
+import { Layout, playerInitialLayout } from "./layout";
+import { Entity, playerInitialEntity } from "./entity";
 import { Hotbar, initialHotbar } from "./hotbar";
-import { Action, Death } from "./definitions/action";
 
 export type GameState = {
   player: {
@@ -19,6 +14,7 @@ export type GameState = {
     entity: Entity,
     layout: Layout,
   } | undefined,
+  idCounter: number,
 };
 
 export function initializeState(state: GameState): void {
@@ -28,6 +24,7 @@ export function initializeState(state: GameState): void {
     hotbar: initialHotbar(),
   };
   state.enemy = undefined;
+  state.idCounter = 0;
 }
 
 export function nodeSprite(

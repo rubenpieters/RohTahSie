@@ -4,6 +4,7 @@ import { nodeSprite, GameState } from "./state";
 import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq } from "../app/animation";
 import { hotbarSelectedNode } from "./hotbar";
 import { Display } from "./display";
+import { EnemyTarget, PlayerTarget } from "./definitions/target";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
@@ -133,24 +134,24 @@ export function playerInitialLayout(): Layout {
   return {
     nodes: [
       new SummonNode("en1"),
-      new AttackNode(10, "enemy"),
-      new AttackNode(10, "enemy"),
-      new GenerateNode(10, "roh", "player"),
+      new AttackNode(10, new EnemyTarget()),
+      new AttackNode(10, new EnemyTarget()),
+      new GenerateNode(10, "roh", new PlayerTarget()),
 
-      new GenerateNode(10, "roh", "player"),
-      new GenerateNode(10, "roh", "player"),
-      new GenerateNode(10, "roh", "player"),
-      new GenerateNode(10, "roh", "player"),
+      new GenerateNode(10, "roh", new PlayerTarget()),
+      new GenerateNode(10, "roh", new PlayerTarget()),
+      new GenerateNode(10, "roh", new PlayerTarget()),
+      new GenerateNode(10, "roh", new PlayerTarget()),
 
-      new GenerateNode(10, "roh", "player"),
-      new GenerateNode(10, "roh", "player"),
-      new GenerateNode(10, "roh", "player"),
-      new GenerateNode(10, "roh", "player"),
+      new GenerateNode(10, "roh", new PlayerTarget()),
+      new GenerateNode(10, "roh", new PlayerTarget()),
+      new GenerateNode(10, "roh", new PlayerTarget()),
+      new GenerateNode(10, "roh", new PlayerTarget()),
 
-      new GenerateNode(10, "roh", "player"),
-      new GenerateNode(10, "roh", "player"),
-      new GenerateNode(10, "roh", "player"),
-      new GenerateNode(10, "roh", "player"),
+      new GenerateNode(10, "roh", new PlayerTarget()),
+      new GenerateNode(10, "roh", new PlayerTarget()),
+      new GenerateNode(10, "roh", new PlayerTarget()),
+      new GenerateNode(10, "roh", new PlayerTarget()),
     ],
     currentIndex: 0,
   }

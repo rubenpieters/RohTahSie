@@ -6,7 +6,7 @@ import { applyActions } from "./action";
 import { Cache } from "../app/main";
 import { Anim } from "../app/animation";
 import { Armor } from "./definitions/status";
-import { TargetType } from "./types";
+import { TargetType } from "./definitions/target";
 
 export function abilityToActions(
   ability: Ability,
