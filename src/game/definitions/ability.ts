@@ -41,6 +41,15 @@ export class ShieldNode {
   ) {}
 }
 
+export class AddArmor {
+  public readonly tag: "AddArmor" = "AddArmor";
+  public readonly size = 1;
+
+  constructor(
+    public readonly target: TargetType,
+  ) {}
+}
+
 export class Empty {
   public readonly tag: "Empty" = "Empty";
   public readonly size = 1;
@@ -54,6 +63,7 @@ export type Ability
   | SummonNode
   | AttackNode
   | ShieldNode
+  | AddArmor
   | Empty
   ;
   

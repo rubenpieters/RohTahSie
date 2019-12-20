@@ -36,6 +36,7 @@ const enemy1: Entity = {
   maxSie: 100,
   shield: "roh",
   dirty: false,
+  statuses: [],
 };
 
 type Enemies = typeof allEnemies;

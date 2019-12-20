@@ -1,5 +1,6 @@
 import { EnemyKey } from "../enemy";
 import { TargetType, ResourceType } from "../types";
+import { Status } from "./status";
 
 export class Regen {
   public readonly tag: "Regen" = "Regen";
@@ -38,6 +39,15 @@ export class ChangeShield {
   ) {}
 }
 
+export class AddStatus {
+  public readonly tag: "AddStatus" = "AddStatus";
+
+  constructor(
+    public readonly status: Status,
+    public readonly target: TargetType,
+  ) {}
+}
+
 export class Death {
   public readonly tag: "Death" = "Death";
 
@@ -57,6 +67,7 @@ export type Action
   | Summon
   | Damage
   | ChangeShield
+  | AddStatus
   | Death
   | NoAction
   ;

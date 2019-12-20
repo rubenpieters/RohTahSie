@@ -96,6 +96,7 @@ function nodeEffects(
     case "SummonNode": return `summon ${node.enemyId}`;
     case "GenerateNode": return `+${node.value} ${node.resource} to ${node.target}`;
     case "ShieldNode": return `change shield to ${node.resource} for ${node.target}`;
+    case "AddArmor": return `add armor for ${node.target}`;
     case "Empty": return `no effect`;
   }
 }

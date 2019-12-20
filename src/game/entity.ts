@@ -3,6 +3,12 @@ import { ResourceType, TargetType } from "./types";
 import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, Particle, mkParticle } from "../app/animation";
 import { Display } from "./display";
 import { Pool, mkPool } from "../app/pool";
+import { Status } from "./definitions/status";
+import { statusSprite } from "./status";
+
+const statusAmountX = 3;
+const statusAmountY = 5;
+export const statusAmount = statusAmountX * statusAmountY;
 
 // resource display size configuration
 /*
@@ -62,6 +68,7 @@ export type Entity = {
   maxSie: number,
   shield: ResourceType,
   dirty: boolean,
+  statuses: Status[],
 }
 
 export type EntityDisplay = {
@@ -76,6 +83,7 @@ export type EntityDisplay = {
   tahText: PIXI.BitmapText,
   sieText: PIXI.BitmapText,
   shield: PIXI.Sprite,
+  statusSprites: PIXI.Sprite[],
 }
 
 // initialize: a function which takes a display and initializes it on the PIXI app
@@ -134,6 +142,18 @@ export function initializeEntity(
   const shield = new PIXI.Sprite();
   container.addChild(shield);
 
+  // initialize status icons
+  let statusSprites: PIXI.Sprite[] = [];
+  for (let i = 0; i < statusAmount; i++) {
+    const statusSprite = new PIXI.Sprite();
+    statusSprite.x = (i % statusAmountX) * 25 + 160;
+    statusSprite.y = Math.floor(i / statusAmountX) * 25 + 15;
+    statusSprite.pivot.set(12.5, 12.5);
+
+    container.addChild(statusSprite);
+    statusSprites.push(statusSprite);
+  }
+
   // initialize resource text  
   const rohText = new PIXI.BitmapText("-", {
     font: {
@@ -143,7 +163,7 @@ export function initializeEntity(
     align: "center",
     tint: 0x000000,
   });
-  Object.assign(rohText, { x: 110, y: 100, visible: false });
+  Object.assign(rohText, { x: 105, y: 100, visible: false });
   container.addChild(rohText);
   const tahText = new PIXI.BitmapText("-", {
     font: {
@@ -163,7 +183,7 @@ export function initializeEntity(
     align: "center",
     tint: 0x000000,
   });
-  Object.assign(sieText, { x: 110, y: 0, visible: false });
+  Object.assign(sieText, { x: 105, y: 0, visible: false });
   container.addChild(sieText);
 
   // portrait mouseover/out
@@ -194,6 +214,7 @@ export function initializeEntity(
     tahText.text = `${entity.tah}\n(${entity.maxTah})`;
     sieText.text = `${entity.sie}\n(${entity.maxSie})`;
     updateEntityShieldDisplay(entity, shield, cache);
+    updateEntityStatusDisplay(entity, statusSprites, cache);
   }
 
   if (entity === undefined) {
@@ -206,6 +227,7 @@ export function initializeEntity(
     container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar,
     rohText, tahText, sieText,
     shield,
+    statusSprites,
   };
 }
 
@@ -216,6 +238,21 @@ function updateEntityShieldDisplay(
 ): void {
   const texture = resourceShieldTexture(entity.shield);
   shieldSprite.texture = cache[texture];
+}
+
+export function updateEntityStatusDisplay(
+  entity: Entity,
+  statusSprites: PIXI.Sprite[],
+  cache: Cache,
+) {
+  for (let i = 0; i < statusAmount; i++) {
+    const status: Status | undefined = entity.statuses[i];
+    if (status === undefined) {
+      statusSprites[i].texture = PIXI.Texture.EMPTY;
+    } else {
+      statusSprites[i].texture = cache[statusSprite(status)];
+    }
+  }
 }
 
 export function newEntityAnim(
@@ -242,7 +279,7 @@ export function newEntityAnim(
       }
     },
     k: () => new Noop(),
-  })
+  });
 }
 
 export function updateResourceAnim(
@@ -375,5 +412,6 @@ export function playerInitialEntity(): Entity {
     maxSie: 100,
     shield: "roh",
     dirty: false,
+    statuses: [],
   };
 }

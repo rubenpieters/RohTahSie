@@ -51,6 +51,9 @@ export function nodeSprite(
     case "ShieldNode": {
       return "shield";
     }
+    case "AddArmor": {
+      return "shield";
+    }
     case "Empty": {
       return "skip";
     }

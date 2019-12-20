@@ -2,7 +2,7 @@ import * as lo from "lodash";
 import { GameState } from "./state";
 import { Anim, Noop, mkEff, Par, Seq } from "../app/animation";
 import { Display } from "./display";
-import { updateResourceAnim, newEntityAnim, changeShieldAnim } from "./entity";
+import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay } from "./entity";
 import { barLocation, newLayoutAnim } from "./layout";
 import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
@@ -72,6 +72,23 @@ export function applyAction(
       ) {
         target.entity.shield = action.resource;
         const animation = changeShieldAnim(display[action.target].entity, action.target, action.resource, cache);
+        return { animation, newActions: [] };
+      }
+      return { animation: new Noop(), newActions: [] };
+    }
+    case "AddStatus": {
+      const target = action.target === "enemy" ? state.enemy : state.player;
+      if (
+        target !== undefined &&
+        target.entity.statuses.length < statusAmount
+      ) {
+        target.entity.statuses.push(lo.cloneDeep(action.status));
+        const animation = mkEff({
+          eff: () => {
+            updateEntityStatusDisplay(target.entity, display[action.target].entity.statusSprites, cache);
+          },
+          k: () => new Noop(),
+        });
         return { animation, newActions: [] };
       }
       return { animation: new Noop(), newActions: [] };

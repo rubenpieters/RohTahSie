@@ -1,10 +1,11 @@
-import { Ability, SummonNode, GenerateNode, AttackNode, ShieldNode, Empty } from "./definitions/ability";
+import { Ability, SummonNode, GenerateNode, AttackNode, ShieldNode, Empty, AddArmor } from "./definitions/ability";
 import { Cache, attachAnimation, attachExplWindowAnimation, clearExplWindowAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
 import { IPoint } from "pixi.js";
 import { Display } from "./display";
 import { showNodeExpl, NodeExplDisplay, hideNodeExpl, resetNodeExpl } from "./nodeExpl";
+import { AddStatus } from "./definitions/action";
 
 const hotbarSize = 14;
 const xAmount = 7;
@@ -158,11 +159,11 @@ export function initialHotbar(): Hotbar {
         selected: false,
       },
       {
-        node: new AttackNode(10, "enemy"),
+        node: new AddArmor("player"),
         selected: false,
       },
       {
-        node: new AttackNode(10, "enemy"),
+        node: new AddArmor("enemy"),
         selected: false,
       },
       {
