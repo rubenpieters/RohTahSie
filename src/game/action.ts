@@ -133,13 +133,8 @@ export function applyAction(
         }, k: () => new Noop () });
         return { animation, newActions: [] };
       } else if (action.target.tag === "StatusTarget") {
-        const status = findStatus(state, action.target.id);
-        if (status !== undefined) {
-          // if a status is found on enemy, then it is not undefined
-          const targetEntity = state[status.owner]!.entity;
-          const animation = removeStatusAnim(targetEntity, display[status.owner].entity, status.statusIndex, cache);
-          return { animation, newActions: [] };
-        }
+        const animation = removeStatusAnim(action.target, state, display, cache);
+        return { animation, newActions: [] };
       }
       return { animation: new Noop(), newActions: [] };
     }

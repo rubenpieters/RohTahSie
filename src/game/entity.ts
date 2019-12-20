@@ -1,11 +1,12 @@
 import { Cache } from "../app/main";
 import { ResourceType } from "./types";
-import { TargetType } from "./definitions/target";
+import { TargetType, StatusTarget } from "./definitions/target";
 import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, Particle, mkParticle } from "../app/animation";
 import { Display } from "./display";
 import { Pool, mkPool } from "../app/pool";
 import { Status } from "./definitions/status";
 import { statusSprite } from "./status";
+import { findStatus, GameState } from "./state";
 
 const statusAmountX = 3;
 const statusAmountY = 5;
@@ -352,21 +353,35 @@ export function changeShieldAnim(
 }
 
 export function removeStatusAnim(
-  entity: Entity,
-  entityDisplay: EntityDisplay,
-  statusId: number,
+  statusTarget: StatusTarget,
+  state: GameState,
+  display: Display,
   cache: Cache,
 ) {
-  return new Seq([
-    new TweenTo(0.25, 0, "absolute", mkAccessTarget(entityDisplay.statusSprites[statusId], "alpha")),
-    mkEff({
-      eff: () => {
-        entity.statuses.splice(statusId, 1);
-        updateEntityStatusDisplay(entity, entityDisplay.statusSprites, cache);
-      },
-      k: () => new Noop(),
-    }),
-  ]);
+  return mkEff({
+    eff: () => {
+      return findStatus(state, statusTarget.id);
+    },
+    k: (status) => {
+      if (status !== undefined) {
+        const entityDisplay = display[status.owner].entity;
+        return new Seq([
+          new TweenTo(0.25, 0, "absolute", mkAccessTarget(entityDisplay.statusSprites[status.statusIndex], "alpha")),
+          mkEff({
+            eff: () => {
+              // if a status is found on enemy, then it is not undefined
+              const targetEntity = state[status.owner]!.entity;
+              targetEntity.statuses.splice(status.statusIndex, 1);
+              updateEntityStatusDisplay(targetEntity, entityDisplay.statusSprites, cache);
+            },
+            k: () => new Noop(),
+          })
+        ]);
+      } else {
+        return new Noop();
+      }
+    },
+  });
 }
 
 function resourceTint(
