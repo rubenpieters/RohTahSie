@@ -2,7 +2,7 @@ import { Ability } from "./definitions/ability";
 import { Action, Damage, Regen, ChangeShield, Summon } from "./definitions/action";
 import { Display } from "./display";
 import { GameState } from "./state";
-import { applyAction, applyActions } from "./action";
+import { applyActions } from "./action";
 import { Cache } from "../app/main";
 import { Anim } from "../app/animation";
 

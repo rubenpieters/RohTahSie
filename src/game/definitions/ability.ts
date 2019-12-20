@@ -1,5 +1,4 @@
 import { EnemyKey } from "../enemy";
-import { Action, Damage, Regen, ChangeShield, Summon } from "./action";
 import { ResourceType, TargetType } from "../types";
 
 export class GenerateNode {

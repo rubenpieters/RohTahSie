@@ -48,6 +48,7 @@ const cache = {
   "shield_roh": PIXI.Texture.from("assets/sprites/shield_roh.png"),
   "shield_tah": PIXI.Texture.from("assets/sprites/shield_tah.png"),
   "shield_sie": PIXI.Texture.from("assets/sprites/shield_sie.png"),
+  "status": PIXI.Texture.from("assets/sprites/status.png"),
 };
 
 let animations: Anim[] = [];
