@@ -6,6 +6,7 @@ import { applyActions } from "./action";
 import { Cache } from "../app/main";
 import { Anim } from "../app/animation";
 import { Armor } from "./definitions/status";
+import { TargetType } from "./types";
 
 export function abilityToActions(
   ability: Ability,
@@ -42,10 +43,11 @@ export function abilityToActions(
 
 export function applyAbility(
   ability: Ability,
+  origin: TargetType,
   state: GameState,
   display: Display,
   cache: Cache,
 ): Anim {
   const actions = abilityToActions(ability);
-  return applyActions(actions, state, display, cache);
+  return applyActions(actions, origin, state, display, cache);
 }

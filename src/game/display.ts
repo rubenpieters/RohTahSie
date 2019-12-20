@@ -8,6 +8,7 @@ import { HotbarDisplay, newHotbarAnim } from "./hotbar";
 import { NodeExplDisplay } from "./nodeExpl";
 import { Pools } from "../app/pool";
 import { applyAbility } from "./ability";
+import { TargetType } from "./types";
 
 export type Display = {
   player: {
@@ -131,20 +132,20 @@ export function playerCheckDieAnimation(
 }
 
 function activateAndAnimateNode(
-  source: "player" | "enemy",
+  origin: TargetType,
   ability: Ability,
   state: GameState,
   display: Display,
   cache: Cache,
 ) {
   const fadeOutBar = new Par([
-    new TweenTo(0.5, 2, "absolute", mkAccessTarget(display[source].layout.bar.scale, "x")),
-    new TweenTo(0.5, 2, "absolute", mkAccessTarget(display[source].layout.bar.scale, "y")),
-    new TweenTo(0.5, 0, "absolute", mkAccessTarget(display[source].layout.bar, "alpha")),
+    new TweenTo(0.5, 2, "absolute", mkAccessTarget(display[origin].layout.bar.scale, "x")),
+    new TweenTo(0.5, 2, "absolute", mkAccessTarget(display[origin].layout.bar.scale, "y")),
+    new TweenTo(0.5, 0, "absolute", mkAccessTarget(display[origin].layout.bar, "alpha")),
   ]);
   return mkEff({
     eff: () => {
-      return applyAbility(ability, state, display, cache);
+      return applyAbility(ability, origin, state, display, cache);
     },
     k: (anim: Anim) => {
       return new Par([fadeOutBar, anim]);

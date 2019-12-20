@@ -273,6 +273,7 @@ export function newEntityAnim(
         entityDisplay.tahText.text = `${entity.tah}\n(${entity.maxTah})`;
         entityDisplay.sieText.text = `${entity.sie}\n(${entity.maxSie})`;
         updateEntityShieldDisplay(entity, entityDisplay.shield, cache);
+        updateEntityStatusDisplay(entity, entityDisplay.statusSprites, cache);
         entity.dirty = true;
       } else {
         entityDisplay.container.visible = false;

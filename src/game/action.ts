@@ -7,6 +7,8 @@ import { barLocation, newLayoutAnim } from "./layout";
 import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
 import { allEnemies } from "./enemy";
+import { applyStatuses } from "./status";
+import { TargetType } from "./types";
 
 export function applyAction(
   action: Action,
@@ -113,6 +115,7 @@ export function applyAction(
 
 export function applyActions(
   actions: Action[],
+  origin: TargetType,
   state: GameState,
   display: Display,
   cache: Cache,
@@ -120,9 +123,11 @@ export function applyActions(
   if (actions.length === 0) {
     return new Noop();
   }
-  const { animation, newActions } = applyAction(actions[0], state, display, cache);
+  const action = actions[0];
+  const afterStatusesAction = applyStatuses(action, origin, state);
+  const { animation, newActions } = applyAction(afterStatusesAction, state, display, cache);
   return new Seq([
     animation,
-    applyActions(newActions.concat(actions.slice(1)), state, display, cache),
+    applyActions(newActions.concat(actions.slice(1)), origin, state, display, cache),
   ]);
 }
