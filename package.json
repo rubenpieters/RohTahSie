@@ -1,7 +1,15 @@
 {
   "name": "RohTahSie",
   "version": "0.0.1",
+  "engines": {
+    "node": "6.9.1"
+  },
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rubenpieters/RohTahSie"
+  },
+  "license": "MIT",
   "author": "rubenpieters",
   "scripts": {
     "setup": "npm install -g npx@9.7.1 && npm install",
