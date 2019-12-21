@@ -54,7 +54,7 @@ export function initializeHotbar(
       attachExplWindowAnimation(showNodeExpl(state.player.hotbar.elements[i].node, display.player.nodeExpl));
     });
     box.on("mouseout", hotbarMouseOutCb(state, box, display, i));
-    box.on("mousedown", hotbarMouseDownCb(state, elements, i));
+    box.on("pointerdown", hotbarPointerDownCb(state, elements, i));
 
     container.addChild(box);
     elements.push(box);
@@ -97,7 +97,7 @@ function hotbarMouseOutCb(
   };
 }
 
-function hotbarMouseDownCb(
+function hotbarPointerDownCb(
   state: GameState,
   hotbarElements: PIXI.Sprite[],
   index: number,

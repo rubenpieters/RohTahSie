@@ -51,7 +51,7 @@ export function initializeLayout(
     if (type === "player") {
       box.interactive = true;
   
-      box.on("mousedown", layoutMouseDownCb(state, display, cache, i, type));
+      box.on("pointerdown", layoutPointerDownCb(state, display, cache, i, type));
     }
 
     container.addChild(box);
@@ -93,7 +93,7 @@ export function newLayoutAnim(
   })
 }
 
-function layoutMouseDownCb(
+function layoutPointerDownCb(
   state: GameState,
   display: Display,
   cache: Cache,
