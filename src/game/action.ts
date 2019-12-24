@@ -76,6 +76,18 @@ export function applyAction(
           }
           return { animation, newActions };
         }
+      } else if (action.target.tag === "StatusTarget") {
+        // TODO: implement damage (and death if <= 0 hp)
+        /*
+        
+          const animation = mkEff({
+            eff: () => {
+              updateEntityStatusDisplay(targetEntity, targetEntityDisplay.statusSprites, targetEntityDisplay.statusHpSprites, cache);
+            },
+            k: () => new Noop(),
+          });
+          return { animation, newActions: [] };
+        */
       }
       return { animation: new Noop(), newActions: [] };
     }
@@ -109,12 +121,12 @@ export function applyAction(
           targetEntity.statuses.length < statusAmount
         ) {
           const id = state.idCounter;
-          const stateStatus = { ...action.status, id };
+          const stateStatus = { ...action.status, id, hp: action.status.maxHp };
           state.idCounter++;
           targetEntity.statuses.push(stateStatus);
           const animation = mkEff({
             eff: () => {
-              updateEntityStatusDisplay(targetEntity, targetEntityDisplay.statusSprites, cache);
+              updateEntityStatusDisplay(targetEntity, targetEntityDisplay.statusSprites, targetEntityDisplay.statusHpSprites, cache);
             },
             k: () => new Noop(),
           });

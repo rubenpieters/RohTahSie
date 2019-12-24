@@ -97,6 +97,7 @@ function nodeEffects(
     case "GenerateNode": return `+${node.value} ${node.resource} to ${node.target.tag}`;
     case "ShieldNode": return `change shield to ${node.resource} for ${node.target.tag}`;
     case "AddArmor": return `add armor for ${node.target.tag}`;
+    case "AddArmor2": return `add armor for ${node.target.tag}`;
     case "Empty": return `no effect`;
   }
 }

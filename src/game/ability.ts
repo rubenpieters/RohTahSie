@@ -5,7 +5,7 @@ import { GameState } from "./state";
 import { applyActions } from "./action";
 import { Cache } from "../app/main";
 import { Anim } from "../app/animation";
-import { Armor } from "./definitions/status";
+import { Armor1, Armor2 } from "./definitions/status";
 import { TargetType } from "./definitions/target";
 
 export function abilityToActions(
@@ -34,7 +34,12 @@ export function abilityToActions(
     }
     case "AddArmor": {
       return [
-        new AddStatus(new Armor(5), ability.target),
+        new AddStatus(new Armor1(4, 5), ability.target),
+      ];
+    }
+    case "AddArmor2": {
+      return [
+        new AddStatus(new Armor2(1, 1, 6), ability.target),
       ];
     }
     case "Empty": return [];

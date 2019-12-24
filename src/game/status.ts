@@ -11,7 +11,10 @@ export function statusSprite(
   status: Status,
 ): CacheValues {
   switch (status.tag) {
-    case "Armor": {
+    case "Armor1": {
+      return "status";
+    }
+    case "Armor2": {
       return "status";
     }
   }
@@ -42,7 +45,7 @@ function applyStatus(
   state: GameState,
 ): { transformed: Action, newActions: Action[] } {
   switch (status.tag) {
-    case "Armor": {
+    case "Armor1": {
       if (
         action.tag === "Damage" &&
         eqTarget(status.owner, action.target)
@@ -53,6 +56,23 @@ function applyStatus(
           new Damage(newValue, action.target);
         const newActions: Action[] = [
           new Death(new StatusTarget(status.id)),
+        ];
+        return { transformed, newActions };
+      } else {
+        return { transformed: action, newActions: [] };
+      }
+    }
+    case "Armor2": {
+      if (
+        action.tag === "Damage" &&
+        eqTarget(status.owner, action.target)
+      ) {
+        const newValue = action.value - status.value;
+        const transformed = newValue <= 0 ?
+          new NoAction() :
+          new Damage(newValue, action.target);
+        const newActions: Action[] = [
+          new Damage(status.loseValue, new StatusTarget(status.id)),
         ];
         return { transformed, newActions };
       } else {

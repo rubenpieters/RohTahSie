@@ -1,4 +1,4 @@
-import { Ability, SummonNode, GenerateNode, AttackNode, ShieldNode, Empty, AddArmor } from "./definitions/ability";
+import { Ability, SummonNode, GenerateNode, AttackNode, ShieldNode, Empty, AddArmor, AddArmor2 } from "./definitions/ability";
 import { Cache, attachAnimation, attachExplWindowAnimation, clearExplWindowAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
@@ -180,7 +180,7 @@ export function initialHotbar(): Hotbar {
         selected: false,
       },
       {
-        node: new Empty,
+        node: new AddArmor2(new PlayerTarget()),
         selected: false,
       },
       {

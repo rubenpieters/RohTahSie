@@ -1,12 +1,24 @@
-export class Armor {
-  public readonly tag: "Armor" = "Armor";
+export class Armor1 {
+  public readonly tag: "Armor1" = "Armor1";
 
   constructor(
     public readonly value: number,
+    public readonly maxHp: number,
+  ) {}
+}
+
+export class Armor2 {
+  public readonly tag: "Armor2" = "Armor2";
+
+  constructor(
+    public readonly value: number,
+    public readonly loseValue: number,
+    public readonly maxHp: number,
   ) {}
 }
 
 export type Status
-  = Armor
+  = Armor1
+  | Armor2
   ;
   

@@ -63,6 +63,7 @@ const resourceVarAxis: {
 
 export type StateStatus = Status & {
   id: number,
+  hp: number,
 }
 
 export type Entity = {
@@ -90,6 +91,7 @@ export type EntityDisplay = {
   sieText: PIXI.BitmapText,
   shield: PIXI.Sprite,
   statusSprites: PIXI.Sprite[],
+  statusHpSprites: PIXI.Sprite[],
 }
 
 // initialize: a function which takes a display and initializes it on the PIXI app
@@ -150,6 +152,7 @@ export function initializeEntity(
 
   // initialize status icons
   let statusSprites: PIXI.Sprite[] = [];
+  let statusHpSprites: PIXI.Sprite[] = [];
   for (let i = 0; i < statusAmount; i++) {
     const statusSprite = new PIXI.Sprite();
     statusSprite.x = (i % statusAmountX) * 25 + 160;
@@ -158,6 +161,15 @@ export function initializeEntity(
 
     container.addChild(statusSprite);
     statusSprites.push(statusSprite);
+
+    const statusHpSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+    statusHpSprite.tint = 0xFF0000;
+    statusHpSprite.x = (i % statusAmountX) * 25 + 160 - 12.5;
+    statusHpSprite.y = Math.floor(i / statusAmountX) * 25 + 15 - 12.5;
+    statusHpSprite.height = 5;
+
+    container.addChild(statusHpSprite);
+    statusHpSprites.push(statusHpSprite);
   }
 
   // initialize resource text  
@@ -220,7 +232,7 @@ export function initializeEntity(
     tahText.text = `${entity.tah}\n(${entity.maxTah})`;
     sieText.text = `${entity.sie}\n(${entity.maxSie})`;
     updateEntityShieldDisplay(entity, shield, cache);
-    updateEntityStatusDisplay(entity, statusSprites, cache);
+    updateEntityStatusDisplay(entity, statusSprites, statusHpSprites, cache);
   }
 
   if (entity === undefined) {
@@ -233,7 +245,7 @@ export function initializeEntity(
     container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar,
     rohText, tahText, sieText,
     shield,
-    statusSprites,
+    statusSprites, statusHpSprites,
   };
 }
 
@@ -257,15 +269,19 @@ function updateEntityShieldDisplay(
 export function updateEntityStatusDisplay(
   entity: Entity,
   statusSprites: PIXI.Sprite[],
+  statusHpSprites: PIXI.Sprite[],
   cache: Cache,
 ) {
   for (let i = 0; i < statusAmount; i++) {
-    const status: Status | undefined = entity.statuses[i];
+    const status: StateStatus | undefined = entity.statuses[i];
     statusSprites[i].alpha = 1;
     if (status === undefined) {
       statusSprites[i].texture = PIXI.Texture.EMPTY;
+      statusHpSprites[i].visible = false;
     } else {
       statusSprites[i].texture = cache[statusSprite(status)];
+      statusHpSprites[i].visible = true;
+      statusHpSprites[i].width = status.hp * 25 / status.maxHp;
     }
   }
 }
@@ -288,7 +304,7 @@ export function newEntityAnim(
         entityDisplay.tahText.text = `${entity.tah}\n(${entity.maxTah})`;
         entityDisplay.sieText.text = `${entity.sie}\n(${entity.maxSie})`;
         updateEntityShieldDisplay(entity, entityDisplay.shield, cache);
-        updateEntityStatusDisplay(entity, entityDisplay.statusSprites, cache);
+        updateEntityStatusDisplay(entity, entityDisplay.statusSprites, entityDisplay.statusHpSprites, cache);
         entity.dirty = true;
       } else {
         entityDisplay.container.visible = false;
@@ -372,7 +388,7 @@ export function removeStatusAnim(
               // if a status is found on enemy, then it is not undefined
               const targetEntity = state[status.owner]!.entity;
               targetEntity.statuses.splice(status.statusIndex, 1);
-              updateEntityStatusDisplay(targetEntity, entityDisplay.statusSprites, cache);
+              updateEntityStatusDisplay(targetEntity, entityDisplay.statusSprites, entityDisplay.statusHpSprites, cache);
             },
             k: () => new Noop(),
           })
