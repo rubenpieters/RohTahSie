@@ -368,6 +368,40 @@ export function changeShieldAnim(
   ])
 }
 
+export function damageStatusAnim(
+  statusTarget: StatusTarget,
+  damage: number,
+  state: GameState,
+  display: Display,
+  cache: Cache,
+) {
+  return mkEff({
+    eff: () => {
+      return findStatus(state, statusTarget.id);
+    },
+    k: (status) => {
+      if (status !== undefined) {
+        const entityDisplay = display[status.owner].entity;
+        return new Seq([
+          // new TweenTo(0.25, 0, "absolute", mkAccessTarget(entityDisplay.statusSprites[status.statusIndex], "alpha")),
+          mkEff({
+            eff: () => {
+              // if a status is found on enemy, then it is not undefined
+              const targetEntity = state[status.owner]!.entity;
+              const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - damage);
+              targetEntity.statuses[status.statusIndex].hp = newHp;
+              updateEntityStatusDisplay(targetEntity, entityDisplay.statusSprites, entityDisplay.statusHpSprites, cache);
+            },
+            k: () => new Noop(),
+          })
+        ]);
+      } else {
+        return new Noop();
+      }
+    },
+  });
+}
+
 export function removeStatusAnim(
   statusTarget: StatusTarget,
   state: GameState,

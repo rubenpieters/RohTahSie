@@ -2,7 +2,7 @@ import * as lo from "lodash";
 import { GameState, findStatus } from "./state";
 import { Anim, Noop, mkEff, Par, Seq } from "../app/animation";
 import { Display } from "./display";
-import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim } from "./entity";
+import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim, damageStatusAnim } from "./entity";
 import { barLocation, newLayoutAnim } from "./layout";
 import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
@@ -77,17 +77,8 @@ export function applyAction(
           return { animation, newActions };
         }
       } else if (action.target.tag === "StatusTarget") {
-        // TODO: implement damage (and death if <= 0 hp)
-        /*
-        
-          const animation = mkEff({
-            eff: () => {
-              updateEntityStatusDisplay(targetEntity, targetEntityDisplay.statusSprites, targetEntityDisplay.statusHpSprites, cache);
-            },
-            k: () => new Noop(),
-          });
-          return { animation, newActions: [] };
-        */
+        const animation = damageStatusAnim(action.target, action.value, state, display, cache);
+        return { animation, newActions: [] };
       }
       return { animation: new Noop(), newActions: [] };
     }
@@ -157,19 +148,19 @@ export function applyAction(
 }
 
 export function applyActions(
-  actions: Action[],
+  actionQueue: Action[],
   origin: TargetType,
   state: GameState,
   display: Display,
   cache: Cache,
 ): Anim {
-  if (actions.length === 0) {
+  if (actionQueue.length === 0) {
     return new Noop();
   }
-  const action = actions[0];
+  const action = actionQueue[0];
   const applyStatusResult = applyStatuses(action, origin, state);
   const applyActionResult = applyAction(applyStatusResult.transformed, state, display, cache);
-  const newActions = applyStatusResult.newActions.concat(applyActionResult.newActions).concat(actions.slice(1));
+  const newActions = applyStatusResult.newActions.concat(applyActionResult.newActions).concat(actionQueue.slice(1));
   return new Seq([
     applyActionResult.animation,
     applyActions(newActions, origin, state, display, cache),
