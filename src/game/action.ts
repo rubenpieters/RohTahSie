@@ -8,7 +8,7 @@ import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
 import { allEnemies } from "./enemy";
 import { applyStatuses } from "./status";
-import { TargetType, EnemyTarget } from "./definitions/target";
+import { TargetType, EnemyTarget, StatusTarget } from "./definitions/target";
 import { targetToEntity, targetToEntityDisplay } from "./target";
 
 export function applyAction(
@@ -77,8 +77,21 @@ export function applyAction(
           return { animation, newActions };
         }
       } else if (action.target.tag === "StatusTarget") {
-        const animation = damageStatusAnim(action.target, action.value, state, display, cache);
-        return { animation, newActions: [] };
+        const status = findStatus(state, action.target.id);
+        if (status !== undefined) {
+          // if a status is found on enemy, then it is not undefined
+          const targetEntity = state[status.owner]!.entity;
+          const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - action.value);
+          targetEntity.statuses[status.statusIndex].hp = newHp;
+          const animation = damageStatusAnim(status, targetEntity, display, cache);
+          let newActions: Action[] = [];
+          if (newHp <= 0) {
+            newActions = [new Death(new StatusTarget(action.target.id))];
+          }
+          return { animation, newActions };
+        } else {
+          return { animation: new Noop(), newActions: [] };
+        }
       }
       return { animation: new Noop(), newActions: [] };
     }
@@ -136,8 +149,16 @@ export function applyAction(
         }, k: () => new Noop () });
         return { animation, newActions: [] };
       } else if (action.target.tag === "StatusTarget") {
-        const animation = removeStatusAnim(action.target, state, display, cache);
-        return { animation, newActions: [] };
+        const status = findStatus(state, action.target.id);
+        if (status !== undefined) {
+          // if a status is found on enemy, then it is not undefined
+          const targetEntity = state[status.owner]!.entity;
+          targetEntity.statuses.splice(status.statusIndex, 1);
+          const animation = removeStatusAnim(status, targetEntity, display, cache);
+          return { animation, newActions: [] };
+        } else {
+          return { animation: new Noop(), newActions: [] };
+        }
       }
       return { animation: new Noop(), newActions: [] };
     }
