@@ -3,8 +3,9 @@ import { Ability } from "./definitions/ability";
 import { Layout, playerInitialLayout } from "./layout";
 import { Entity, playerInitialEntity, entityFindStatus } from "./entity";
 import { Hotbar, initialHotbar } from "./hotbar";
+import { GamePhase, Charging } from "./definitions/phase";
 
-export type GameState = {
+export type GameStateBase = {
   player: {
     entity: Entity,
     layout: Layout,
@@ -17,6 +18,10 @@ export type GameState = {
   idCounter: number,
 };
 
+export type GameState = GameStateBase & {
+  phase: GamePhase,
+};
+
 export function initializeState(state: GameState): void {
   state.player = {
     entity: playerInitialEntity(),
@@ -25,6 +30,7 @@ export function initializeState(state: GameState): void {
   };
   state.enemy = undefined;
   state.idCounter = 0;
+  state.phase = new Charging();
 }
 
 export function findStatus(

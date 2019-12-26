@@ -3,11 +3,12 @@ import { Anim, TweenTo, runAnimation, mkAccessTarget, Seq, Par, Eff, mkEff, Noop
 import { playerInitialLayout, initializeLayout, barLocation } from "../game/layout";
 import { GameState, initializeState } from "../game/state";
 import { PixiFps } from "./fps";
-import { Display, gameLoopAnimation } from "../game/display";
+import { Display, chargingAnimation, finalizingAnimation, applyingAnimation, transformingAnimation } from "../game/display";
 import { Ability } from "../game/definitions/ability";
 import { initialHotbar, initializeHotbar } from "../game/hotbar";
 import { initializeNodeExpl } from "../game/nodeExpl";
 import { initializePools } from "./pool";
+import { nextPhase } from "../game/phase";
 
 const WIDTH = 540;
 const HEIGHT = 540;
@@ -58,7 +59,6 @@ const cache = {
 let animations: Anim[] = [];
 let explWindowAnimations: Anim[] = [];
 let gameAnimations: Anim[] = [];
-let gameLoopAnim: Anim;
 
 function load(): void {
   // TODO: create load screen with pixi loader https://pixijs.download/dev/docs/PIXI.Loader.html
@@ -104,18 +104,17 @@ function main(): void {
   display.pools = initializePools(appContainer);
   display.player.nodeExpl = initializeNodeExpl(appContainer, cache);
 
-  // attach initial animation
-  gameLoopAnim = gameLoopAnimation(state, display, cache);
-  gameAnimations = [gameLoopAnim];
-
   // attach fps counter
   const fpsCounter = new PixiFps();
   appContainer.addChild(fpsCounter);
 
-  window.requestAnimationFrame(update(state, display));
+  // attach initial animation
+  animatePhase(state, display, cache);
+
+  window.requestAnimationFrame(update(state, display, cache));
 }
 
-function update(state: GameState, display: Display): () => void {
+function update(state: GameState, display: Display, cache: Cache): () => void {
   return () => {
     prevTime = currentTime;
     currentTime = new Date().getTime();
@@ -147,12 +146,40 @@ function update(state: GameState, display: Display): () => void {
       }
     });
     if (newAnims.length === 0) {
-      gameAnimations = [gameLoopAnim];
+      state.phase = nextPhase(state);
+      animatePhase(state, display, cache);
     } else {
       gameAnimations = newAnims;
     }
   
-    requestAnimationFrame(update(state, display));
+    requestAnimationFrame(update(state, display, cache));
+  }
+}
+
+export function animatePhase(
+  state: GameState,
+  display: Display,
+  cache: Cache,
+): void {
+  switch (state.phase.tag) {
+    case "Charging": {
+      gameAnimations = [chargingAnimation(state, display, cache)];
+      break;
+    }
+    case "Activating": {
+      if (state.phase.transformed) {
+        // @ts-ignore state phase is Activating in this branch
+        gameAnimations = [applyingAnimation(state, display, cache)]; 
+      } else {
+        // @ts-ignore state phase is Activating in this branch
+        gameAnimations = [transformingAnimation(state, display, cache)]; 
+      }
+      break;
+    }
+    case "Finalizing": {
+      gameAnimations = [finalizingAnimation(state, display, cache)];
+      break;
+    }
   }
 }
 
