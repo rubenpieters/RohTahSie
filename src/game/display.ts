@@ -14,6 +14,7 @@ import { Action } from "./definitions/action";
 import { Activating } from "./definitions/phase";
 import { applyStatuses } from "./status";
 import { MenuDisplay } from "src/menu/menu";
+import { CardCraftDisplay } from "src/craft/card";
 
 export type Display = {
   player: {
@@ -30,6 +31,7 @@ export type Display = {
   menu: MenuDisplay,
   combatContainer: PIXI.Container,
   craftContainer: PIXI.Container,
+  cardCraft: CardCraftDisplay,
 }
 
 

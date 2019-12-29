@@ -10,6 +10,7 @@ import { initializeNodeExpl } from "../game/nodeExpl";
 import { initializePools } from "./pool";
 import { nextPhase } from "../game/phase";
 import { initializeMenu } from "../menu/menu";
+import { initializeCraftCards } from "../craft/card";
 
 const WIDTH = 540;
 const HEIGHT = 540;
@@ -97,6 +98,7 @@ function main(): void {
   combatContainer = new PIXI.Container();
   appContainer.addChild(combatContainer);
   craftContainer = new PIXI.Container();
+  craftContainer.visible = false;
   appContainer.addChild(craftContainer);
 
   const state: GameState = {} as GameState;
@@ -118,6 +120,7 @@ function main(): void {
   display.menu = initializeMenu(appContainer, cache, display, state.menuState);
   display.combatContainer = combatContainer;
   display.craftContainer = craftContainer;
+  display.cardCraft = initializeCraftCards(craftContainer, state.cardCrafts, cache);
 
   // attach fps counter
   const fpsCounter = new PixiFps();
