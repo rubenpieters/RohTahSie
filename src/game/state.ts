@@ -4,6 +4,11 @@ import { Layout, playerInitialLayout } from "./layout";
 import { Entity, playerInitialEntity, entityFindStatus } from "./entity";
 import { Hotbar, initialHotbar } from "./hotbar";
 import { GamePhase, Charging } from "./definitions/phase";
+import { MenuType } from "src/menu/menu";
+
+export type MenuState = {
+  menuSelected: MenuType,
+}
 
 export type GameStateBase = {
   player: {
@@ -16,6 +21,7 @@ export type GameStateBase = {
     layout: Layout,
   } | undefined,
   idCounter: number,
+  menuState: MenuState,
 };
 
 export type GameState = GameStateBase & {
@@ -31,6 +37,7 @@ export function initializeState(state: GameState): void {
   state.enemy = undefined;
   state.idCounter = 0;
   state.phase = new Charging();
+  state.menuState = { menuSelected: "combat" };
 }
 
 export function findStatus(

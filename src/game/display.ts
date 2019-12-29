@@ -13,6 +13,7 @@ import { applyAction } from "./action";
 import { Action } from "./definitions/action";
 import { Activating } from "./definitions/phase";
 import { applyStatuses } from "./status";
+import { MenuDisplay } from "src/menu/menu";
 
 export type Display = {
   player: {
@@ -26,6 +27,9 @@ export type Display = {
     layout: LayoutDisplay,
   },
   pools: Pools,
+  menu: MenuDisplay,
+  combatContainer: PIXI.Container,
+  craftContainer: PIXI.Container,
 }
 
 

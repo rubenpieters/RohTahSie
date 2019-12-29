@@ -9,6 +9,7 @@ import { initialHotbar, initializeHotbar } from "../game/hotbar";
 import { initializeNodeExpl } from "../game/nodeExpl";
 import { initializePools } from "./pool";
 import { nextPhase } from "../game/phase";
+import { initializeMenu } from "../menu/menu";
 
 const WIDTH = 540;
 const HEIGHT = 540;
@@ -54,6 +55,10 @@ const cache = {
   "shield_tah": PIXI.Texture.from("assets/sprites/shield_tah.png"),
   "shield_sie": PIXI.Texture.from("assets/sprites/shield_sie.png"),
   "status": PIXI.Texture.from("assets/sprites/status.png"),
+  "menu_combat": PIXI.Texture.from("assets/sprites/menu_combat.png"),
+  "menu_map": PIXI.Texture.from("assets/sprites/menu_map.png"),
+  "menu_craft": PIXI.Texture.from("assets/sprites/menu_craft.png"),
+  "menu_settings": PIXI.Texture.from("assets/sprites/menu_settings.png"),
 };
 
 let animations: Anim[] = [];
@@ -75,6 +80,8 @@ function load(): void {
 
 let app: PIXI.Application = undefined as any;
 let appContainer: PIXI.Container = undefined as any;
+let combatContainer: PIXI.Container = undefined as any;
+let craftContainer: PIXI.Container = undefined as any;
 
 function main(): void {
   app = new PIXI.Application({ width: WIDTH, height: HEIGHT });
@@ -87,22 +94,30 @@ function main(): void {
   Object.assign(bg, { width: WIDTH, height: HEIGHT });
   appContainer.addChild(bg);
 
+  combatContainer = new PIXI.Container();
+  appContainer.addChild(combatContainer);
+  craftContainer = new PIXI.Container();
+  appContainer.addChild(craftContainer);
+
   const state: GameState = {} as GameState;
   initializeState(state);
 
   let display: Display = {} as Display;
   display.player = {
-    entity: initializeEntity(state.player.entity, 40, 40, appContainer, display, cache),
-    layout: initializeLayout(state.player.layout, 50, 200, appContainer, state, display, cache, "player"),
-    hotbar: initializeHotbar(state.player.hotbar, 100, 455, appContainer, state, display, cache),
+    entity: initializeEntity(state.player.entity, 40, 40, combatContainer, display, cache),
+    layout: initializeLayout(state.player.layout, 50, 200, combatContainer, state, display, cache, "player"),
+    hotbar: initializeHotbar(state.player.hotbar, 100, 455, combatContainer, state, display, cache),
     nodeExpl: undefined as any,
   };
   display.enemy = {
-    entity: initializeEntity(undefined, 270, 40, appContainer, display, cache),
-    layout: initializeLayout(undefined, 280, 200, appContainer, state, display, cache, "enemy"),
+    entity: initializeEntity(undefined, 270, 40, combatContainer, display, cache),
+    layout: initializeLayout(undefined, 280, 200, combatContainer, state, display, cache, "enemy"),
   };
-  display.pools = initializePools(appContainer);
-  display.player.nodeExpl = initializeNodeExpl(appContainer, cache);
+  display.pools = initializePools(combatContainer);
+  display.player.nodeExpl = initializeNodeExpl(combatContainer, cache);
+  display.menu = initializeMenu(appContainer, cache, display, state.menuState);
+  display.combatContainer = combatContainer;
+  display.craftContainer = craftContainer;
 
   // attach fps counter
   const fpsCounter = new PixiFps();
