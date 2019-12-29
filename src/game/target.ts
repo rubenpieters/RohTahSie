@@ -8,8 +8,11 @@ export function targetToEntity<T extends TargetType>(
   state: GameState,
 ): { "PlayerTarget": Entity, "EnemyTarget": Entity | undefined, "StatusTarget": undefined }[T["tag"]] {
   switch (target.tag) {
+    // @ts-ignore
     case "PlayerTarget": return state.player.entity;
+    // @ts-ignore
     case "EnemyTarget": return state.enemy === undefined ? undefined : state.enemy.entity;
+    // @ts-ignore
     case "StatusTarget": return undefined;
   }
 }
@@ -19,8 +22,11 @@ export function targetToEntityDisplay<T extends TargetType>(
   display: Display,
 ): { "PlayerTarget": EntityDisplay, "EnemyTarget": EntityDisplay, "StatusTarget": undefined }[T["tag"]] {
   switch (target.tag) {
+    // @ts-ignore
     case "PlayerTarget": return display.player.entity;
+    // @ts-ignore
     case "EnemyTarget": return display.enemy.entity;
+    // @ts-ignore
     case "StatusTarget": return undefined;
   }
 }

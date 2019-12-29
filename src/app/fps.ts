@@ -1,5 +1,3 @@
-import * as PIXI from 'pixi.js';
-
 export class PixiFps extends PIXI.Container {
     private static readonly DEFAULT_FONT_SIZE: number = 30;
     private static readonly DEFAULT_FONT_COLOR: number = 0xff0000;
