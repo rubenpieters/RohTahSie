@@ -1,5 +1,5 @@
-import { GenerateNode, Ability } from "../game/definitions/ability";
-import { PlayerTarget } from "../game/definitions/target";
+import { GenerateNode, Ability, AttackNode } from "../game/definitions/ability";
+import { PlayerTarget, EnemyTarget } from "../game/definitions/target";
 
 export type CardCrafts = {
   node: Ability,
@@ -21,6 +21,11 @@ export function allCardCrafts(): CardCrafts {
     },
     {
       node: new GenerateNode(10, "sie", new PlayerTarget()),
+      included: 0,
+      available: 1,
+    },
+    {
+      node: new AttackNode(5, new EnemyTarget()),
       included: 0,
       available: 1,
     },

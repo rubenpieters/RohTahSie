@@ -51,6 +51,7 @@ export function mkPool<A extends PIXI.DisplayObject>(
 
 export type Pools = {
   textParticlePool: Pool<PIXI.BitmapText>,
+  spriteParticlePool: Pool<PIXI.Sprite>
 }
 
 export function initializePools(
@@ -70,7 +71,12 @@ export function initializePools(
     });
   }, 10, "textParticlePool", container);
 
+  // initialize sprite particle pool
+  const spriteParticlePool = mkPool(() => {
+    return new PIXI.Sprite();
+  }, 3, "spriteParticlePool", container);
+
   parentContainer.addChild(container);
 
-  return { textParticlePool };
+  return { textParticlePool, spriteParticlePool };
 }

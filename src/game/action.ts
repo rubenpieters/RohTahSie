@@ -1,6 +1,6 @@
 import * as lo from "lodash";
 import { GameState, findStatus } from "./state";
-import { Anim, Noop, mkEff, Par, Seq } from "../app/animation";
+import { Anim, Noop, mkEff, Par, Seq, TweenTo, mkAccessTarget, mkParticle } from "../app/animation";
 import { Display } from "./display";
 import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim, damageStatusAnim } from "./entity";
 import { barLocation, newLayoutAnim } from "./layout";
@@ -10,6 +10,7 @@ import { allEnemies } from "./enemy";
 import { applyStatuses } from "./status";
 import { TargetType, EnemyTarget, StatusTarget } from "./definitions/target";
 import { targetToEntity, targetToEntityDisplay } from "./target";
+import { updateGemText } from "../craft/card";
 
 export function applyAction(
   action: Action,
@@ -41,16 +42,16 @@ export function applyAction(
       // summon enemy animation
       const animation = mkEff({
         eff: () => {
-          display.enemy.layout.container.visible = true;
-          display.enemy.entity.container.visible = true;
+          display.enemy.layout.container.alpha = 1;
+          display.enemy.entity.container.alpha = 1;
           // reset bar location
           state.enemy!.layout.currentIndex = 0;
           Object.assign(display.enemy.layout.bar, barLocation(state.enemy!.layout.currentIndex));
         },
         k: () => {
           return new Par([
-            newLayoutAnim(state.enemy === undefined ? undefined : state.enemy.layout, display.enemy.layout, cache),
-            newEntityAnim(state.enemy === undefined ? undefined : state.enemy.entity, display.enemy.entity, cache),
+            newLayoutAnim(state.enemy?.layout, display.enemy.layout, cache),
+            newEntityAnim(state.enemy?.entity, display.enemy.entity, cache),
           ]);
         },
       });
@@ -141,13 +142,47 @@ export function applyAction(
     }
     case "Death": {
       if (action.target.tag === "EnemyTarget") {
-        state.enemy = undefined;
-        // enemy death animation
-        const animation: Anim = mkEff({ eff: () => {
-          display.enemy.layout.container.visible = false;
-          display.enemy.entity.container.visible = false;
-        }, k: () => new Noop () });
-        return { animation, newActions: [] };
+        if (state.enemy !== undefined) {
+          const gainedGems = state.enemy.reward;
+          state.gems += gainedGems;
+          state.enemy = undefined;
+          // enemy death animation
+          const animation: Anim = new Seq([
+            new Par([
+              new TweenTo(0.5, 0, "absolute", mkAccessTarget(display.enemy.layout.container, "alpha")),
+              new TweenTo(0.5, 0, "absolute", mkAccessTarget(display.enemy.entity.container, "alpha")),
+            ]),
+            mkParticle({
+              animation: (particle) => {
+                return new Seq([
+                  new Par([
+                    new TweenTo(0.4, 10, "absolute", mkAccessTarget(particle, "x")),
+                    new TweenTo(0.4, 290, "absolute", mkAccessTarget(particle, "y")),
+                  ]),
+                  new Par([
+                    new TweenTo(0.4, 0, "absolute", mkAccessTarget(particle, "alpha")),
+                    mkParticle({
+                      animation: (particle) => {
+                        return new TweenTo(0.4, 25, "relativeDecrease", mkAccessTarget(particle, "y"));
+                      },
+                      pool: display.pools.textParticlePool,
+                      props: { text: `+${gainedGems}`, x: 10, y: 290, tint: 0x6600CC },
+                    }),
+                  ]),
+                ]);
+              },
+              pool: display.pools.spriteParticlePool,
+              props: { texture: cache["gem"], x: 250, y: 150, alpha: 1 },
+            }),
+            mkEff({
+              eff: () => {
+                updateGemText(display.cardCraft.gemText, state);
+              },
+              k: () => new Noop(),
+            }),
+          ]);
+          return { animation, newActions: [] };
+        }
       } else if (action.target.tag === "StatusTarget") {
         const status = findStatus(state, action.target.id);
         if (status !== undefined) {

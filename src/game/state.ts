@@ -20,10 +20,12 @@ export type GameStateBase = {
   enemy: {
     entity: Entity,
     layout: Layout,
+    reward: number,
   } | undefined,
   idCounter: number,
   menuState: MenuState,
   cardCrafts: CardCrafts,
+  gems: number,
 };
 
 export type GameState = GameStateBase & {
@@ -41,6 +43,7 @@ export function initializeState(state: GameState): void {
   state.idCounter = 0;
   state.phase = new Charging();
   state.menuState = { menuSelected: "combat" };
+  state.gems = 0;
 }
 
 export function findStatus(

@@ -61,6 +61,7 @@ const cache = {
   "menu_craft": PIXI.Texture.from("assets/sprites/menu_craft.png"),
   "menu_settings": PIXI.Texture.from("assets/sprites/menu_settings.png"),
   "refresh": PIXI.Texture.from("assets/sprites/refresh.png"),
+  "gem": PIXI.Texture.from("assets/sprites/gem.png"),
 };
 
 let animations: Anim[] = [];

@@ -29,12 +29,12 @@ const layout1: Layout = {
 }
 
 const enemy1: Entity = {
-  roh: 100,
-  maxRoh: 100,
-  tah: 100,
-  maxTah: 100,
-  sie: 100,
-  maxSie: 100,
+  roh: 10,
+  maxRoh: 10,
+  tah: 10,
+  maxTah: 10,
+  sie: 10,
+  maxSie: 10,
   shield: "roh",
   dirty: false,
   statuses: [],
@@ -46,5 +46,6 @@ export const allEnemies = {
   "en1": {
     entity: enemy1,
     layout: layout1,
+    reward: 1,
   }
 }
