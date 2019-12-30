@@ -1,6 +1,7 @@
 import { CardCrafts } from "./all";
 import { nodeSprite } from "../game/state";
 import { Cache } from "../app/main";
+import { Display } from "src/game/display";
 
 export type CardDisplay = {
   cardContainer: PIXI.Container,
@@ -16,6 +17,7 @@ export type CardCraftDisplay = {
 export function initializeCraftCards(
   parentContainer: PIXI.Container,
   cardCrafts: CardCrafts,
+  display: Display,
   cache: Cache,
 ): CardCraftDisplay {
   const container = new PIXI.Container();
@@ -23,11 +25,11 @@ export function initializeCraftCards(
 
   // initialize icons
   let cards: CardDisplay[] = [];
-  let i = 0;
-  cardCrafts.forEach(card => {
+  for (let i = 0; i < cardCrafts.length; i++) {
+    const card = cardCrafts[i];
     const cardContainer = new PIXI.Container();
     cardContainer.interactive = true;
-    cardContainer.on("pointerdown", () => console.log("test"));
+    cardContainer.on("pointerdown", changeCardIncluded(i, cardCrafts, display));
     cardContainer.width = 60;
     cardContainer.height = 75;
 
@@ -44,10 +46,43 @@ export function initializeCraftCards(
     cardContainer.addChild(sprite);
     container.addChild(cardContainer);
     cards.push({ cardContainer, bg, sprite });
-    i += 1;
-  });
+  }
+
+  updateCardIncluded(cardCrafts, cards);
 
   parentContainer.addChild(container);
 
   return { container, cards };
+}
+
+function updateCardIncluded(
+  cardCrafts: CardCrafts,
+  cardsDisplay: CardDisplay[],
+) {
+  for (let i = 0; i < cardCrafts.length; i++) {
+    const card = cardCrafts[i];
+    const currentIncluded = card.included;
+    if (currentIncluded === 0) {
+      cardsDisplay[i].bg.tint = 0x00AAAA;
+    } else {
+      cardsDisplay[i].bg.tint = 0x00CC11;
+    }
+  }
+}
+
+function changeCardIncluded(
+  i: number,
+  cardCrafts: CardCrafts,
+  display: Display,
+): () => void {
+  return () => {
+    const currentIncluded = cardCrafts[i].included;
+    if (currentIncluded === 0) {
+      cardCrafts[i].included = 1;
+      display.cardCraft.cards[i].bg.tint = 0x00CC11;
+    } else {
+      cardCrafts[i].included = 0;
+      display.cardCraft.cards[i].bg.tint = 0x00AAAA;
+    }
+  }
 }

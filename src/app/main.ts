@@ -60,6 +60,7 @@ const cache = {
   "menu_map": PIXI.Texture.from("assets/sprites/menu_map.png"),
   "menu_craft": PIXI.Texture.from("assets/sprites/menu_craft.png"),
   "menu_settings": PIXI.Texture.from("assets/sprites/menu_settings.png"),
+  "refresh": PIXI.Texture.from("assets/sprites/refresh.png"),
 };
 
 let animations: Anim[] = [];
@@ -109,7 +110,7 @@ function main(): void {
     entity: initializeEntity(state.player.entity, 40, 40, combatContainer, display, cache),
     layout: initializeLayout(state.player.layout, 50, 200, combatContainer, state, display, cache, "player"),
     hotbar: initializeHotbar(state.player.hotbar, 100, 455, combatContainer, state, display, cache),
-    nodeExpl: undefined as any,
+    nodeExpl: undefined as any, // initialized later for z-index
   };
   display.enemy = {
     entity: initializeEntity(undefined, 270, 40, combatContainer, display, cache),
@@ -117,10 +118,10 @@ function main(): void {
   };
   display.pools = initializePools(combatContainer);
   display.player.nodeExpl = initializeNodeExpl(combatContainer, cache);
-  display.menu = initializeMenu(appContainer, cache, display, state.menuState);
+  display.menu = initializeMenu(appContainer, cache, display, state);
   display.combatContainer = combatContainer;
   display.craftContainer = craftContainer;
-  display.cardCraft = initializeCraftCards(craftContainer, state.cardCrafts, cache);
+  display.cardCraft = initializeCraftCards(craftContainer, state.cardCrafts, display, cache);
 
   // attach fps counter
   const fpsCounter = new PixiFps();

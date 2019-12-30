@@ -16,12 +16,12 @@ export function allCardCrafts(): CardCrafts {
     },
     {
       node: new GenerateNode(10, "tah", new PlayerTarget()),
-      included: 1,
+      included: 0,
       available: 1,
     },
     {
       node: new GenerateNode(10, "sie", new PlayerTarget()),
-      included: 1,
+      included: 0,
       available: 1,
     },
   ];

@@ -7,10 +7,12 @@ import { Display } from "./display";
 import { showNodeExpl, NodeExplDisplay, hideNodeExpl, resetNodeExpl } from "./nodeExpl";
 import { AddStatus } from "./definitions/action";
 import { PlayerTarget, EnemyTarget } from "./definitions/target";
+import { CardCrafts } from "../craft/all";
+import { filterUndefined, fillUndefinedUpTo } from "../util/util";
 
-const hotbarSize = 14;
 const xAmount = 7;
 const yAmount = 2;
+const hotbarSize = xAmount * yAmount;
 
 export type Hotbar = {
   elements: {
@@ -22,6 +24,7 @@ export type Hotbar = {
 export type HotbarDisplay = {
   container: PIXI.Container,
   elements: PIXI.Sprite[],
+  refreshBtn: PIXI.Sprite,
 }
 
 export function initializeHotbar(
@@ -60,9 +63,17 @@ export function initializeHotbar(
     elements.push(box);
   }
 
+  const refreshBtn = new PIXI.Sprite(cache["refresh"]);
+  refreshBtn.x = 370;
+  refreshBtn.y = 12.5;
+  container.addChild(refreshBtn);
+
+  refreshBtn.interactive = true;
+  refreshBtn.on("pointerdown", refreshHotBar(state, display, cache));
+
   parentContainer.addChild(container);
 
-  return { container, elements };
+  return { container, elements, refreshBtn };
 }
 
 function hotbarMouseOverAnim<A extends { scale: IPoint }>(
@@ -113,6 +124,7 @@ function hotbarPointerDownCb(
     hotbar.elements[index].selected = ! hotbar.elements[index].selected;
   };
 }
+
 export function newHotbarAnim(
   hotbar: Hotbar,
   hotbarDisplay: HotbarDisplay,
@@ -126,7 +138,7 @@ export function newHotbarAnim(
       }
     },
     k: () => new Noop(),
-  })
+  });
 }
 
 export function hotbarSelectedNode(
@@ -134,6 +146,36 @@ export function hotbarSelectedNode(
 ): Ability | undefined {
   const selectedElement = hotbar.elements.find(x => x.selected);
   return selectedElement === undefined ? undefined : selectedElement.node;
+}
+
+export function refreshHotBar(
+  state: GameState,
+  display: Display,
+  cache: Cache,
+): () => void {
+  return () => {
+    const newHotbar = calcHotbar(state.cardCrafts);
+    state.player.hotbar = newHotbar;
+    attachAnimation(newHotbarAnim(newHotbar, display.player.hotbar, cache));
+  };
+}
+
+export function calcHotbar(
+  cardCrafts: CardCrafts,
+): Hotbar {
+  const elementsUnfiltered = cardCrafts.map(x => {
+    if (x.included === 1) {
+      return { 
+        node: x.node,
+        selected: false,
+      };
+    } else {
+      return undefined;
+    }
+  });
+  const elementsUnfilled = filterUndefined(elementsUnfiltered);
+  const elements = fillUndefinedUpTo(elementsUnfilled, { node: new Empty(), selected: false }, hotbarSize);
+  return { elements };
 }
 
 export function initialHotbar(): Hotbar {

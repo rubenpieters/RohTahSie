@@ -1,5 +1,5 @@
 import { Cache } from "src/app/main";
-import { MenuState } from "src/game/state";
+import { MenuState, GameState } from "src/game/state";
 import { Display } from "src/game/display";
 
 export type MenuType = "combat" | "map" | "craft" | "settings";
@@ -13,7 +13,7 @@ export function initializeMenu(
   parentContainer: PIXI.Container,
   cache: Cache,
   display: Display,
-  menuState: MenuState,
+  state: GameState,
 ): MenuDisplay {
   const container = new PIXI.Container();
   Object.assign(container, { x: 0, y: 130 });
@@ -31,13 +31,13 @@ export function initializeMenu(
     iconSprite.alpha = 0.35;
 
     iconSprite.interactive = true;
-    iconSprite.on("pointerdown", transitionScreen(iconName, display, menuState));
+    iconSprite.on("pointerdown", transitionScreen(iconName, display, state));
 
     iconSprites.push(iconSprite);
     container.addChild(iconSprite);
   }
 
-  updateMenuSelected(menuState, iconSprites);
+  updateMenuSelected(state.menuState, iconSprites);
 
   parentContainer.addChild(container);
 
@@ -60,14 +60,13 @@ function updateMenuSelected(
     } else {
       iconSprites[i].alpha = 0.35;
     }
-
   }
 }
 
 function transitionScreen(
   to: MenuType,
   display: Display,
-  menuState: MenuState,
+  state: GameState,
 ): () => void {
   return () => {
     display.combatContainer.visible = false;
@@ -75,23 +74,25 @@ function transitionScreen(
     switch (to) {
       case "combat": {
         display.combatContainer.visible = true;
-        menuState.menuSelected = "combat";
+        state.menuState.menuSelected = "combat";
         break;
       }
       case "map": {
-        menuState.menuSelected = "map";
+        state.menuState.menuSelected = "map";
         break;
       }
       case "craft": {
         display.craftContainer.visible = true;
-        menuState.menuSelected = "craft";
+        state.menuState.menuSelected = "craft";
         break;
       }
       case "settings": {
-        menuState.menuSelected = "settings";
+        state.menuState.menuSelected = "settings";
         break;
       }
     }
-    updateMenuSelected(menuState, display.menu.iconSprites);
+    state.player.hotbar.elements.forEach(x => x.selected = false);
+    display.player.hotbar.elements.forEach(x => x.scale.set(1, 1));
+    updateMenuSelected(state.menuState, display.menu.iconSprites);
   };
 }

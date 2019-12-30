@@ -2,7 +2,7 @@ import { CacheValues } from "../app/main";
 import { Ability } from "./definitions/ability";
 import { Layout, playerInitialLayout } from "./layout";
 import { Entity, playerInitialEntity, entityFindStatus } from "./entity";
-import { Hotbar, initialHotbar } from "./hotbar";
+import { Hotbar, initialHotbar, calcHotbar } from "./hotbar";
 import { GamePhase, Charging } from "./definitions/phase";
 import { MenuType } from "../menu/menu";
 import { CardCrafts, allCardCrafts } from "../craft/all";
@@ -31,16 +31,16 @@ export type GameState = GameStateBase & {
 };
 
 export function initializeState(state: GameState): void {
+  state.cardCrafts = allCardCrafts();
   state.player = {
     entity: playerInitialEntity(),
     layout: playerInitialLayout(),
-    hotbar: initialHotbar(),
+    hotbar: calcHotbar(state.cardCrafts),
   };
   state.enemy = undefined;
   state.idCounter = 0;
   state.phase = new Charging();
   state.menuState = { menuSelected: "combat" };
-  state.cardCrafts = allCardCrafts();
 }
 
 export function findStatus(
