@@ -9,6 +9,7 @@ import { AddStatus } from "./definitions/action";
 import { PlayerTarget, EnemyTarget } from "./definitions/target";
 import { CardCrafts } from "../craft/all";
 import { filterUndefined, fillUndefinedUpTo } from "../util/util";
+import { Zones } from "src/zone/all";
 
 const xAmount = 7;
 const yAmount = 2;
@@ -154,7 +155,7 @@ export function refreshHotBar(
   cache: Cache,
 ): () => void {
   return () => {
-    const newHotbar = calcHotbar(state.cardCrafts);
+    const newHotbar = calcHotbar(state.cardCrafts, state.zones);
     state.player.hotbar = newHotbar;
     attachAnimation(newHotbarAnim(newHotbar, display.player.hotbar, cache));
   };
@@ -162,7 +163,10 @@ export function refreshHotBar(
 
 export function calcHotbar(
   cardCrafts: CardCrafts,
+  zones: Zones,
 ): Hotbar {
+  // crafted cards
+  const craftedCardSize = hotbarSize - 4;
   const elementsUnfiltered = cardCrafts.map(x => {
     if (x.included === 1) {
       return { 
@@ -173,8 +177,22 @@ export function calcHotbar(
       return undefined;
     }
   });
-  const elementsUnfilled = filterUndefined(elementsUnfiltered);
-  const elements = fillUndefinedUpTo(elementsUnfilled, { node: new Empty(), selected: false }, hotbarSize);
+  const elementsUnfilled = filterUndefined(elementsUnfiltered).slice(0, craftedCardSize - 1);
+  const elementsCrafts = fillUndefinedUpTo(elementsUnfilled, { node: new Empty(), selected: false }, craftedCardSize);
+  // zone cards
+  const selectedZone = zones.find(x => x.selected === true);
+  if (selectedZone === undefined) {
+    throw "no selected zone";
+  }
+  const elementsZoneUnfilled: { node: Ability, selected: boolean }[] = selectedZone.enemyIds.map(x => {
+    return {
+      node: new SummonNode(x),
+      selected: false,
+    };
+  });
+  const elementsZone = fillUndefinedUpTo(elementsZoneUnfilled, { node: new Empty(), selected: false }, 4);
+
+  const elements = elementsCrafts.concat(elementsZone);
   return { elements };
 }
 

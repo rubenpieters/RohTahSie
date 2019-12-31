@@ -1,0 +1,20 @@
+import { EnemyKey } from "src/game/enemy";
+
+export type Zones = {
+  enemyIds: EnemyKey[],
+  selected: boolean,
+}[];
+
+
+export function allZones(): Zones {
+  return [
+    {
+      enemyIds: ["en1"],
+      selected: true,
+    },
+    {
+      enemyIds: [],
+      selected: false,
+    },
+  ];
+}

@@ -6,6 +6,7 @@ import { Hotbar, initialHotbar, calcHotbar } from "./hotbar";
 import { GamePhase, Charging } from "./definitions/phase";
 import { MenuType } from "../menu/menu";
 import { CardCrafts, allCardCrafts } from "../craft/all";
+import { Zones, allZones } from "../zone/all";
 
 export type MenuState = {
   menuSelected: MenuType,
@@ -26,6 +27,7 @@ export type GameStateBase = {
   menuState: MenuState,
   cardCrafts: CardCrafts,
   gems: number,
+  zones: Zones,
 };
 
 export type GameState = GameStateBase & {
@@ -34,10 +36,11 @@ export type GameState = GameStateBase & {
 
 export function initializeState(state: GameState): void {
   state.cardCrafts = allCardCrafts();
+  state.zones = allZones();
   state.player = {
     entity: playerInitialEntity(),
     layout: playerInitialLayout(),
-    hotbar: calcHotbar(state.cardCrafts),
+    hotbar: calcHotbar(state.cardCrafts, state.zones),
   };
   state.enemy = undefined;
   state.idCounter = 0;

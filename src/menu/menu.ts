@@ -71,6 +71,7 @@ function transitionScreen(
   return () => {
     display.combatContainer.visible = false;
     display.craftContainer.visible = false;
+    display.zoneContainer.visible = false;
     switch (to) {
       case "combat": {
         display.combatContainer.visible = true;
@@ -78,6 +79,7 @@ function transitionScreen(
         break;
       }
       case "map": {
+        display.zoneContainer.visible = true;
         state.menuState.menuSelected = "map";
         break;
       }

@@ -11,6 +11,7 @@ import { initializePools } from "./pool";
 import { nextPhase } from "../game/phase";
 import { initializeMenu } from "../menu/menu";
 import { initializeCraftCards } from "../craft/card";
+import { initializeZones } from "../zone/zone";
 
 const WIDTH = 540;
 const HEIGHT = 540;
@@ -85,6 +86,7 @@ let app: PIXI.Application = undefined as any;
 let appContainer: PIXI.Container = undefined as any;
 let combatContainer: PIXI.Container = undefined as any;
 let craftContainer: PIXI.Container = undefined as any;
+let zoneContainer: PIXI.Container = undefined as any;
 
 function main(): void {
   app = new PIXI.Application({ width: WIDTH, height: HEIGHT });
@@ -102,6 +104,9 @@ function main(): void {
   craftContainer = new PIXI.Container();
   craftContainer.visible = false;
   appContainer.addChild(craftContainer);
+  zoneContainer = new PIXI.Container();
+  zoneContainer.visible = false;
+  appContainer.addChild(zoneContainer);
 
   const state: GameState = {} as GameState;
   initializeState(state);
@@ -122,7 +127,9 @@ function main(): void {
   display.menu = initializeMenu(appContainer, cache, display, state);
   display.combatContainer = combatContainer;
   display.craftContainer = craftContainer;
+  display.zoneContainer = zoneContainer;
   display.cardCraft = initializeCraftCards(craftContainer, state.cardCrafts, display, cache);
+  display.zone = initializeZones(zoneContainer, state.zones, display, cache);
 
   // attach fps counter
   const fpsCounter = new PixiFps();
