@@ -68,6 +68,14 @@ export class Empty {
   ) {}
 }
 
+export class Harvest {
+  public readonly tag: "Harvest" = "Harvest";
+  public readonly size = 1;
+
+  constructor() {}
+}
+
+
 export type Ability
   = GenerateNode
   | SummonNode
@@ -76,5 +84,6 @@ export type Ability
   | AddArmor
   | AddArmor2
   | Empty
+  | Harvest
   ;
   

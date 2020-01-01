@@ -57,6 +57,16 @@ export class Death {
   ) {}
 }
 
+export class Cost {
+  public readonly tag: "Cost" = "Cost";
+
+  constructor(
+    public readonly value: number,
+    public readonly resource: ResourceType,
+    public readonly target: TargetType,
+  ) {}
+}
+
 export class NoAction {
   public readonly tag: "NoAction" = "NoAction";
 
@@ -67,6 +77,7 @@ export type Action
   = Regen
   | Summon
   | Damage
+  | Cost
   | ChangeShield
   | AddStatus
   | Death

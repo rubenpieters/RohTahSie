@@ -26,40 +26,31 @@ const resourceFullSize = {
   roh: 119,
   tah: 121,
   sie: 103,
-};
+} as const;
 
 const resourceMinSize = {
   roh: 10,
   tah: 5,
   sie: 0,
-};
+} as const;
 
 const resourceVarSize = {
   roh: 99,
   tah: 90,
   sie: 83,
-};
+} as const;
 
-// TODO: use as const when TS is upgraded
-const resourceVarField: {
+const resourceVarField = {
   roh: "width",
   tah: "height",
   sie: "height",
-} = {
-  roh: "width",
-  tah: "height",
-  sie: "height",
-};
+} as const;
 
-const resourceVarAxis: {
+const resourceVarAxis = {
   roh: "x",
   tah: "y",
   sie: "y",
-} = {
-  roh: "x",
-  tah: "y",
-  sie: "y",
-};
+} as const;
 
 export type StateStatus = Status & {
   id: number,
@@ -472,11 +463,11 @@ function resourceMaskTargets(
 
 export function playerInitialEntity(): Entity {
   return {
-    roh: 50,
+    roh: 100,
     maxRoh: 100,
-    tah: 50,
+    tah: 100,
     maxTah: 100,
-    sie: 50,
+    sie: 100,
     maxSie: 100,
     shield: "roh",
     dirty: false,

@@ -98,6 +98,7 @@ function nodeEffects(
     case "ShieldNode": return `change shield to ${node.resource} for ${node.target.tag}`;
     case "AddArmor": return `add armor for ${node.target.tag}`;
     case "AddArmor2": return `add armor for ${node.target.tag}`;
+    case "Harvest": return `harvest`;
     case "Empty": return `no effect`;
   }
 }

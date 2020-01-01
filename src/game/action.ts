@@ -96,6 +96,45 @@ export function applyAction(
       }
       return { animation: new Noop(), newActions: [] };
     }
+    case "Cost": {
+      if (
+        action.target.tag === "PlayerTarget" ||
+        action.target.tag === "EnemyTarget"
+      ) {
+        const targetEntity = targetToEntity(action.target, state);
+        if (targetEntity !== undefined) {
+          const shieldType = action.resource;
+          const prevValue = targetEntity[shieldType];
+          targetEntity[shieldType] = Math.max(0, targetEntity[shieldType] - action.value);
+          const valueChange = prevValue - targetEntity[shieldType];
+          // decrease resource animation
+          const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
+          const animation = updateResourceAnim(targetEntity, display, shieldType, target, `-${valueChange}`);
+          let newActions: Action[] = [];
+          if (action.target.tag === "EnemyTarget" && targetEntity[shieldType] <= 0) {
+            newActions = [new Death(new EnemyTarget())];
+          }
+          return { animation, newActions };
+        }
+      } else if (action.target.tag === "StatusTarget") {
+        const status = findStatus(state, action.target.id);
+        if (status !== undefined) {
+          // if a status is found on enemy, then it is not undefined
+          const targetEntity = state[status.owner]!.entity;
+          const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - action.value);
+          targetEntity.statuses[status.statusIndex].hp = newHp;
+          const animation = damageStatusAnim(status, targetEntity, display, cache);
+          let newActions: Action[] = [];
+          if (newHp <= 0) {
+            newActions = [new Death(new StatusTarget(action.target.id))];
+          }
+          return { animation, newActions };
+        } else {
+          return { animation: new Noop(), newActions: [] };
+        }
+      }
+      return { animation: new Noop(), newActions: [] };
+    }
     case "ChangeShield": {
       if (
         action.target.tag === "PlayerTarget" ||

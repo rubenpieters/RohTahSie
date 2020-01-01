@@ -1,4 +1,4 @@
-import { Ability, GenerateNode, SummonNode, AttackNode } from "./definitions/ability";
+import { Ability, GenerateNode, SummonNode, AttackNode, Empty } from "./definitions/ability";
 import { Cache, attachAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq } from "../app/animation";
@@ -133,25 +133,25 @@ export function barLocation(
 export function playerInitialLayout(): Layout {
   return {
     nodes: [
-      new SummonNode("en1"),
-      new AttackNode(10, new EnemyTarget()),
-      new AttackNode(10, new EnemyTarget()),
-      new GenerateNode(10, "roh", new PlayerTarget()),
+      new Empty(),
+      new Empty(),
+      new Empty(),
+      new Empty(),
 
-      new GenerateNode(10, "roh", new PlayerTarget()),
-      new GenerateNode(10, "roh", new PlayerTarget()),
-      new GenerateNode(10, "roh", new PlayerTarget()),
-      new GenerateNode(10, "roh", new PlayerTarget()),
+      new Empty(),
+      new Empty(),
+      new Empty(),
+      new Empty(),
 
-      new GenerateNode(10, "roh", new PlayerTarget()),
-      new GenerateNode(10, "roh", new PlayerTarget()),
-      new GenerateNode(10, "roh", new PlayerTarget()),
-      new GenerateNode(10, "roh", new PlayerTarget()),
+      new Empty(),
+      new Empty(),
+      new Empty(),
+      new Empty(),
 
-      new GenerateNode(10, "roh", new PlayerTarget()),
-      new GenerateNode(10, "roh", new PlayerTarget()),
-      new GenerateNode(10, "roh", new PlayerTarget()),
-      new GenerateNode(10, "roh", new PlayerTarget()),
+      new Empty(),
+      new Empty(),
+      new Empty(),
+      new Empty(),
     ],
     currentIndex: 0,
   }

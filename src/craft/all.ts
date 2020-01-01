@@ -1,4 +1,4 @@
-import { GenerateNode, Ability, AttackNode } from "../game/definitions/ability";
+import { GenerateNode, Ability, AttackNode, Harvest } from "../game/definitions/ability";
 import { PlayerTarget, EnemyTarget } from "../game/definitions/target";
 
 export type CardCrafts = {
@@ -25,7 +25,7 @@ export function allCardCrafts(): CardCrafts {
       available: 1,
     },
     {
-      node: new AttackNode(5, new EnemyTarget()),
+      node: new Harvest(),
       included: 0,
       available: 1,
     },

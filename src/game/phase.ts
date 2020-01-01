@@ -7,7 +7,7 @@ export function nextPhase(
 ): GamePhase {
   switch (state.phase.tag) {
     case "Charging": {
-      const actionQueue = abilityToActions(state.player.layout.nodes[state.player.layout.currentIndex]);
+      const actionQueue = abilityToActions(state, state.player.layout.nodes[state.player.layout.currentIndex]);
       return new Activating(actionQueue, false, "player");
     }
     case "Activating": {
@@ -16,7 +16,7 @@ export function nextPhase(
         if (state.phase.source === "enemy") {
           return new Finalizing();
         } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
-          const actionQueue = abilityToActions(state.enemy.layout.nodes[state.enemy.layout.currentIndex]);
+          const actionQueue = abilityToActions(state, state.enemy.layout.nodes[state.enemy.layout.currentIndex]);
           return new Activating(actionQueue, false, "enemy");
         } else {
           return new Finalizing();

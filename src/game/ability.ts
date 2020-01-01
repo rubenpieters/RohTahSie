@@ -1,14 +1,15 @@
 import { Ability } from "./definitions/ability";
-import { Action, Damage, Regen, ChangeShield, Summon, AddStatus } from "./definitions/action";
+import { Action, Damage, Regen, ChangeShield, Summon, AddStatus, Cost } from "./definitions/action";
 import { Display } from "./display";
 import { GameState } from "./state";
 import { applyActions } from "./action";
 import { Cache } from "../app/main";
 import { Anim } from "../app/animation";
 import { Armor1, Armor2 } from "./definitions/status";
-import { TargetType } from "./definitions/target";
+import { TargetType, EnemyTarget, PlayerTarget } from "./definitions/target";
 
 export function abilityToActions(
+  state: GameState,
   ability: Ability,
 ): Action[] {
   switch (ability.tag) {
@@ -42,17 +43,12 @@ export function abilityToActions(
         new AddStatus(new Armor2(1, 1, 6), ability.target),
       ];
     }
+    case "Harvest": {
+      return [
+        new Cost(3, "tah", new PlayerTarget()),
+        new Damage(5, new EnemyTarget()),
+      ];
+    }
     case "Empty": return [];
   }
-}
-
-export function applyAbility(
-  ability: Ability,
-  origin: TargetType,
-  state: GameState,
-  display: Display,
-  cache: Cache,
-): Anim {
-  const actions = abilityToActions(ability);
-  return applyActions(actions, origin, state, display, cache);
 }

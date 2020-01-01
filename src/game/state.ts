@@ -79,7 +79,6 @@ export function nodeSprite(
         case "tah": return "res_gre";
         case "sie": return "res_yel";
       }
-      throw "impossible";
     }
     case "SummonNode": {
       return "creep";
@@ -95,6 +94,9 @@ export function nodeSprite(
     }
     case "AddArmor2": {
       return "shield";
+    }
+    case "Harvest": {
+      return "sword";
     }
     case "Empty": {
       return "skip";
