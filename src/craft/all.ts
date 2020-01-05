@@ -16,17 +16,17 @@ export function allCardCrafts(): CardCrafts {
     },
     {
       node: new GenerateNode(10, "tah", new PlayerTarget()),
-      included: 0,
+      included: 1,
       available: 1,
     },
     {
       node: new GenerateNode(10, "sie", new PlayerTarget()),
-      included: 0,
+      included: 1,
       available: 1,
     },
     {
       node: new Harvest(),
-      included: 0,
+      included: 1,
       available: 1,
     },
   ];

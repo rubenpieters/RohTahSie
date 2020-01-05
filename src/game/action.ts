@@ -11,6 +11,7 @@ import { applyStatuses } from "./status";
 import { TargetType, EnemyTarget, StatusTarget } from "./definitions/target";
 import { targetToEntity, targetToEntityDisplay } from "./target";
 import { updateGemText } from "../craft/card";
+import { resourceMaxField } from "./entity";
 
 export function applyAction(
   action: Action,
@@ -27,7 +28,8 @@ export function applyAction(
         const targetEntity = targetToEntity(action.target, state);
         if (targetEntity !== undefined) {
           const prevValue = targetEntity[action.resource];
-          targetEntity[action.resource] = Math.min(100, targetEntity[action.resource] + action.value);
+          const maxValue = targetEntity[resourceMaxField(action.resource)];
+          targetEntity[action.resource] = Math.min(maxValue, targetEntity[action.resource] + action.value);
           const valueChange = targetEntity[action.resource] - prevValue;
           // increase resource animation
           const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";

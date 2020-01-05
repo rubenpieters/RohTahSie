@@ -405,7 +405,7 @@ function resourceTint(
   }
 }
 
-function resourceMaxField<T extends ResourceType>(
+export function resourceMaxField<T extends ResourceType>(
   resourceType: T,
 ): { roh: "maxRoh", tah: "maxTah", sie: "maxSie" }[T] {
   // @ts-ignore

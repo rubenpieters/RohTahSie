@@ -9,7 +9,7 @@ export type Zones = {
 export function allZones(): Zones {
   return [
     {
-      enemyIds: ["en1"],
+      enemyIds: ["en1", "en2", "en3"],
       selected: true,
     },
     {
