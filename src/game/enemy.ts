@@ -103,12 +103,12 @@ const layout3: Layout = {
 }
 
 const enemy3: Entity = {
-  roh: 40,
-  maxRoh: 40,
-  tah: 40,
-  maxTah: 40,
-  sie: 40,
-  maxSie: 40,
+  roh: 45,
+  maxRoh: 45,
+  tah: 45,
+  maxTah: 45,
+  sie: 45,
+  maxSie: 45,
   shield: "roh",
   dirty: false,
   statuses: [],

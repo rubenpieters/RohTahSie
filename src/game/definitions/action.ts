@@ -73,6 +73,12 @@ export class NoAction {
   constructor() {}
 }
 
+export class EndTurn {
+  public readonly tag: "EndTurn" = "EndTurn";
+
+  constructor() {}
+}
+
 export type Action
   = Regen
   | Summon
@@ -82,4 +88,5 @@ export type Action
   | AddStatus
   | Death
   | NoAction
+  | EndTurn
   ;

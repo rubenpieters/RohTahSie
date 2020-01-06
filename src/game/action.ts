@@ -241,6 +241,9 @@ export function applyAction(
     case "NoAction": {
       return { animation: new Noop(), newActions: [] };
     }
+    case "EndTurn": {
+      return { animation: new Noop(), newActions: [] };
+    }
   }
 }
 

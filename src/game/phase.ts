@@ -1,6 +1,7 @@
 import { GameState } from "./state";
 import { GamePhase, Activating, Charging, Finalizing } from "./definitions/phase";
 import { abilityToActions } from "./ability";
+import { EndTurn } from "./definitions/action";
 
 export function nextPhase(
   state: GameState,
@@ -8,6 +9,7 @@ export function nextPhase(
   switch (state.phase.tag) {
     case "Charging": {
       const actionQueue = abilityToActions(state, state.player.layout.nodes[state.player.layout.currentIndex]);
+      actionQueue.push(new EndTurn());
       return new Activating(actionQueue, false, "player");
     }
     case "Activating": {

@@ -17,8 +17,19 @@ export class Armor2 {
   ) {}
 }
 
+export class Dmg1 {
+  public readonly tag: "Dmg1" = "Dmg1";
+
+  constructor(
+    public readonly value: number,
+    public readonly loseValue: number,
+    public readonly maxHp: number,
+  ) {}
+}
+
 export type Status
   = Armor1
   | Armor2
+  | Dmg1
   ;
   

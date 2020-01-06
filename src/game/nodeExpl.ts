@@ -99,6 +99,7 @@ function nodeEffects(
     case "AddArmor": return `add armor for ${node.target.tag}`;
     case "AddArmor2": return `add armor for ${node.target.tag}`;
     case "Harvest": return `harvest`;
+    case "AddDmg1": return `AddDmg1`;
     case "Empty": return `no effect`;
   }
 }

@@ -98,6 +98,9 @@ export function nodeSprite(
     case "Harvest": {
       return "sword";
     }
+    case "AddDmg1": {
+      return "sword";
+    }
     case "Empty": {
       return "skip";
     }

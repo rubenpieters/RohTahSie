@@ -5,7 +5,7 @@ import { GameState } from "./state";
 import { applyActions } from "./action";
 import { Cache } from "../app/main";
 import { Anim } from "../app/animation";
-import { Armor1, Armor2 } from "./definitions/status";
+import { Armor1, Armor2, Dmg1 } from "./definitions/status";
 import { TargetType, EnemyTarget, PlayerTarget } from "./definitions/target";
 
 export function abilityToActions(
@@ -47,6 +47,11 @@ export function abilityToActions(
       return [
         new Cost(3, "tah", new PlayerTarget()),
         new Damage(5, new EnemyTarget()),
+      ];
+    }
+    case "AddDmg1": {
+      return [
+        new AddStatus(new Dmg1(1, 1, 10), new PlayerTarget()),
       ];
     }
     case "Empty": return [];

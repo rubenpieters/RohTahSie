@@ -17,6 +17,9 @@ export function statusSprite(
     case "Armor2": {
       return "status";
     }
+    case "Dmg1": {
+      return "status";
+    }
   }
 }
 
@@ -75,6 +78,17 @@ function applyStatus(
           new Damage(status.loseValue, new StatusTarget(status.id)),
         ];
         return { transformed, newActions };
+      } else {
+        return { transformed: action, newActions: [] };
+      }
+    }
+    case "Dmg1": {
+      if (action.tag === "EndTurn") {
+        const newActions = [
+          new Damage(1, new EnemyTarget()),
+          new Damage(status.loseValue, new StatusTarget(status.id)),
+        ];
+        return { transformed: action, newActions };
       } else {
         return { transformed: action, newActions: [] };
       }
