@@ -81,12 +81,12 @@ export function applyingAnimation(
   }
   const source = state.phase.source;
   const fadeOutBar = display[source].layout.bar.alpha < Number.EPSILON * 100 ?
-  new Noop() :
-  new Par([
-    new TweenTo(0.5, 2, "absolute", mkAccessTarget(display[source].layout.bar.scale, "x")),
-    new TweenTo(0.5, 2, "absolute", mkAccessTarget(display[source].layout.bar.scale, "y")),
-    new TweenTo(0.5, 0, "absolute", mkAccessTarget(display[source].layout.bar, "alpha")),
-  ]);
+    new Noop() :
+    new Par([
+      new TweenTo(0.5, 2, "absolute", mkAccessTarget(display[source].layout.bar.scale, "x")),
+      new TweenTo(0.5, 2, "absolute", mkAccessTarget(display[source].layout.bar.scale, "y")),
+      new TweenTo(0.5, 0, "absolute", mkAccessTarget(display[source].layout.bar, "alpha")),
+    ]);
   return mkEff({
     eff: () => {
       const { animation, newActions } = applyAction(action, state, display, cache);

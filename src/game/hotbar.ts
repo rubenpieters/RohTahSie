@@ -24,6 +24,7 @@ export type Hotbar = {
 
 export type HotbarDisplay = {
   container: PIXI.Container,
+  bg: PIXI.Sprite,
   elements: PIXI.Sprite[],
   refreshBtn: PIXI.Sprite,
 }
@@ -39,6 +40,11 @@ export function initializeHotbar(
 ): HotbarDisplay {
   const container = new PIXI.Container();
   Object.assign(container, { x, y });
+
+  const bg = new PIXI.Sprite(cache["hotbar_bg"]);
+  bg.x = -45;
+  bg.y = -45;
+  container.addChild(bg);
 
   let elements: PIXI.Sprite[] = [];
 
@@ -74,7 +80,7 @@ export function initializeHotbar(
 
   parentContainer.addChild(container);
 
-  return { container, elements, refreshBtn };
+  return { container, bg, elements, refreshBtn };
 }
 
 function hotbarMouseOverAnim<A extends { scale: IPoint }>(

@@ -63,6 +63,7 @@ const cache = {
   "menu_settings": PIXI.Texture.from("assets/sprites/menu_settings.png"),
   "refresh": PIXI.Texture.from("assets/sprites/refresh.png"),
   "gem": PIXI.Texture.from("assets/sprites/gem.png"),
+  "hotbar_bg": PIXI.Texture.from("assets/sprites/hotbar_bg.png"),
 };
 
 let animations: Anim[] = [];
@@ -128,7 +129,7 @@ function main(): void {
   display.combatContainer = combatContainer;
   display.craftContainer = craftContainer;
   display.zoneContainer = zoneContainer;
-  display.cardCraft = initializeCraftCards(craftContainer, state.cardCrafts, display, cache);
+  display.cardCraft = initializeCraftCards(craftContainer, state.cardCrafts, state, display, cache);
   display.zone = initializeZones(zoneContainer, state.zones, display, cache);
 
   // attach fps counter

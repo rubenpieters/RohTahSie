@@ -1,12 +1,13 @@
 import { CardCrafts } from "./all";
 import { nodeSprite, GameState } from "../game/state";
 import { Cache } from "../app/main";
-import { Display } from "src/game/display";
+import { Display } from "../game/display";
 
 export type CardDisplay = {
   cardContainer: PIXI.Container,
   bg: PIXI.Sprite,
   sprite: PIXI.Sprite,
+  addBtn: PIXI.Sprite,
 }
 
 export type CardCraftDisplay = {
@@ -18,6 +19,7 @@ export type CardCraftDisplay = {
 export function initializeCraftCards(
   parentContainer: PIXI.Container,
   cardCrafts: CardCrafts,
+  state: GameState,
   display: Display,
   cache: Cache,
 ): CardCraftDisplay {
@@ -29,8 +31,6 @@ export function initializeCraftCards(
   for (let i = 0; i < cardCrafts.length; i++) {
     const card = cardCrafts[i];
     const cardContainer = new PIXI.Container();
-    cardContainer.interactive = true;
-    cardContainer.on("pointerdown", changeCardIncluded(i, cardCrafts, display));
     cardContainer.width = 60;
     cardContainer.height = 75;
 
@@ -45,10 +45,24 @@ export function initializeCraftCards(
     bg.width = 50;
     bg.height = 75;
 
+    const addBtn = new PIXI.Sprite(PIXI.Texture.WHITE);
+    addBtn.tint = 0x00000000;
+    addBtn.x = i * 60 + 45;
+    addBtn.y = 135;
+    addBtn.width = 50;
+    addBtn.height = 10;
+
+    sprite.interactive = true;
+    sprite.on("pointerdown", changeCardIncluded(i, cardCrafts, display));
+
+    addBtn.interactive = true;
+    addBtn.on("pointerdown", addCard(i, state, display));
+
     cardContainer.addChild(bg);
     cardContainer.addChild(sprite);
+    cardContainer.addChild(addBtn);
     container.addChild(cardContainer);
-    cards.push({ cardContainer, bg, sprite });
+    cards.push({ cardContainer, bg, sprite, addBtn });
   }
 
   // initialize gem counter
@@ -96,14 +110,37 @@ function changeCardIncluded(
 ): () => void {
   return () => {
     const currentIncluded = cardCrafts[i].included;
-    if (currentIncluded === 0) {
-      cardCrafts[i].included = 1;
-      display.cardCraft.cards[i].bg.tint = 0x00CC11;
+    const currentAvailable = cardCrafts[i].available;
+    if (currentAvailable <= 0) {
+      // TODO: animation
+      console.log("card not available");
     } else {
-      cardCrafts[i].included = 0;
-      display.cardCraft.cards[i].bg.tint = 0x00AAAA;
+      if (currentIncluded === 0) {
+        cardCrafts[i].included = 1;
+        display.cardCraft.cards[i].bg.tint = 0x00CC11;
+      } else {
+        cardCrafts[i].included = 0;
+        display.cardCraft.cards[i].bg.tint = 0x00AAAA;
+      }
     }
-  }
+  };
+}
+
+function addCard(
+  i: number,
+  state: GameState,
+  display: Display,
+): () => void {
+  return () => {
+    const currentGems = state.gems;
+    const cost = state.cardCrafts[i].cost;
+    if (cost > currentGems) {
+      // TODO: animation
+      console.log("not enough gems");
+    } else {
+      state.cardCrafts[i].available += 1;
+    }
+  };
 }
 
 export function updateGemText(
