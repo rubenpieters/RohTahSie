@@ -1,12 +1,8 @@
 import { Ability } from "./definitions/ability";
 import { Action, Damage, Regen, ChangeShield, Summon, AddStatus, Cost } from "./definitions/action";
-import { Display } from "./display";
 import { GameState } from "./state";
-import { applyActions } from "./action";
-import { Cache } from "../app/main";
-import { Anim } from "../app/animation";
 import { Armor1, Armor2, Dmg1 } from "./definitions/status";
-import { TargetType, EnemyTarget, PlayerTarget } from "./definitions/target";
+import { EnemyTarget, PlayerTarget } from "./definitions/target";
 
 export function abilityToActions(
   state: GameState,

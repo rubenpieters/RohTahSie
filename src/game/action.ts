@@ -246,23 +246,3 @@ export function applyAction(
     }
   }
 }
-
-export function applyActions(
-  actionQueue: Action[],
-  origin: TargetType,
-  state: GameState,
-  display: Display,
-  cache: Cache,
-): Anim {
-  if (actionQueue.length === 0) {
-    return new Noop();
-  }
-  const action = actionQueue[0];
-  const applyStatusResult = applyStatuses(action, origin, state);
-  const applyActionResult = applyAction(applyStatusResult.transformed, state, display, cache);
-  const newActions = applyStatusResult.newActions.concat(applyActionResult.newActions).concat(actionQueue.slice(1));
-  return new Seq([
-    applyActionResult.animation,
-    applyActions(newActions, origin, state, display, cache),
-  ]);
-}
