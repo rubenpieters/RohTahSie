@@ -1,6 +1,6 @@
 import { Ability } from "./definitions/ability";
 import { Cache } from "../app/main";
-import { mkAccessTarget, TweenTo, Par, Seq, mkEff, Noop, Anim } from "../app/animation";
+import { mkAccessTarget, TweenTo, Par, Seq, mkEff, Noop, Anim, Delay } from "../app/animation";
 import { easeOutQuint } from "../app/interpolation";
 
 export type NodeExplDisplay = {
@@ -8,6 +8,7 @@ export type NodeExplDisplay = {
   bg: PIXI.Sprite,
   title: PIXI.BitmapText,
   effects: PIXI.BitmapText,
+  loading: PIXI.Sprite,
 }
 
 export function initializeNodeExpl(
@@ -15,7 +16,7 @@ export function initializeNodeExpl(
   cache: Cache,
 ): NodeExplDisplay {
   const container = new PIXI.Container();
-  Object.assign(container, { x: 70, y: 15, alpha: 0 });
+  Object.assign(container, { x: 70, y: 15 });
 
   // initialize bgs
   const nodeExplBg = new PIXI.Sprite(cache["node_expl_bg"]);
@@ -43,9 +44,43 @@ export function initializeNodeExpl(
   Object.assign(effects, { x: 30, y: 80 });
   container.addChild(effects);
 
+  // loading screen, obscures rest while loading the expl window
+  const loading = new PIXI.Sprite(PIXI.Texture.WHITE);
+  loading.tint = 0x000000;
+  loading.width = 400;
+  loading.height = 400;
+  container.addChild(loading);
+
+  container.visible = false;
+
   parentContainer.addChild(container);
 
-  return { container, bg: nodeExplBg, title, effects };
+  return { container, bg: nodeExplBg, title, effects, loading };
+}
+
+export function loadNodeExpl(
+  node: Ability,
+  display: NodeExplDisplay,
+): Anim {
+  return new Seq([
+    mkEff({
+      eff: () => {
+        console.log('test');
+        display.container.visible = true;
+        display.loading.visible = true;
+      },
+      k : () => new Noop(),
+    }),
+    new Delay(1),
+    mkEff({
+      eff: () => {
+        display.loading.visible = false;
+        display.title.text = node.tag;
+        display.effects.text = nodeEffects(node);
+      },
+      k : () => new Noop(),
+    }),
+  ])
 }
 
 export function showNodeExpl(

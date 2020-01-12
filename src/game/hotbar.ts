@@ -4,7 +4,7 @@ import { nodeSprite, GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
 import { IPoint } from "pixi.js";
 import { Display } from "./display";
-import { showNodeExpl, NodeExplDisplay, hideNodeExpl, resetNodeExpl } from "./nodeExpl";
+import { showNodeExpl, NodeExplDisplay, hideNodeExpl, resetNodeExpl, loadNodeExpl } from "./nodeExpl";
 import { AddStatus } from "./definitions/action";
 import { PlayerTarget, EnemyTarget } from "./definitions/target";
 import { CardCrafts } from "../craft/all";
@@ -57,15 +57,8 @@ export function initializeHotbar(
 
     box.interactive = true;
 
-    /*box.on("mouseover", () => {
-      attachAnimation(hotbarMouseOverAnim(box));
-      clearExplWindowAnimation();
-      resetNodeExpl(display.player.nodeExpl);
-      attachExplWindowAnimation(showNodeExpl(state.player.hotbar.elements[i].node, display.player.nodeExpl));
-    });
-    box.on("mouseout", hotbarMouseOutCb(state, box, display, i));*/
-    box.on("pointerup", hotbarPointerUpCb(state, elements, i));
-    box.on("pointerdown", hotbarPointerDownCb(state, elements, i));
+    box.on("pointerup", hotbarPointerUpCb(state, display, i));
+    box.on("pointerdown", hotbarPointerDownCb(state, display, i));
 
     container.addChild(box);
     elements.push(box);
@@ -118,14 +111,18 @@ function hotbarMouseOutCb(
 
 function hotbarPointerUpCb(
   state: GameState,
-  hotbarElements: PIXI.Sprite[],
+  display: Display,
   index: number,
 ): () => void {
   return () => {
+    clearExplWindowAnimation();
+    if (display.player.nodeExpl.loading.visible) {
+      display.player.nodeExpl.container.visible = false;
+    }
     const hotbar = state.player.hotbar;
     for (let i = 0; i < hotbar.elements.length; i++) {
       if (i !== index && hotbar.elements[i].selected) {
-        attachAnimation(hotbarMouseOutAnim(hotbarElements[i]));
+        attachAnimation(hotbarMouseOutAnim(display.player.hotbar.elements[i]));
         hotbar.elements[i].selected = false;
       }
     }
@@ -135,11 +132,12 @@ function hotbarPointerUpCb(
 
 function hotbarPointerDownCb(
   state: GameState,
-  hotbarElements: PIXI.Sprite[],
+  display: Display,
   index: number,
 ): () => void {
   return () => {
-    // TODO: attach cancelable animation to display node expl
+    const anim = loadNodeExpl(state.player.hotbar.elements[index].node, display.player.nodeExpl)
+    attachExplWindowAnimation(anim);
   };
 }
 

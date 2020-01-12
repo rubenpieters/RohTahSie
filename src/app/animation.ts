@@ -117,6 +117,14 @@ export class Noop {
   constructor() {}
 }
 
+export class Delay {
+  public readonly tag: "Delay" = "Delay";
+
+  constructor(
+    public readonly delay: number,
+  ) {}
+}
+
 export function mkEff<A>(
   effk: EffK<A>,
 ): Eff {
@@ -130,6 +138,7 @@ export type Anim
   | TweenFromTo
   | Eff
   | Noop
+  | Delay
   | Particle
   ;
 
@@ -235,6 +244,14 @@ export function runAnimation(
         ]);
       });
       return runAnimation(delta, nextAnim);
+    }
+    case "Delay": {
+      const remainingDelay = anim.delay - delta;
+      if (remainingDelay > 0) {
+        return { remainingAnim: new Delay(remainingDelay), remainingDelta: "nothing" };
+      } else {
+        return { remainingAnim: "nothing", remainingDelta: -remainingDelay };
+      }
     }
     case "Noop": {
       return { remainingAnim: "nothing", remainingDelta: delta };
