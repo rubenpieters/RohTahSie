@@ -57,13 +57,14 @@ export function initializeHotbar(
 
     box.interactive = true;
 
-    box.on("mouseover", () => {
+    /*box.on("mouseover", () => {
       attachAnimation(hotbarMouseOverAnim(box));
       clearExplWindowAnimation();
       resetNodeExpl(display.player.nodeExpl);
       attachExplWindowAnimation(showNodeExpl(state.player.hotbar.elements[i].node, display.player.nodeExpl));
     });
-    box.on("mouseout", hotbarMouseOutCb(state, box, display, i));
+    box.on("mouseout", hotbarMouseOutCb(state, box, display, i));*/
+    box.on("pointerup", hotbarPointerUpCb(state, elements, i));
     box.on("pointerdown", hotbarPointerDownCb(state, elements, i));
 
     container.addChild(box);
@@ -115,7 +116,7 @@ function hotbarMouseOutCb(
   };
 }
 
-function hotbarPointerDownCb(
+function hotbarPointerUpCb(
   state: GameState,
   hotbarElements: PIXI.Sprite[],
   index: number,
@@ -129,6 +130,16 @@ function hotbarPointerDownCb(
       }
     }
     hotbar.elements[index].selected = ! hotbar.elements[index].selected;
+  };
+}
+
+function hotbarPointerDownCb(
+  state: GameState,
+  hotbarElements: PIXI.Sprite[],
+  index: number,
+): () => void {
+  return () => {
+    // TODO: attach cancelable animation to display node expl
   };
 }
 
