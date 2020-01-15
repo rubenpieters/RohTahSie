@@ -83,6 +83,7 @@ export type EntityDisplay = {
   shield: PIXI.Sprite,
   statusSprites: PIXI.Sprite[],
   statusHpSprites: PIXI.Sprite[],
+  statusSlotSprites: PIXI.Sprite[],
 }
 
 // initialize: a function which takes a display and initializes it on the PIXI app
@@ -144,7 +145,14 @@ export function initializeEntity(
   // initialize status icons
   let statusSprites: PIXI.Sprite[] = [];
   let statusHpSprites: PIXI.Sprite[] = [];
+  let statusSlotSprites: PIXI.Sprite[] = [];
   for (let i = 0; i < statusAmount; i++) {
+    const statusSlotSprite = new PIXI.Sprite(cache["status_slot"]);
+    statusSlotSprite.x = (i % statusAmountX) * 25 + 160 - 12.5;
+    statusSlotSprite.y = Math.floor(i / statusAmountX) * 25 + 15 - 12.5;
+
+    container.addChild(statusSlotSprite);
+    statusSlotSprites.push(statusSlotSprite);
     const statusSprite = new PIXI.Sprite();
     statusSprite.x = (i % statusAmountX) * 25 + 160;
     statusSprite.y = Math.floor(i / statusAmountX) * 25 + 15;
@@ -236,7 +244,7 @@ export function initializeEntity(
     container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar,
     rohText, tahText, sieText,
     shield,
-    statusSprites, statusHpSprites,
+    statusSprites, statusHpSprites, statusSlotSprites,
   };
 }
 

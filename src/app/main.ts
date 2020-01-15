@@ -64,6 +64,10 @@ const cache = {
   "refresh": PIXI.Texture.from("assets/sprites/refresh.png"),
   "gem": PIXI.Texture.from("assets/sprites/gem.png"),
   "hotbar_bg": PIXI.Texture.from("assets/sprites/hotbar_bg.png"),
+  "status_slot": PIXI.Texture.from("assets/sprites/status_slot.png"),
+  "status1": PIXI.Texture.from("assets/sprites/status1.png"),
+  "ability1": PIXI.Texture.from("assets/sprites/ability1.png"),
+  "ability_slot": PIXI.Texture.from("assets/sprites/ability_slot.png"),
 };
 
 let animations: Anim[] = [];

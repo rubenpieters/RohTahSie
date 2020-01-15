@@ -21,6 +21,7 @@ export type Layout = {
 export type LayoutDisplay = {
   container: PIXI.Container,
   nodes: PIXI.Sprite[],
+  abilitySlots: PIXI.Sprite[],
   bar: PIXI.Sprite,
 }
 
@@ -38,8 +39,16 @@ export function initializeLayout(
   Object.assign(container, { x, y });
 
   let nodes: PIXI.Sprite[] = [];
-
+  let abilitySlots: PIXI.Sprite[] = [];
   for (let i = 0; i < nodeAmount; i++) {
+    const abilitySlot = new PIXI.Sprite(cache["ability_slot"]);
+    abilitySlot.x = (i % xAmount) * 55 + 26;
+    abilitySlot.y = Math.floor(i / xAmount) * 55 + 26;
+    abilitySlot.pivot.set(26, 26);
+
+    container.addChild(abilitySlot);
+    abilitySlots.push(abilitySlot);
+
     const box =
       layout !== undefined && layout.nodes[i] !== undefined ?
       new PIXI.Sprite(cache[nodeSprite(layout.nodes[i])]) :
@@ -70,7 +79,7 @@ export function initializeLayout(
 
   parentContainer.addChild(container);
 
-  return { container, nodes, bar };
+  return { container, nodes, bar, abilitySlots };
 }
 
 export function newLayoutAnim(

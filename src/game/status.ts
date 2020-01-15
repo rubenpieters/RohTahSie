@@ -12,13 +12,13 @@ export function statusSprite(
 ): CacheValues {
   switch (status.tag) {
     case "Armor1": {
-      return "status";
+      return "status1";
     }
     case "Armor2": {
-      return "status";
+      return "status1";
     }
     case "Dmg1": {
-      return "status";
+      return "status1";
     }
   }
 }

@@ -99,7 +99,7 @@ export function nodeSprite(
       return "sword";
     }
     case "AddDmg1": {
-      return "sword";
+      return "ability1";
     }
     case "Empty": {
       return "skip";
