@@ -47,6 +47,7 @@ const cache = {
   "bar_yel": PIXI.Texture.from("assets/sprites/bar_yellow.png"),
   "bar": PIXI.Texture.from("assets/sprites/bar.png"),
   "portrait": PIXI.Texture.from("assets/sprites/portrait.png"),
+  "portrait_inside": PIXI.Texture.from("assets/sprites/portrait_inside.png"),
   "portrait_roh": PIXI.Texture.from("assets/sprites/portrait_roh.png"),
   "portrait_tah": PIXI.Texture.from("assets/sprites/portrait_tah.png"),
   "portrait_sie": PIXI.Texture.from("assets/sprites/portrait_sie.png"),
@@ -68,6 +69,7 @@ const cache = {
   "status1": PIXI.Texture.from("assets/sprites/status1.png"),
   "ability1": PIXI.Texture.from("assets/sprites/ability1.png"),
   "ability_slot": PIXI.Texture.from("assets/sprites/ability_slot.png"),
+  "card_bg": PIXI.Texture.from("assets/sprites/card_bg.png"),
 };
 
 let animations: Anim[] = [];

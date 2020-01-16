@@ -19,7 +19,7 @@ export function initializeNodeExpl(
   Object.assign(container, { x: 70, y: 15 });
 
   // initialize bgs
-  const nodeExplBg = new PIXI.Sprite(cache["node_expl_bg"]);
+  const nodeExplBg = new PIXI.Sprite(cache["card_bg"]);
   container.addChild(nodeExplBg);
 
   // initialize title text
@@ -47,7 +47,7 @@ export function initializeNodeExpl(
   // loading screen, obscures rest while loading the expl window
   const loading = new PIXI.Sprite(PIXI.Texture.WHITE);
   loading.tint = 0x000000;
-  loading.width = 400;
+  loading.width = 250;
   loading.height = 400;
   container.addChild(loading);
 
@@ -65,7 +65,6 @@ export function loadNodeExpl(
   return new Seq([
     mkEff({
       eff: () => {
-        console.log('test');
         display.container.visible = true;
         display.loading.visible = true;
       },

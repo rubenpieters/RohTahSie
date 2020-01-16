@@ -98,6 +98,13 @@ export function initializeEntity(
   const container = new PIXI.Container();
   Object.assign(container, { x, y });
 
+  // initialize portrait inside
+  const portraitInside = new PIXI.Sprite(cache["portrait_inside"]);
+  portraitInside.x = 18;
+  portraitInside.y = 8;
+
+  container.addChild(portraitInside);
+
   // initialize bgs
   const rohBg = new PIXI.Sprite(cache["portrait_roh"]);
   Object.assign(rohBg, { x: 14, y: 85, tint: 0x777777 });
