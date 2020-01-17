@@ -138,6 +138,8 @@ function addCard(
       // TODO: animation
       console.log("not enough gems");
     } else {
+      state.gems -= cost;
+      updateGemText(display.cardCraft.gemText, state);
       state.cardCrafts[i].available += 1;
     }
   };

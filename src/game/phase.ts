@@ -19,6 +19,7 @@ export function nextPhase(
           return new Finalizing();
         } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
           const actionQueue = abilityToActions(state, state.enemy.layout.nodes[state.enemy.layout.currentIndex]);
+          actionQueue.push(new EndTurn());
           return new Activating(actionQueue, false, "enemy");
         } else {
           return new Finalizing();
