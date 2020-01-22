@@ -70,6 +70,7 @@ const cache = {
   "ability1": PIXI.Texture.from("assets/sprites/ability1.png"),
   "ability_slot": PIXI.Texture.from("assets/sprites/ability_slot.png"),
   "card_bg": PIXI.Texture.from("assets/sprites/card_bg.png"),
+  "card_name_bg": PIXI.Texture.from("assets/sprites/card_name_bg.png"),
 };
 
 let animations: Anim[] = [];

@@ -6,6 +6,7 @@ import { easeOutQuint } from "../app/interpolation";
 export type NodeExplDisplay = {
   container: PIXI.Container,
   bg: PIXI.Sprite,
+  nameBg: PIXI.Sprite,
   title: PIXI.BitmapText,
   effects: PIXI.BitmapText,
   loading: PIXI.Sprite,
@@ -19,8 +20,12 @@ export function initializeNodeExpl(
   Object.assign(container, { x: 70, y: 15 });
 
   // initialize bgs
-  const nodeExplBg = new PIXI.Sprite(cache["card_bg"]);
-  container.addChild(nodeExplBg);
+  const bg = new PIXI.Sprite(cache["card_bg"]);
+  container.addChild(bg);
+  const nameBg = new PIXI.Sprite(cache["card_name_bg"]);
+  nameBg.y = 0;
+  nameBg.x = -24.5;
+  container.addChild(nameBg);
 
   // initialize title text
   const title = new PIXI.BitmapText("", {
@@ -30,7 +35,7 @@ export function initializeNodeExpl(
     },
     tint: 0xFF0000,
   });
-  Object.assign(title, { x: 30, y: 10 });
+  Object.assign(title, { x: 30, y: 25 });
   container.addChild(title);
 
   // intialize effect text
@@ -41,7 +46,7 @@ export function initializeNodeExpl(
     },
     tint: 0xFF0000,
   });
-  Object.assign(effects, { x: 30, y: 80 });
+  Object.assign(effects, { x: 30, y: 100 });
   container.addChild(effects);
 
   // loading screen, obscures rest while loading the expl window
@@ -55,7 +60,7 @@ export function initializeNodeExpl(
 
   parentContainer.addChild(container);
 
-  return { container, bg: nodeExplBg, title, effects, loading };
+  return { container, bg, nameBg, title, effects, loading };
 }
 
 export function loadNodeExpl(
