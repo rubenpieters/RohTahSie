@@ -1,3 +1,4 @@
+import * as lo from "lodash";
 import { GameState } from "./state";
 import { GamePhase, Activating, Charging, Finalizing } from "./definitions/phase";
 import { EndTurn } from "./definitions/action";
@@ -7,7 +8,7 @@ export function nextPhase(
 ): GamePhase {
   switch (state.phase.tag) {
     case "Charging": {
-      const actionQueue = state.player.layout.nodes[state.player.layout.currentIndex].actions;
+      const actionQueue = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].actions);
       actionQueue.push(new EndTurn());
       return new Activating(actionQueue, false, "player");
     }
@@ -17,7 +18,7 @@ export function nextPhase(
         if (state.phase.source === "enemy") {
           return new Finalizing();
         } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
-          const actionQueue = state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions;
+          const actionQueue = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
           actionQueue.push(new EndTurn());
           return new Activating(actionQueue, false, "enemy");
         } else {
