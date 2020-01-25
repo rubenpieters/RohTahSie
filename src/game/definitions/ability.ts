@@ -42,8 +42,8 @@ export class Discussion {
 export class Demon {
   public readonly name: "Demon" = "Demon"
   public readonly actions: Action[] = [
-    new A.Cost(6, "tah", new PlayerTarget()),
-    new A.AddStatus(new S.Dmg1(1, 1, 8), new EnemyTarget()),
+    new A.Cost(6, "sie", new PlayerTarget()),
+    new A.AddStatus(new S.Dmg1(1, 1, 8), new PlayerTarget()),
   ]
 }
 
