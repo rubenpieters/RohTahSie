@@ -2,7 +2,7 @@ import { CacheValues } from "../app/main";
 import { Ability } from "./definitions/ability";
 import { Layout, playerInitialLayout } from "./layout";
 import { Entity, playerInitialEntity, entityFindStatus } from "./entity";
-import { Hotbar, initialHotbar, calcHotbar } from "./hotbar";
+import { Hotbar, calcHotbar } from "./hotbar";
 import { GamePhase, Charging } from "./definitions/phase";
 import { MenuType } from "../menu/menu";
 import { CardCrafts, allCardCrafts } from "../craft/all";
@@ -70,39 +70,15 @@ export function findStatus(
 }
 
 export function nodeSprite(
-  node: Ability,
+  ability: Ability,
 ): CacheValues {
-  switch (node.tag) {
-    case "GenerateNode": {
-      switch (node.resource) {
-        case "roh": return "res_red";
-        case "tah": return "res_gre";
-        case "sie": return "res_yel";
-      }
-    }
-    case "SummonNode": {
-      return "creep";
-    }
-    case "AttackNode": {
-      return "sword";
-    }
-    case "ShieldNode": {
-      return "shield";
-    }
-    case "AddArmor": {
-      return "shield";
-    }
-    case "AddArmor2": {
-      return "shield";
-    }
-    case "Harvest": {
-      return "sword";
-    }
-    case "AddDmg1": {
-      return "ability1";
-    }
-    case "Empty": {
-      return "skip";
-    }
+  switch (ability.name) {
+    case "Rest": return "res_red";
+    case "Meditation": return "res_gre";
+    case "Requiem": return "res_yel";
+    case "Discussion": return "sword";
+    case "Dormant": return "skip";
+    case "Initiate": return "creep";
+    case "Demon": return "ability1";
   }
 }

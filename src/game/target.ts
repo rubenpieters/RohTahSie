@@ -41,3 +41,13 @@ export function eqTarget(
     case "StatusTarget": return target2.tag === "StatusTarget" && target1.id === target2.id;
   }
 }
+
+export function targetExpl(
+  target: TargetType
+) {
+  switch (target.tag) {
+    case "PlayerTarget": return "Player";
+    case "EnemyTarget": return "Enemy";
+    case "StatusTarget": return `Status ${target.id}`;
+  }
+}

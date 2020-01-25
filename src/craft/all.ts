@@ -1,5 +1,5 @@
-import { GenerateNode, Ability, AttackNode, Harvest, AddDmg1 } from "../game/definitions/ability";
-import { PlayerTarget, EnemyTarget } from "../game/definitions/target";
+import { Ability } from "../game/definitions/ability";
+import * as  Ab from "../game/definitions/ability";
 
 export type CardCrafts = {
   node: Ability,
@@ -11,37 +11,31 @@ export type CardCrafts = {
 export function allCardCrafts(): CardCrafts {
   return [
     {
-      node: new GenerateNode(10, "roh", new PlayerTarget()),
+      node: new Ab.Rest(),
       included: 1,
       available: 1,
       cost: 0,
     },
     {
-      node: new GenerateNode(10, "tah", new PlayerTarget()),
+      node: new Ab.Meditation(),
       included: 1,
       available: 1,
       cost: 0,
     },
     {
-      node: new GenerateNode(10, "sie", new PlayerTarget()),
+      node: new Ab.Requiem(),
       included: 1,
       available: 1,
       cost: 0,
     },
     {
-      node: new Harvest(),
+      node: new Ab.Discussion(),
       included: 1,
       available: 1,
       cost: 0,
     },
     {
-      node: new AddDmg1(),
-      included: 1,
-      available: 1,
-      cost: 0,
-    },
-    {
-      node: new GenerateNode(10, "sie", new PlayerTarget()),
+      node: new Ab.Demon(),
       included: 0,
       available: 0,
       cost: 10,

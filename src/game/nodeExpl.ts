@@ -2,6 +2,7 @@ import { Ability } from "./definitions/ability";
 import { Cache } from "../app/main";
 import { mkAccessTarget, TweenTo, Par, Seq, mkEff, Noop, Anim, Delay } from "../app/animation";
 import { easeOutQuint } from "../app/interpolation";
+import { abilityExplFormatted } from "./ability";
 
 export type NodeExplDisplay = {
   container: PIXI.Container,
@@ -64,7 +65,7 @@ export function initializeNodeExpl(
 }
 
 export function loadNodeExpl(
-  node: Ability,
+  ability: Ability,
   display: NodeExplDisplay,
 ): Anim {
   return new Seq([
@@ -79,8 +80,8 @@ export function loadNodeExpl(
     mkEff({
       eff: () => {
         display.loading.visible = false;
-        display.title.text = node.tag;
-        display.effects.text = nodeEffects(node);
+        display.title.text = ability.name;
+        display.effects.text = abilityExplFormatted(ability);
       },
       k : () => new Noop(),
     }),
@@ -88,15 +89,15 @@ export function loadNodeExpl(
 }
 
 export function showNodeExpl(
-  node: Ability,
+  ability: Ability,
   display: NodeExplDisplay,
 ): Anim {
   return new Seq([
     mkEff({
       eff: () => {
         display.container.visible = true;
-        display.title.text = node.tag;
-        display.effects.text = nodeEffects(node);
+        display.title.text = ability.name;
+        display.effects.text = abilityExplFormatted(ability);
       },
       k: () => new Noop(),
     }),
@@ -125,20 +126,4 @@ export function resetNodeExpl(
   display.container.visible = false;
   display.container.y = 15;
   display.container.alpha = 0;
-}
-
-function nodeEffects(
-  node: Ability,
-): string {
-  switch (node.tag) {
-    case "AttackNode": return `-${node.damage} to ${node.target.tag}`;
-    case "SummonNode": return `summon ${node.enemyId}`;
-    case "GenerateNode": return `+${node.value} ${node.resource} to ${node.target.tag}`;
-    case "ShieldNode": return `change shield to ${node.resource} for ${node.target.tag}`;
-    case "AddArmor": return `add armor for ${node.target.tag}`;
-    case "AddArmor2": return `add armor for ${node.target.tag}`;
-    case "Harvest": return `harvest`;
-    case "AddDmg1": return `AddDmg1`;
-    case "Empty": return `no effect`;
-  }
 }

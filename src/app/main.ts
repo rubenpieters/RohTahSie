@@ -5,7 +5,7 @@ import { GameState, initializeState } from "../game/state";
 import { PixiFps } from "./fps";
 import { Display, chargingAnimation, finalizingAnimation, applyingAnimation, transformingAnimation } from "../game/display";
 import { Ability } from "../game/definitions/ability";
-import { initialHotbar, initializeHotbar } from "../game/hotbar";
+import { initializeHotbar } from "../game/hotbar";
 import { initializeNodeExpl } from "../game/nodeExpl";
 import { initializePools } from "./pool";
 import { nextPhase } from "../game/phase";

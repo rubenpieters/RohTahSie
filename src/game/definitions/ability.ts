@@ -1,97 +1,73 @@
+import { Action } from "./action";
+import * as A from "./action";
+import * as S from "./status";
+import { PlayerTarget, EnemyTarget } from "./target";
 import { EnemyKey } from "../enemy";
-import { ResourceType } from "../types";
-import { TargetType } from "./target";
 
-export class GenerateNode {
-  public readonly tag: "GenerateNode" = "GenerateNode";
-  public readonly size = 1;
+export class Rest {
+  public readonly name: "Rest" = "Rest"
+  public readonly actions: Action[] = [
+    new A.Regen(10, "roh", new PlayerTarget()),
+  ]
+}
+
+export class Meditation {
+  public readonly name: "Meditation" = "Meditation"
+  public readonly actions: Action[] = [
+    new A.Regen(8, "tah", new PlayerTarget()),
+  ]
+}
+
+export class Requiem {
+  public readonly name: "Requiem" = "Requiem"
+  public readonly actions: Action[] = [
+    new A.Regen(6, "sie", new PlayerTarget()),
+  ]
+}
+
+export class Dormant {
+  public readonly name: "Dormant" = "Dormant"
+  public readonly actions: Action[] = [
+  ]
+}
+
+export class Discussion {
+  public readonly name: "Discussion" = "Discussion"
+  public readonly actions: Action[] = [
+    new A.Cost(3, "tah", new PlayerTarget()),
+    new A.Damage(5, new EnemyTarget()),
+  ]
+}
+
+export class Demon {
+  public readonly name: "Demon" = "Demon"
+  public readonly actions: Action[] = [
+    new A.Cost(6, "tah", new PlayerTarget()),
+    new A.AddStatus(new S.Dmg1(1, 1, 8), new EnemyTarget()),
+  ]
+}
+
+export class Initiate {
+  public readonly name: "Initiate" = "Initiate"
+  public readonly actions: Action[]
 
   constructor(
-    public readonly value: number,
-    public readonly resource: ResourceType,
-    public readonly target: TargetType,
-  ) {}
+    enemyId: EnemyKey,
+  ) {
+    // TODO: set name based on enemyId? split into tag and name?
+    // this.name = `Initiate ${enemyId}`;
+    this.actions = [
+      new A.Summon(enemyId),
+    ];
+  }
 }
-
-export class SummonNode {
-  public readonly tag: "SummonNode" = "SummonNode";
-  public readonly size = 1;
-
-  constructor(
-    public readonly enemyId: EnemyKey,
-  ) {}
-}
-
-export class AttackNode {
-  public readonly tag: "AttackNode" = "AttackNode";
-  public readonly size = 1;
-
-  constructor(
-    public readonly damage: number,
-    public readonly target: TargetType,
-  ) {}
-}
-
-export class ShieldNode {
-  public readonly tag: "ShieldNode" = "ShieldNode";
-  public readonly size = 1;
-
-  constructor(
-    public readonly resource: ResourceType,
-    public readonly target: TargetType,
-  ) {}
-}
-
-export class AddArmor {
-  public readonly tag: "AddArmor" = "AddArmor";
-  public readonly size = 1;
-
-  constructor(
-    public readonly target: TargetType,
-  ) {}
-}
-
-export class AddArmor2 {
-  public readonly tag: "AddArmor2" = "AddArmor2";
-  public readonly size = 1;
-
-  constructor(
-    public readonly target: TargetType,
-  ) {}
-}
-
-export class Empty {
-  public readonly tag: "Empty" = "Empty";
-  public readonly size = 1;
-
-  constructor(
-  ) {}
-}
-
-export class Harvest {
-  public readonly tag: "Harvest" = "Harvest";
-  public readonly size = 1;
-
-  constructor() {}
-}
-
-export class AddDmg1 {
-  public readonly tag: "AddDmg1" = "AddDmg1";
-  public readonly size = 1;
-
-  constructor() {}
-}
-
 
 export type Ability
-  = GenerateNode
-  | SummonNode
-  | AttackNode
-  | ShieldNode
-  | AddArmor
-  | AddArmor2
-  | Empty
-  | Harvest
-  | AddDmg1
+  = Rest
+  | Meditation
+  | Requiem
+  | Discussion
+  | Dormant
+  | Demon
+  | Initiate
   ;
-  

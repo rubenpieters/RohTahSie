@@ -1,4 +1,4 @@
-import { Ability, SummonNode, GenerateNode, AttackNode, ShieldNode, Empty, AddArmor, AddArmor2 } from "./definitions/ability";
+import { Ability, Initiate, Dormant } from "./definitions/ability";
 import { Cache, attachAnimation, attachExplWindowAnimation, clearExplWindowAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
@@ -193,7 +193,7 @@ export function calcHotbar(
     }
   });
   const elementsUnfilled = filterUndefined(elementsUnfiltered).slice(0, craftedCardSize - 1);
-  const elementsCrafts = fillUndefinedUpTo(elementsUnfilled, { node: new Empty(), selected: false }, craftedCardSize);
+  const elementsCrafts = fillUndefinedUpTo(elementsUnfilled, { node: new Dormant(), selected: false }, craftedCardSize);
   // zone cards
   const selectedZone = zones.find(x => x.selected === true);
   if (selectedZone === undefined) {
@@ -201,75 +201,12 @@ export function calcHotbar(
   }
   const elementsZoneUnfilled: { node: Ability, selected: boolean }[] = selectedZone.enemyIds.map(x => {
     return {
-      node: new SummonNode(x),
+      node: new Initiate(x),
       selected: false,
     };
   });
-  const elementsZone = fillUndefinedUpTo(elementsZoneUnfilled, { node: new Empty(), selected: false }, 4);
+  const elementsZone = fillUndefinedUpTo(elementsZoneUnfilled, { node: new Dormant(), selected: false }, 4);
 
   const elements = elementsCrafts.concat(elementsZone);
   return { elements };
-}
-
-export function initialHotbar(): Hotbar {
-  return {
-    elements: [
-      {
-        node: new GenerateNode(10, "roh", new PlayerTarget()),
-        selected: false,
-      },
-      {
-        node: new GenerateNode(10, "tah", new PlayerTarget()),
-        selected: false,
-      },
-      {
-        node: new GenerateNode(10, "sie", new PlayerTarget()),
-        selected: false,
-      },
-      {
-        node: new SummonNode("en1"),
-        selected: false,
-      },
-      {
-        node: new AttackNode(10, new EnemyTarget()),
-        selected: false,
-      },
-      {
-        node: new AddArmor(new PlayerTarget()),
-        selected: false,
-      },
-      {
-        node: new AddArmor(new EnemyTarget()),
-        selected: false,
-      },
-      {
-        node: new ShieldNode("roh", new PlayerTarget()),
-        selected: false,
-      },
-      {
-        node: new ShieldNode("tah", new PlayerTarget()),
-        selected: false,
-      },
-      {
-        node: new ShieldNode("sie", new PlayerTarget()),
-        selected: false,
-      },
-      {
-        node: new AddArmor2(new PlayerTarget()),
-        selected: false,
-      },
-      {
-        node: new Empty,
-        selected: false,
-      },
-      {
-        node: new Empty,
-        selected: false,
-      },
-      {
-        node: new Empty,
-        selected: false,
-      },
-    ],
-  }
 }

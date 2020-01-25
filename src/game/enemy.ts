@@ -1,29 +1,29 @@
 import { Layout } from "./layout";
-import { GenerateNode, AttackNode, Empty, ShieldNode } from "./definitions/ability";
+import * as Ab from "./definitions/ability";
 import { Entity } from "./entity";
 import { EnemyTarget, PlayerTarget } from "./definitions/target";
 
 const layout1: Layout = {
   nodes: [
-    new Empty,
-    new Empty,
-    new Empty,
-    new Empty,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
 
-    new Empty,
-    new Empty,
-    new Empty,
-    new Empty,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
 
-    new Empty,
-    new Empty,
-    new Empty,
-    new Empty,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
 
-    new Empty,
-    new Empty,
-    new Empty,
-    new Empty,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
   ],
   currentIndex: 0,
 }
@@ -42,25 +42,44 @@ const enemy1: Entity = {
 
 const layout2: Layout = {
   nodes: [
-    new Empty,
-    new Empty,
-    new Empty,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    /*new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
     new AttackNode(10, new PlayerTarget()),
 
-    new Empty,
-    new Empty,
-    new Empty,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
     new AttackNode(10, new PlayerTarget()),
 
-    new Empty,
-    new Empty,
-    new Empty,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
     new AttackNode(10, new PlayerTarget()),
 
-    new Empty,
-    new Empty,
-    new Empty,
-    new AttackNode(10, new PlayerTarget()),
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new AttackNode(10, new PlayerTarget()),*/
   ],
   currentIndex: 0,
 }
@@ -79,12 +98,32 @@ const enemy2: Entity = {
 
 const layout3: Layout = {
   nodes: [
-    new Empty(),
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+    new Ab.Dormant,
+
+    /*new Ab.Dormant(),
     new AttackNode(5, new PlayerTarget()),
     new AttackNode(5, new PlayerTarget()),
     new GenerateNode(10, "roh", new EnemyTarget()),
 
-    new Empty(),
+    new Ab.Dormant(),
     new AttackNode(5, new PlayerTarget()),
     new AttackNode(5, new PlayerTarget()),
     new GenerateNode(10, "roh", new EnemyTarget()),
@@ -94,10 +133,10 @@ const layout3: Layout = {
     new GenerateNode(10, "tah", new EnemyTarget()),
     new GenerateNode(10, "tah", new EnemyTarget()),
 
-    new Empty(),
+    new Ab.Dormant(),
     new AttackNode(5, new PlayerTarget()),
     new AttackNode(5, new PlayerTarget()),
-    new GenerateNode(10, "roh", new EnemyTarget()),
+    new GenerateNode(10, "roh", new EnemyTarget()),*/
   ],
   currentIndex: 0,
 }

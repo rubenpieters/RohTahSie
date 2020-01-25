@@ -9,7 +9,7 @@ import { Action, Death } from "./definitions/action";
 import { allEnemies } from "./enemy";
 import { applyStatuses } from "./status";
 import { TargetType, EnemyTarget, StatusTarget } from "./definitions/target";
-import { targetToEntity, targetToEntityDisplay } from "./target";
+import { targetToEntity, targetToEntityDisplay, targetExpl } from "./target";
 import { updateGemText } from "../craft/card";
 import { resourceMaxField } from "./entity";
 
@@ -244,5 +244,21 @@ export function applyAction(
     case "EndTurn": {
       return { animation: new Noop(), newActions: [] };
     }
+  }
+}
+
+export function actionExpl(
+  action: Action,
+) {
+  switch (action.tag) {
+    case "Regen": return `+${action.value} ${action.resource} to ${targetExpl(action.target)}`;
+    case "Cost": return `-${action.value} ${action.resource} to ${targetExpl(action.target)}`;
+    case "AddStatus": return `Add Status`;
+    case "ChangeShield": return `${action.resource} Concentration`;
+    case "Damage": return `-${action.value} Essence to ${targetExpl(action.target)}`;
+    case "Death": return `Death`;
+    case "EndTurn": return `EndTurn`;
+    case "NoAction": return `NoAction`;
+    case "Summon": return `Summon ${action.enemyId}`;
   }
 }

@@ -1,4 +1,5 @@
-import { Ability, GenerateNode, SummonNode, AttackNode, Empty } from "./definitions/ability";
+import { Ability } from "./definitions/ability";
+import * as Ab from "./definitions/ability";
 import { Cache, attachAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq } from "../app/animation";
@@ -142,25 +143,25 @@ export function barLocation(
 export function playerInitialLayout(): Layout {
   return {
     nodes: [
-      new Empty(),
-      new Empty(),
-      new Empty(),
-      new Empty(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
 
-      new Empty(),
-      new Empty(),
-      new Empty(),
-      new Empty(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
 
-      new Empty(),
-      new Empty(),
-      new Empty(),
-      new Empty(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
 
-      new Empty(),
-      new Empty(),
-      new Empty(),
-      new Empty(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
+      new Ab.Dormant(),
     ],
     currentIndex: 0,
   }
