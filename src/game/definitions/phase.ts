@@ -1,4 +1,5 @@
 import { Action } from "./action";
+import { AbstractTarget } from "./target";
 
 export class Charging {
   public readonly tag: "Charging" = "Charging";
@@ -10,7 +11,7 @@ export class Activating {
   public readonly tag: "Activating" = "Activating";
 
   constructor(
-    public actionQueue: Action[],
+    public actionQueue: Action<AbstractTarget>[],
     public transformed: boolean,
     public readonly source: "player" | "enemy",
   ) {}

@@ -19,8 +19,28 @@ export class StatusTarget {
   ) {}
 }
 
-export type TargetType
+export type ConcreteTarget
   = PlayerTarget
   | EnemyTarget
   | StatusTarget
   ;
+
+export class Self {
+  public readonly tag: "Self" = "Self";
+
+  constructor() {}
+}
+
+export class Other {
+  public readonly tag: "Other" = "Other";
+
+  constructor() {}
+}
+
+
+export type AbstractTarget
+  = Self
+  | Other
+  | ConcreteTarget
+  ;
+

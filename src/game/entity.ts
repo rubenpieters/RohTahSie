@@ -1,6 +1,6 @@
 import { Cache } from "../app/main";
 import { ResourceType } from "./types";
-import { TargetType, StatusTarget } from "./definitions/target";
+import { ConcreteTarget, StatusTarget } from "./definitions/target";
 import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, Particle, mkParticle } from "../app/animation";
 import { Display } from "./display";
 import { Pool, mkPool } from "../app/pool";
@@ -360,7 +360,7 @@ export function updateResourceAnim(
 
 export function changeShieldAnim(
   entityDisplay: EntityDisplay,
-  target: TargetType,
+  target: ConcreteTarget,
   newShieldType: ResourceType,
   cache: Cache,
 ) {

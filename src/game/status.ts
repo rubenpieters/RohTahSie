@@ -2,7 +2,7 @@ import { Status } from "./definitions/status";
 import { CacheValues } from "../app/main";
 import { GameState } from "./state";
 import { Action, Damage, NoAction, Death } from "./definitions/action";
-import { TargetType, PlayerTarget, EnemyTarget, StatusTarget } from "./definitions/target";
+import { ConcreteTarget, PlayerTarget, EnemyTarget, StatusTarget } from "./definitions/target";
 import { eqTarget } from "./target";
 import { StateStatus } from "./entity";
 
@@ -24,15 +24,15 @@ export function statusSprite(
 }
 
 export function applyStatuses(
-  action: Action,
-  origin: TargetType,
+  action: Action<ConcreteTarget>,
+  origin: ConcreteTarget,
   state: GameState,
-): { transformed: Action, newActions: Action[] } {
-  const pStatuses = state.player.entity.statuses.map(x => Object.assign(x, { owner: new PlayerTarget() as TargetType }));
-  const eStatuses = state.enemy === undefined ? [] : state.enemy.entity.statuses.map(x => Object.assign(x, { owner: new EnemyTarget() as TargetType }));
+): { transformed: Action<ConcreteTarget>, newActions: Action<ConcreteTarget>[] } {
+  const pStatuses = state.player.entity.statuses.map(x => Object.assign(x, { owner: new PlayerTarget() as ConcreteTarget }));
+  const eStatuses = state.enemy === undefined ? [] : state.enemy.entity.statuses.map(x => Object.assign(x, { owner: new EnemyTarget() as ConcreteTarget }));
   const statuses = pStatuses.concat(eStatuses);
   let transformed = action;
-  let newActions: Action[] = [];
+  let newActions: Action<ConcreteTarget>[] = [];
   for (const status of statuses) {
     const result = applyStatus(transformed, origin, status, state);
     transformed = result.transformed;
@@ -42,11 +42,11 @@ export function applyStatuses(
 }
 
 function applyStatus(
-  action: Action,
-  origin: TargetType,
-  status: StateStatus & { owner: TargetType },
+  action: Action<ConcreteTarget>,
+  origin: ConcreteTarget,
+  status: StateStatus & { owner: ConcreteTarget },
   state: GameState,
-): { transformed: Action, newActions: Action[] } {
+): { transformed: Action<ConcreteTarget>, newActions: Action<ConcreteTarget>[] } {
   switch (status.tag) {
     case "Armor1": {
       if (
@@ -57,7 +57,7 @@ function applyStatus(
         const transformed = newValue <= 0 ?
           new NoAction() :
           new Damage(newValue, action.target);
-        const newActions: Action[] = [
+        const newActions: Action<ConcreteTarget>[] = [
           new Death(new StatusTarget(status.id)),
         ];
         return { transformed, newActions };
@@ -74,7 +74,7 @@ function applyStatus(
         const transformed = newValue <= 0 ?
           new NoAction() :
           new Damage(newValue, action.target);
-        const newActions: Action[] = [
+        const newActions: Action<ConcreteTarget>[] = [
           new Damage(status.loseValue, new StatusTarget(status.id)),
         ];
         return { transformed, newActions };

@@ -1,9 +1,9 @@
-import { TargetType } from "./definitions/target";
+import { ConcreteTarget, AbstractTarget, PlayerTarget, EnemyTarget } from "./definitions/target";
 import { Display } from "./display";
 import { EntityDisplay, Entity } from "./entity";
 import { GameState } from "./state";
 
-export function targetToEntity<T extends TargetType>(
+export function targetToEntity<T extends ConcreteTarget>(
   target: T,
   state: GameState,
 ): { "PlayerTarget": Entity, "EnemyTarget": Entity | undefined, "StatusTarget": undefined }[T["tag"]] {
@@ -17,7 +17,7 @@ export function targetToEntity<T extends TargetType>(
   }
 }
 
-export function targetToEntityDisplay<T extends TargetType>(
+export function targetToEntityDisplay<T extends ConcreteTarget>(
   target: T,
   display: Display,
 ): { "PlayerTarget": EntityDisplay, "EnemyTarget": EntityDisplay, "StatusTarget": undefined }[T["tag"]] {
@@ -32,8 +32,8 @@ export function targetToEntityDisplay<T extends TargetType>(
 }
 
 export function eqTarget(
-  target1: TargetType,
-  target2: TargetType,
+  target1: ConcreteTarget,
+  target2: ConcreteTarget,
 ) {
   switch (target1.tag) {
     case "PlayerTarget": return target2.tag === "PlayerTarget";
@@ -43,11 +43,26 @@ export function eqTarget(
 }
 
 export function targetExpl(
-  target: TargetType
+  target: AbstractTarget,
 ) {
   switch (target.tag) {
     case "PlayerTarget": return "Player";
     case "EnemyTarget": return "Enemy";
     case "StatusTarget": return `Status ${target.id}`;
+    case "Self": return "Self";
+    case "Other": return "Other";
+  }
+}
+
+export function concretizeTarget(
+  target: AbstractTarget,
+  source: "player" | "enemy",
+): ConcreteTarget {
+  if (target.tag === "Self") {
+    return source === "player" ? new PlayerTarget() : new EnemyTarget();
+  } else if (target.tag === "Other") {
+    return source === "player" ? new EnemyTarget() : new PlayerTarget();
+  } else {
+    return target;
   }
 }

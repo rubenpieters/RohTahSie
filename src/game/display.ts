@@ -2,17 +2,19 @@ import { LayoutDisplay, barLocation } from "./layout";
 import { EntityDisplay } from "./entity";
 import { Anim, Seq, mkEff, Noop, TweenTo, Par, mkAccessTarget } from "../app/animation";
 import { GameState, GameStateBase } from "./state";
+import { concretizeAction } from "./action";
+import { Action } from "./definitions/action";
 import { Cache } from "../app/main";
 import { HotbarDisplay } from "./hotbar";
 import { NodeExplDisplay } from "./nodeExpl";
 import { Pools } from "../app/pool";
-import { PlayerTarget, EnemyTarget } from "./definitions/target";
+import { PlayerTarget, EnemyTarget, AbstractTarget } from "./definitions/target";
 import { applyAction } from "./action";
 import { Activating } from "./definitions/phase";
 import { applyStatuses } from "./status";
-import { MenuDisplay } from "src/menu/menu";
-import { CardCraftDisplay } from "src/craft/card";
-import { ZoneOverviewDisplay } from "src/zone/zone";
+import { MenuDisplay } from "../menu/menu";
+import { CardCraftDisplay } from "../craft/card";
+import { ZoneOverviewDisplay } from "../zone/zone";
 
 export type Display = {
   player: {
@@ -89,6 +91,7 @@ export function applyingAnimation(
     ]);
   return mkEff({
     eff: () => {
+      // TODO: set aside next to be applied Action<ConcreteTarget>, queue is a list of Action<AbstractTarget>
       const { animation, newActions } = applyAction(action, state, display, cache);
       const newActionQueue = newActions.concat(state.phase.actionQueue);
       state.phase.actionQueue = newActionQueue;
@@ -113,8 +116,10 @@ export function transformingAnimation(
   return mkEff({
     eff: () => {
       const origin = source === "player" ? new PlayerTarget() : new EnemyTarget();
-      const { transformed, newActions } = applyStatuses(action, origin, state);
-      state.phase.actionQueue = [transformed].concat(newActions).concat(state.phase.actionQueue);
+      const concretized = concretizeAction(action, source);
+      const { transformed, newActions } = applyStatuses(concretized, origin, state);
+      state.phase.actionQueue = ([transformed] as Action<AbstractTarget>[])
+        .concat(newActions).concat(state.phase.actionQueue);
       return new Noop();
     },
     k: (animation: Anim) => {

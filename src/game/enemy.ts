@@ -45,7 +45,7 @@ const layout2: Layout = {
     new Ab.Dormant,
     new Ab.Dormant,
     new Ab.Dormant,
-    new Ab.Dormant,
+    new Ab.Discussion,
 
     new Ab.Dormant,
     new Ab.Dormant,

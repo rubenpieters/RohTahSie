@@ -8,17 +8,17 @@ import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
 import { allEnemies } from "./enemy";
 import { applyStatuses } from "./status";
-import { TargetType, EnemyTarget, StatusTarget } from "./definitions/target";
-import { targetToEntity, targetToEntityDisplay, targetExpl } from "./target";
+import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget } from "./definitions/target";
+import { targetToEntity, targetToEntityDisplay, targetExpl, concretizeTarget } from "./target";
 import { updateGemText } from "../craft/card";
 import { resourceMaxField } from "./entity";
 
 export function applyAction(
-  action: Action,
+  action: Action<ConcreteTarget>,
   state: GameState,
   display: Display,
   cache: Cache,
-): { animation: Anim, newActions: Action[] } {
+): { animation: Anim, newActions: Action<ConcreteTarget>[] } {
   switch (action.tag) {
     case "Regen": {
       if (
@@ -73,7 +73,7 @@ export function applyAction(
           // decrease resource animation
           const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
           const animation = updateResourceAnim(targetEntity, display, shieldType, target, `-${valueChange}`);
-          let newActions: Action[] = [];
+          let newActions: Action<ConcreteTarget>[] = [];
           if (action.target.tag === "EnemyTarget" && targetEntity[shieldType] <= 0) {
             newActions = [new Death(new EnemyTarget())];
           }
@@ -87,7 +87,7 @@ export function applyAction(
           const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - action.value);
           targetEntity.statuses[status.statusIndex].hp = newHp;
           const animation = damageStatusAnim(status, targetEntity, display, cache);
-          let newActions: Action[] = [];
+          let newActions: Action<ConcreteTarget>[] = [];
           if (newHp <= 0) {
             newActions = [new Death(new StatusTarget(action.target.id))];
           }
@@ -112,7 +112,7 @@ export function applyAction(
           // decrease resource animation
           const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
           const animation = updateResourceAnim(targetEntity, display, shieldType, target, `-${valueChange}`);
-          let newActions: Action[] = [];
+          let newActions: Action<ConcreteTarget>[] = [];
           if (action.target.tag === "EnemyTarget" && targetEntity[shieldType] <= 0) {
             newActions = [new Death(new EnemyTarget())];
           }
@@ -126,7 +126,7 @@ export function applyAction(
           const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - action.value);
           targetEntity.statuses[status.statusIndex].hp = newHp;
           const animation = damageStatusAnim(status, targetEntity, display, cache);
-          let newActions: Action[] = [];
+          let newActions: Action<ConcreteTarget>[] = [];
           if (newHp <= 0) {
             newActions = [new Death(new StatusTarget(action.target.id))];
           }
@@ -247,8 +247,8 @@ export function applyAction(
   }
 }
 
-export function actionExpl(
-  action: Action,
+export function actionExpl<T extends AbstractTarget>(
+  action: Action<T>,
 ) {
   switch (action.tag) {
     case "Regen": return `+${action.value} ${action.resource} to ${targetExpl(action.target)}`;
@@ -260,5 +260,16 @@ export function actionExpl(
     case "EndTurn": return `EndTurn`;
     case "NoAction": return `NoAction`;
     case "Summon": return `Summon ${action.enemyId}`;
+  }
+}
+
+export function concretizeAction(
+  action: Action<AbstractTarget>,
+  source: "player" | "enemy",
+): Action<ConcreteTarget> {
+  switch (action.tag) {
+    case "Damage": return { ...action, target: concretizeTarget(action.target, source) };
+    case "Cost": return { ...action, target: concretizeTarget(action.target, source) };
+    default: return action;
   }
 }
