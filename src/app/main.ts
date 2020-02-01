@@ -131,7 +131,7 @@ function main(): void {
     layout: initializeLayout(undefined, 280, 200, combatContainer, state, display, cache, "enemy"),
   };
   display.pools = initializePools(combatContainer);
-  display.player.nodeExpl = initializeNodeExpl(combatContainer, cache);
+  display.player.nodeExpl = initializeNodeExpl(appContainer, cache);
   display.menu = initializeMenu(appContainer, cache, display, state);
   display.combatContainer = combatContainer;
   display.craftContainer = craftContainer;

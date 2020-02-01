@@ -95,6 +95,7 @@ function transitionScreen(
     }
     state.player.hotbar.elements.forEach(x => x.selected = false);
     display.player.hotbar.elements.forEach(x => x.scale.set(1, 1));
+    display.player.nodeExpl.container.visible = false;
     updateMenuSelected(state.menuState, display.menu.iconSprites);
   };
 }
