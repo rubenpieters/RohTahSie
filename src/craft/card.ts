@@ -1,7 +1,8 @@
 import { CardCrafts } from "./all";
 import { nodeSprite, GameState } from "../game/state";
-import { Cache } from "../app/main";
+import { Cache, attachExplWindowAnimation, clearExplWindowAnimation } from "../app/main";
 import { Display } from "../game/display";
+import { loadNodeExpl } from "../game/nodeExpl";
 
 export type CardDisplay = {
   cardContainer: PIXI.Container,
@@ -53,7 +54,8 @@ export function initializeCraftCards(
     addBtn.height = 10;
 
     sprite.interactive = true;
-    sprite.on("pointerdown", changeCardIncluded(i, cardCrafts, display));
+    sprite.on("pointerup", craftPointerUpCb(i, cardCrafts, display));
+    sprite.on("pointerdown", craftPointerDownCb(i, cardCrafts, display));
 
     addBtn.interactive = true;
     addBtn.on("pointerdown", addCard(i, state, display));
@@ -103,26 +105,47 @@ function updateCardIncluded(
   }
 }
 
-function changeCardIncluded(
+function craftPointerUpCb(
   i: number,
   cardCrafts: CardCrafts,
   display: Display,
 ): () => void {
   return () => {
-    const currentIncluded = cardCrafts[i].included;
-    const currentAvailable = cardCrafts[i].available;
-    if (currentAvailable <= 0) {
-      // TODO: animation
-      console.log("card not available");
-    } else {
-      if (currentIncluded === 0) {
-        cardCrafts[i].included = 1;
-        display.cardCraft.cards[i].bg.tint = 0x00CC11;
+    clearExplWindowAnimation();
+    // if node expl container is not visible: do click action
+    if (! display.player.nodeExpl.container.visible) {
+      const currentIncluded = cardCrafts[i].included;
+      const currentAvailable = cardCrafts[i].available;
+      if (currentAvailable <= 0) {
+        // TODO: animation
+        console.log("card not available");
       } else {
-        cardCrafts[i].included = 0;
-        display.cardCraft.cards[i].bg.tint = 0x00AAAA;
+        if (currentIncluded === 0) {
+          cardCrafts[i].included = 1;
+          display.cardCraft.cards[i].bg.tint = 0x00CC11;
+        } else {
+          cardCrafts[i].included = 0;
+          display.cardCraft.cards[i].bg.tint = 0x00AAAA;
+        }
       }
     }
+    // if loading sprite is visible: cancel loading
+    else if (display.player.nodeExpl.loading.visible) {
+      display.player.nodeExpl.container.visible = false;
+    }
+  };
+}
+
+function craftPointerDownCb(
+  i: number,
+  cardCrafts: CardCrafts,
+  display: Display,
+) {
+  return () => {
+    display.player.nodeExpl.container.visible = false;
+    display.player.nodeExpl.loading.visible = false;
+    const anim = loadNodeExpl(cardCrafts[i].node, display.player.nodeExpl);
+    attachExplWindowAnimation(anim);
   };
 }
 
