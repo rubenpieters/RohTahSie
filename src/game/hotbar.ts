@@ -116,17 +116,29 @@ function hotbarPointerUpCb(
 ): () => void {
   return () => {
     clearExplWindowAnimation();
-    if (display.player.nodeExpl.loading.visible) {
-      display.player.nodeExpl.container.visible = false;
-    }
-    const hotbar = state.player.hotbar;
-    for (let i = 0; i < hotbar.elements.length; i++) {
-      if (i !== index && hotbar.elements[i].selected) {
-        attachAnimation(hotbarMouseOutAnim(display.player.hotbar.elements[i]));
-        hotbar.elements[i].selected = false;
+    // if node expl container is not visible: do click action
+    if (! display.player.nodeExpl.container.visible) {
+      const hotbar = state.player.hotbar;
+      // deselect other icons
+      for (let i = 0; i < hotbar.elements.length; i++) {
+        if (i !== index && hotbar.elements[i].selected) {
+          attachAnimation(hotbarMouseOutAnim(display.player.hotbar.elements[i]));
+          hotbar.elements[i].selected = false;
+        }
+      }
+      // change icon selected
+      hotbar.elements[index].selected = ! hotbar.elements[index].selected;
+      // (de-)select clicked icon
+      if (hotbar.elements[index].selected) {
+        attachAnimation(hotbarMouseOverAnim(display.player.hotbar.elements[index]));
+      } else {
+        attachAnimation(hotbarMouseOutAnim(display.player.hotbar.elements[index]));
       }
     }
-    hotbar.elements[index].selected = ! hotbar.elements[index].selected;
+    // if loading sprite is visible: cancel loading
+    else if (display.player.nodeExpl.loading.visible) {
+      display.player.nodeExpl.container.visible = false;
+    }
   };
 }
 
@@ -136,6 +148,8 @@ function hotbarPointerDownCb(
   index: number,
 ): () => void {
   return () => {
+    display.player.nodeExpl.container.visible = false;
+    display.player.nodeExpl.loading.visible = false;
     const anim = loadNodeExpl(state.player.hotbar.elements[index].node, display.player.nodeExpl)
     attachExplWindowAnimation(anim);
   };

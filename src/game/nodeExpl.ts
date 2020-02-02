@@ -69,6 +69,7 @@ export function loadNodeExpl(
   display: NodeExplDisplay,
 ): Anim {
   return new Seq([
+    new Delay(0.15),
     mkEff({
       eff: () => {
         display.container.visible = true;
@@ -76,7 +77,7 @@ export function loadNodeExpl(
       },
       k : () => new Noop(),
     }),
-    new Delay(1),
+    new Delay(0.1),
     mkEff({
       eff: () => {
         display.loading.visible = false;
