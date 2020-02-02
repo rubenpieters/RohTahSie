@@ -150,7 +150,7 @@ function hotbarPointerDownCb(
   return () => {
     display.player.nodeExpl.container.visible = false;
     display.player.nodeExpl.loading.visible = false;
-    const anim = loadNodeExpl(state.player.hotbar.elements[index].node, display.player.nodeExpl)
+    const anim = loadNodeExpl(state.player.hotbar.elements[index].node, display.player.nodeExpl);
     attachExplWindowAnimation(anim);
   };
 }

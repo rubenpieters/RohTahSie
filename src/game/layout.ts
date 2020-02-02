@@ -1,11 +1,12 @@
 import { Ability } from "./definitions/ability";
 import * as Ab from "./definitions/ability";
-import { Cache, attachAnimation } from "../app/main";
+import { Cache, attachAnimation, clearExplWindowAnimation, attachExplWindowAnimation } from "../app/main";
 import { nodeSprite, GameState } from "./state";
 import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq } from "../app/animation";
 import { hotbarSelectedNode } from "./hotbar";
 import { Display } from "./display";
 import { EnemyTarget, PlayerTarget } from "./definitions/target";
+import { loadNodeExpl } from "./nodeExpl";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
@@ -58,11 +59,9 @@ export function initializeLayout(
     box.y = Math.floor(i / xAmount) * 55 + 25;
     box.pivot.set(25, 25);
 
-    if (type === "player") {
-      box.interactive = true;
-  
-      box.on("pointerdown", layoutPointerDownCb(state, display, cache, i, type));
-    }
+    box.interactive = true;
+    box.on("pointerup", layoutPointerUpCb(state, display, cache, i, type));
+    box.on("pointerdown", layoutPointerDownCb(state, display, cache, i, type));
 
     container.addChild(box);
     nodes.push(box);
@@ -111,22 +110,48 @@ function layoutPointerDownCb(
   type: "player" | "enemy",
 ): () => void {
   return () => {
-    const selectedNode = hotbarSelectedNode(state.player.hotbar);
-    if (selectedNode !== undefined) {
-      state.player.layout.nodes[index] = selectedNode;
-      display.player.layout.nodes[index].texture = cache[nodeSprite(selectedNode)];
-      attachAnimation(
-        new Seq([
-          new Par([
-            new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x")),
-            new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y")),
+    display.player.nodeExpl.container.visible = false;
+    display.player.nodeExpl.loading.visible = false;
+    const layout = state[type]?.layout;
+    if (layout !== undefined) {
+      const anim = loadNodeExpl(layout.nodes[index], display.player.nodeExpl);
+      attachExplWindowAnimation(anim);
+    }
+  };
+}
+
+function layoutPointerUpCb(
+  state: GameState,
+  display: Display,
+  cache: Cache,
+  index: number,
+  type: "player" | "enemy",
+) {
+  return () => {
+    clearExplWindowAnimation();
+    // if node expl container is not visible: do click action
+    if (! display.player.nodeExpl.container.visible && type === "player") {
+      const selectedNode = hotbarSelectedNode(state.player.hotbar);
+      if (selectedNode !== undefined) {
+        state.player.layout.nodes[index] = selectedNode;
+        display.player.layout.nodes[index].texture = cache[nodeSprite(selectedNode)];
+        attachAnimation(
+          new Seq([
+            new Par([
+              new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x")),
+              new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y")),
+            ]),
+            new Par([
+              new TweenTo(0.1, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x")),
+              new TweenTo(0.1, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y")),
+            ]),
           ]),
-          new Par([
-            new TweenTo(0.1, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x")),
-            new TweenTo(0.1, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y")),
-          ]),
-        ]),
-      );
+        );
+      }
+    }
+    // if loading sprite is visible: cancel loading
+    else if (display.player.nodeExpl.loading.visible) {
+      display.player.nodeExpl.container.visible = false;
     }
   };
 }
