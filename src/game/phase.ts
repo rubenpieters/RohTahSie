@@ -1,6 +1,6 @@
 import * as lo from "lodash";
 import { GameState } from "./state";
-import { GamePhase, Activating, Charging, Finalizing } from "./definitions/phase";
+import { GamePhase, Transforming, Applying, Charging, Finalizing } from "./definitions/phase";
 import { EndTurn } from "./definitions/action";
 
 export function nextPhase(
@@ -10,9 +10,26 @@ export function nextPhase(
     case "Charging": {
       const actionQueue = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].actions);
       actionQueue.push(new EndTurn());
-      return new Activating(actionQueue, false, "player");
+      return new Transforming(actionQueue, "player");
     }
-    case "Activating": {
+    case "Transforming": {
+      if (state.phase.afterTransform === undefined) {
+        // if after transform is empty, skip
+        if (state.phase.source === "enemy") {
+          return new Finalizing();
+        } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
+          const actionQueue = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
+          actionQueue.push(new EndTurn());
+          return new Transforming(actionQueue, "enemy");
+        } else {
+          return new Finalizing();
+        }
+      } else {
+        // else go to applying phase
+        return { ...state.phase, tag: "Applying", nextAction: state.phase.afterTransform };
+      }
+    }
+    case "Applying": {
       // if queue is empty, advance to enemy turn or return to charging phase
       if (state.phase.actionQueue.length === 0) {
         if (state.phase.source === "enemy") {
@@ -20,19 +37,13 @@ export function nextPhase(
         } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
           const actionQueue = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
           actionQueue.push(new EndTurn());
-          return new Activating(actionQueue, false, "enemy");
+          return new Transforming(actionQueue, "enemy");
         } else {
           return new Finalizing();
         }
       }
-      // if queue is not empty, continue transforming / applying actions
-      if (state.phase.transformed) {
-        // previous phase was apply phase, set transform flag to false
-        return { ...state.phase, transformed: false };
-      } else {
-        // previous phase was transform phase, set transform flag to true to apply action
-        return { ...state.phase, transformed: true };
-      }
+      // otherwise, go to transforming phase
+      return { ...state.phase, tag: "Transforming" };
     }
     case "Finalizing": {
       return new Charging();

@@ -10,7 +10,7 @@ import { NodeExplDisplay } from "./nodeExpl";
 import { Pools } from "../app/pool";
 import { PlayerTarget, EnemyTarget, AbstractTarget } from "./definitions/target";
 import { applyAction } from "./action";
-import { Activating } from "./definitions/phase";
+import { Transforming, Applying } from "./definitions/phase";
 import { applyStatuses } from "./status";
 import { MenuDisplay } from "../menu/menu";
 import { CardCraftDisplay } from "../craft/card";
@@ -73,14 +73,10 @@ export function chargingAnimation(
 }
 
 export function applyingAnimation(
-  state: GameStateBase & { phase: Activating },
+  state: GameStateBase & { phase: Applying },
   display: Display,
   cache: Cache,
 ) {
-  const action = state.phase.actionQueue.shift();
-  if (action === undefined) {
-    return new Noop();
-  }
   const source = state.phase.source;
   const fadeOutBar = display[source].layout.bar.alpha < Number.EPSILON * 100 ?
     new Noop() :
@@ -91,9 +87,8 @@ export function applyingAnimation(
     ]);
   return mkEff({
     eff: () => {
-      // TODO: set aside next to be applied Action<ConcreteTarget>, queue is a list of Action<AbstractTarget>
-      const { animation, newActions } = applyAction(action, state, display, cache);
-      const newActionQueue = newActions.concat(state.phase.actionQueue);
+      const { animation, newActions } = applyAction(state.phase.nextAction, state, display, cache);
+      const newActionQueue = (newActions as Action<AbstractTarget>[]).concat(state.phase.actionQueue);
       state.phase.actionQueue = newActionQueue;
       return animation;
     },
@@ -104,7 +99,7 @@ export function applyingAnimation(
 }
 
 export function transformingAnimation(
-  state: GameStateBase & { phase: Activating },
+  state: GameStateBase & { phase: Transforming },
   display: Display,
   cache: Cache,
 ) {
@@ -118,8 +113,8 @@ export function transformingAnimation(
       const origin = source === "player" ? new PlayerTarget() : new EnemyTarget();
       const concretized = concretizeAction(action, source);
       const { transformed, newActions } = applyStatuses(concretized, origin, state);
-      state.phase.actionQueue = ([transformed] as Action<AbstractTarget>[])
-        .concat(newActions).concat(state.phase.actionQueue);
+      state.phase.afterTransform = transformed;
+      state.phase.actionQueue = (newActions as Action<AbstractTarget>[]).concat(state.phase.actionQueue);
       return new Noop();
     },
     k: (animation: Anim) => {

@@ -201,14 +201,14 @@ export function animatePhase(
       gameAnimations = [chargingAnimation(state, display, cache)];
       break;
     }
-    case "Activating": {
-      if (state.phase.transformed) {
-        // @ts-ignore state phase is Activating in this branch
-        gameAnimations = [applyingAnimation(state, display, cache)]; 
-      } else {
-        // @ts-ignore state phase is Activating in this branch
-        gameAnimations = [transformingAnimation(state, display, cache)]; 
-      }
+    case "Transforming": {
+      // @ts-ignore state phase is Activating in this branch
+      gameAnimations = [transformingAnimation(state, display, cache)]; 
+      break;
+    }
+    case "Applying": {
+      // @ts-ignore state phase is Activating in this branch
+      gameAnimations = [applyingAnimation(state, display, cache)];
       break;
     }
     case "Finalizing": {

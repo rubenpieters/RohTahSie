@@ -1,5 +1,5 @@
 import { Action } from "./action";
-import { AbstractTarget } from "./target";
+import { AbstractTarget, ConcreteTarget } from "./target";
 
 export class Charging {
   public readonly tag: "Charging" = "Charging";
@@ -7,12 +7,22 @@ export class Charging {
   constructor() {}
 }
 
-export class Activating {
-  public readonly tag: "Activating" = "Activating";
+export class Transforming {
+  public readonly tag: "Transforming" = "Transforming";
 
   constructor(
     public actionQueue: Action<AbstractTarget>[],
-    public transformed: boolean,
+    public readonly source: "player" | "enemy",
+    public afterTransform?: Action<ConcreteTarget>,
+  ) {}
+}
+
+export class Applying {
+  public readonly tag: "Applying" = "Applying";
+
+  constructor(
+    public nextAction: Action<ConcreteTarget>,
+    public actionQueue: Action<AbstractTarget>[],
     public readonly source: "player" | "enemy",
   ) {}
 }
@@ -25,6 +35,7 @@ export class Finalizing {
 
 export type GamePhase
   = Charging
-  | Activating
+  | Transforming
+  | Applying
   | Finalizing
   ;
