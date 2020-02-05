@@ -68,17 +68,3 @@ export function findStatus(
     return undefined;
   }
 }
-
-export function nodeSprite(
-  ability: Ability,
-): CacheValues {
-  switch (ability.name) {
-    case "Rest": return "res_red";
-    case "Meditation": return "res_gre";
-    case "Requiem": return "res_yel";
-    case "Discussion": return "sword";
-    case "Dormant": return "skip";
-    case "Initiate": return "creep";
-    case "Demon": return "ability1";
-  }
-}

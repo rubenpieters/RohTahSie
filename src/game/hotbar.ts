@@ -1,6 +1,6 @@
 import { Ability, Initiate, Dormant } from "./definitions/ability";
 import { Cache, attachAnimation, attachExplWindowAnimation, clearExplWindowAnimation } from "../app/main";
-import { nodeSprite, GameState } from "./state";
+import { GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
 import { IPoint } from "pixi.js";
 import { Display } from "./display";
@@ -10,6 +10,7 @@ import { PlayerTarget, EnemyTarget } from "./definitions/target";
 import { CardCrafts } from "../craft/all";
 import { filterUndefined, fillUndefinedUpTo } from "../util/util";
 import { Zones } from "src/zone/all";
+import { nodeSprite } from "./ability";
 
 const xAmount = 7;
 const yAmount = 2;

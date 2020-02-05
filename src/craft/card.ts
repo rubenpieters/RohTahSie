@@ -1,8 +1,9 @@
 import { CardCrafts } from "./all";
-import { nodeSprite, GameState } from "../game/state";
+import { GameState } from "../game/state";
 import { Cache, attachExplWindowAnimation, clearExplWindowAnimation } from "../app/main";
 import { Display } from "../game/display";
 import { loadNodeExpl } from "../game/nodeExpl";
+import { nodeSprite } from "../game/ability";
 
 export type CardDisplay = {
   cardContainer: PIXI.Container,

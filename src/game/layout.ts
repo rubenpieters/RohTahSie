@@ -1,12 +1,13 @@
 import { Ability } from "./definitions/ability";
 import * as Ab from "./definitions/ability";
 import { Cache, attachAnimation, clearExplWindowAnimation, attachExplWindowAnimation } from "../app/main";
-import { nodeSprite, GameState } from "./state";
+import { GameState } from "./state";
 import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq } from "../app/animation";
 import { hotbarSelectedNode } from "./hotbar";
 import { Display } from "./display";
 import { EnemyTarget, PlayerTarget } from "./definitions/target";
 import { loadNodeExpl } from "./nodeExpl";
+import { nodeSprite } from "./ability";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;

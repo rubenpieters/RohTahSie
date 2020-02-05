@@ -71,6 +71,9 @@ const cache = {
   "ability_slot": PIXI.Texture.from("assets/sprites/ability_slot.png"),
   "card_bg": PIXI.Texture.from("assets/sprites/card_bg.png"),
   "card_name_bg": PIXI.Texture.from("assets/sprites/card_name_bg.png"),
+  "meditation": PIXI.Texture.from("assets/sprites/meditation.png"),
+  "rest": PIXI.Texture.from("assets/sprites/rest.png"),
+  "requiem": PIXI.Texture.from("assets/sprites/requiem.png"),
 };
 
 let animations: Anim[] = [];
