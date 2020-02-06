@@ -7,21 +7,21 @@ import { EnemyKey } from "../enemy";
 export class Rest {
   public readonly name: "Rest" = "Rest"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Regen(10, "roh", new PlayerTarget()),
+    new A.Regen(10, "roh", new Self()),
   ]
 }
 
 export class Meditation {
   public readonly name: "Meditation" = "Meditation"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Regen(8, "tah", new PlayerTarget()),
+    new A.Regen(8, "tah", new Self()),
   ]
 }
 
 export class Requiem {
   public readonly name: "Requiem" = "Requiem"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Regen(6, "sie", new PlayerTarget()),
+    new A.Regen(6, "sie", new Self()),
   ]
 }
 
@@ -42,8 +42,8 @@ export class Discussion {
 export class Demon {
   public readonly name: "Demon" = "Demon"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Cost(6, "sie", new PlayerTarget()),
-    new A.AddStatus(new S.Dmg1(1, 1, 8), new PlayerTarget()),
+    new A.Cost(6, "sie", new Self()),
+    new A.AddStatus(new S.Dmg1(1, 1, 8), new Self()),
   ]
 }
 

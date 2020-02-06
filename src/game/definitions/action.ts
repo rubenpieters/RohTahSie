@@ -1,16 +1,15 @@
 import { EnemyKey } from "../enemy";
 import { ResourceType } from "../types";
-import { ConcreteTarget, AbstractTarget } from "./target";
 import { Status } from "./status";
 
-export class Regen {
+export class Regen<T> {
   public readonly tag: "Regen" = "Regen";
   public readonly size = 1;
 
   constructor(
     public readonly value: number,
     public readonly resource: ResourceType,
-    public readonly target: ConcreteTarget,
+    public readonly target: T,
   ) {}
 }
 
@@ -31,29 +30,29 @@ export class Damage<T> {
   ) {}
 }
 
-export class ChangeShield {
+export class ChangeShield<T> {
   public readonly tag: "ChangeShield" = "ChangeShield";
 
   constructor(
     public readonly resource: ResourceType,
-    public readonly target: ConcreteTarget,
+    public readonly target: T,
   ) {}
 }
 
-export class AddStatus {
+export class AddStatus<T> {
   public readonly tag: "AddStatus" = "AddStatus";
 
   constructor(
     public readonly status: Status,
-    public readonly target: ConcreteTarget,
+    public readonly target: T,
   ) {}
 }
 
-export class Death {
+export class Death<T> {
   public readonly tag: "Death" = "Death";
 
   constructor(
-    public readonly target: ConcreteTarget,
+    public readonly target: T,
   ) {}
 }
 
@@ -80,13 +79,13 @@ export class EndTurn {
 }
 
 export type Action<T>
-  = Regen
+  = Regen<T>
   | Summon
   | Damage<T>
   | Cost<T>
-  | ChangeShield
-  | AddStatus
-  | Death
+  | ChangeShield<T>
+  | AddStatus<T>
+  | Death<T>
   | NoAction
   | EndTurn
   ;

@@ -268,8 +268,13 @@ export function concretizeAction(
   source: "player" | "enemy",
 ): Action<ConcreteTarget> {
   switch (action.tag) {
-    case "Damage": return { ...action, target: concretizeTarget(action.target, source) };
-    case "Cost": return { ...action, target: concretizeTarget(action.target, source) };
+    case "Cost": // fallthrough
+    case "Regen": // fallthrough
+    case "Death": // fallthrough
+    case "AddStatus": // fallthrough
+    case "ChangeShield": // fallthrough
+    case "Damage":
+      return { ...action, target: concretizeTarget(action.target, source) };
     default: return action;
   }
 }
