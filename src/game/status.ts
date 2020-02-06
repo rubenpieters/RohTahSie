@@ -5,6 +5,8 @@ import { Action, Damage, NoAction, Death } from "./definitions/action";
 import { ConcreteTarget, PlayerTarget, EnemyTarget, StatusTarget } from "./definitions/target";
 import { eqTarget } from "./target";
 import { StateStatus } from "./entity";
+import { evalVar } from "./var";
+import { Constant } from "./definitions/var";
 
 
 export function statusSprite(
@@ -53,10 +55,11 @@ function applyStatus(
         action.tag === "Damage" &&
         eqTarget(status.owner, action.target)
       ) {
-        const newValue = action.value - status.value;
+        const varValue = evalVar(state, action.value);
+        const newValue = varValue - status.value;
         const transformed = newValue <= 0 ?
           new NoAction() :
-          new Damage(newValue, action.target);
+          new Damage(new Constant(newValue), action.target);
         const newActions: Action<ConcreteTarget>[] = [
           new Death(new StatusTarget(status.id)),
         ];
@@ -70,12 +73,13 @@ function applyStatus(
         action.tag === "Damage" &&
         eqTarget(status.owner, action.target)
       ) {
-        const newValue = action.value - status.value;
+        const varValue = evalVar(state, action.value);
+        const newValue = varValue - status.value;
         const transformed = newValue <= 0 ?
           new NoAction() :
-          new Damage(newValue, action.target);
+          new Damage(new Constant(newValue), action.target);
         const newActions: Action<ConcreteTarget>[] = [
-          new Damage(status.loseValue, new StatusTarget(status.id)),
+          new Damage(new Constant(status.loseValue), new StatusTarget(status.id)),
         ];
         return { transformed, newActions };
       } else {
@@ -85,8 +89,8 @@ function applyStatus(
     case "Dmg1": {
       if (action.tag === "EndTurn") {
         const newActions = [
-          new Damage(1, new EnemyTarget()),
-          new Damage(status.loseValue, new StatusTarget(status.id)),
+          new Damage(new Constant(1), new EnemyTarget()),
+          new Damage(new Constant(status.loseValue), new StatusTarget(status.id)),
         ];
         return { transformed: action, newActions };
       } else {

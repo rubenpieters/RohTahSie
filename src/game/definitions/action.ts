@@ -1,6 +1,7 @@
 import { EnemyKey } from "../enemy";
 import { ResourceType } from "../types";
 import { Status } from "./status";
+import { Var } from "./var";
 
 export class Regen<T> {
   public readonly tag: "Regen" = "Regen";
@@ -25,7 +26,7 @@ export class Damage<T> {
   public readonly tag: "Damage" = "Damage";
 
   constructor(
-    public readonly value: number,
+    public readonly value: Var<number>,
     public readonly target: T,
   ) {}
 }

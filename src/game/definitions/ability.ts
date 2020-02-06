@@ -3,6 +3,7 @@ import * as A from "./action";
 import * as S from "./status";
 import { PlayerTarget, EnemyTarget, AbstractTarget, Self, Other } from "./target";
 import { EnemyKey } from "../enemy";
+import { Constant } from "./var";
 
 export class Rest {
   public readonly name: "Rest" = "Rest"
@@ -35,7 +36,7 @@ export class Discussion {
   public readonly name: "Discussion" = "Discussion"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(3, "tah", new Self()),
-    new A.Damage(5, new Other()),
+    new A.Damage(new Constant(5), new Other()),
   ]
 }
 

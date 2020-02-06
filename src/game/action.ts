@@ -12,6 +12,7 @@ import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget } from "./def
 import { targetToEntity, targetToEntityDisplay, targetExpl, concretizeTarget } from "./target";
 import { updateGemText } from "../craft/card";
 import { resourceMaxField } from "./entity";
+import { evalVar } from "./var";
 
 export function applyAction(
   action: Action<ConcreteTarget>,
@@ -68,7 +69,8 @@ export function applyAction(
         if (targetEntity !== undefined) {
           const shieldType = targetEntity.shield;
           const prevValue = targetEntity[shieldType];
-          targetEntity[shieldType] = Math.max(0, targetEntity[shieldType] - action.value);
+          const varValue = evalVar(state, action.value);
+          targetEntity[shieldType] = Math.max(0, targetEntity[shieldType] - varValue);
           const valueChange = prevValue - targetEntity[shieldType];
           // decrease resource animation
           const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
@@ -84,7 +86,8 @@ export function applyAction(
         if (status !== undefined) {
           // if a status is found on enemy, then it is not undefined
           const targetEntity = state[status.owner]!.entity;
-          const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - action.value);
+          const varValue = evalVar(state, action.value);
+          const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - varValue);
           targetEntity.statuses[status.statusIndex].hp = newHp;
           const animation = damageStatusAnim(status, targetEntity, display, cache);
           let newActions: Action<ConcreteTarget>[] = [];
