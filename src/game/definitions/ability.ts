@@ -3,7 +3,7 @@ import * as A from "./action";
 import * as S from "./status";
 import { PlayerTarget, EnemyTarget, AbstractTarget, Self, Other } from "./target";
 import { EnemyKey } from "../enemy";
-import { Constant } from "./var";
+import * as V from "./var";
 
 export class Rest {
   public readonly name: "Rest" = "Rest"
@@ -36,7 +36,7 @@ export class Discussion {
   public readonly name: "Discussion" = "Discussion"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(3, "tah", new Self()),
-    new A.Damage(new Constant(5), new Other()),
+    new A.Damage(new V.Constant(5), new Other()),
   ]
 }
 
@@ -63,6 +63,14 @@ export class Initiate {
   }
 }
 
+export class Community {
+  public readonly name: "Community" = "Community"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(3, "tah", new Self()),
+    new A.Damage(new V.Div(V.mkCountAbility("Community"), new V.Constant(2), "ceil"), new Other()),
+  ];
+}
+
 export type Ability
   = Rest
   | Meditation
@@ -71,4 +79,5 @@ export type Ability
   | Dormant
   | Demon
   | Initiate
+  | Community
   ;

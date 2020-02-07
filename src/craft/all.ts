@@ -35,10 +35,16 @@ export function allCardCrafts(): CardCrafts {
       cost: 0,
     },
     {
+      node: new Ab.Community(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
       node: new Ab.Demon(),
       included: 0,
       available: 0,
-      cost: 10,
+      cost: 4,
     },
   ];
 }
