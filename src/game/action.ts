@@ -12,7 +12,7 @@ import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget } from "./def
 import { targetToEntity, targetToEntityDisplay, targetExpl, concretizeTarget } from "./target";
 import { updateGemText } from "../craft/card";
 import { resourceMaxField } from "./entity";
-import { evalVar } from "./var";
+import { evalVar, concretizeVar } from "./var";
 
 export function applyAction(
   action: Action<ConcreteTarget>,
@@ -275,9 +275,10 @@ export function concretizeAction(
     case "Regen": // fallthrough
     case "Death": // fallthrough
     case "AddStatus": // fallthrough
-    case "ChangeShield": // fallthrough
-    case "Damage":
+    case "ChangeShield":
       return { ...action, target: concretizeTarget(action.target, source) };
+    case "Damage":
+      return { ...action, target: concretizeTarget(action.target, source), value: concretizeVar(action.value, source) };
     default: return action;
   }
 }

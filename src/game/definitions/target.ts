@@ -31,12 +31,15 @@ export class Self {
   constructor() {}
 }
 
+export const mkSelf: AbstractTarget = new Self();
+
 export class Other {
   public readonly tag: "Other" = "Other";
 
   constructor() {}
 }
 
+export const mkOther: AbstractTarget = new Other();
 
 export type AbstractTarget
   = Self

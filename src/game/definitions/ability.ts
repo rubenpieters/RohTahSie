@@ -1,7 +1,7 @@
 import { Action } from "./action";
 import * as A from "./action";
 import * as S from "./status";
-import { PlayerTarget, EnemyTarget, AbstractTarget, Self, Other } from "./target";
+import { PlayerTarget, EnemyTarget, AbstractTarget, Self, Other, mkSelf, mkOther } from "./target";
 import { EnemyKey } from "../enemy";
 import * as V from "./var";
 
@@ -67,7 +67,7 @@ export class Community {
   public readonly name: "Community" = "Community"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(3, "tah", new Self()),
-    new A.Damage(new V.Div(V.mkCountAbility("Community"), new V.Constant(2), "ceil"), new Other()),
+    new A.Damage(new V.Div(V.mkCountAbility("Community", mkSelf), new V.Constant(2), "ceil"), mkOther),
   ];
 }
 

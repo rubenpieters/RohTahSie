@@ -26,7 +26,7 @@ export class Damage<T> {
   public readonly tag: "Damage" = "Damage";
 
   constructor(
-    public readonly value: Var<number>,
+    public readonly value: Var<number, T>,
     public readonly target: T,
   ) {}
 }

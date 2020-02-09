@@ -8,35 +8,35 @@ export class Constant<A> {
   ) {}
 }
 
-// TODO: add abstract target for counting
-export class CountAbility {
+export class CountAbility<T> {
   public readonly tag: "CountAbility" = "CountAbility";
 
   constructor(
     public readonly ability: Ability["name"],
+    public readonly target: T,
   ) {}
 }
 
-export function mkCountAbility(ability: Ability["name"]): Var<number> {
-  return new CountAbility(ability);
+export function mkCountAbility<T>(ability: Ability["name"], target: T): Var<number, T> {
+  return new CountAbility(ability, target);
 }
 
-export class Div {
+export class Div<T> {
   public readonly tag: "Div" = "Div";
 
   constructor(
-    public readonly x1: Var<number>,
-    public readonly x2: Var<number>,
+    public readonly x1: Var<number, T>,
+    public readonly x2: Var<number, T>,
     public readonly rounding: "floor" | "ceil",
   ) {}
 }
 
-export function mkDiv(x1: Var<number>, x2: Var<number>, rounding: "floor" | "ceil",): Var<number> {
+export function mkDiv<T>(x1: Var<number, T>, x2: Var<number, T>, rounding: "floor" | "ceil",): Var<number, T> {
   return new Div(x1, x2, rounding);
 }
 
-export type Var<A>
+export type Var<A, T>
   = Constant<A>
-  | CountAbility
-  | Div
+  | CountAbility<T>
+  | Div<T>
   ;
