@@ -23,6 +23,7 @@ export function nodeSprite(
     case "Requiem": return "requiem";
     case "Discussion": return "sword";
     case "Community": return "sword";
+    case "Isolation": return "sword";
     case "Dormant": return "skip";
     case "Initiate": return "creep";
     case "Demon": return "ability1";

@@ -41,6 +41,12 @@ export function allCardCrafts(): CardCrafts {
       cost: 0,
     },
     {
+      node: new Ab.Isolation(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
       node: new Ab.Demon(),
       included: 0,
       available: 0,

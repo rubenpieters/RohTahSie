@@ -79,6 +79,16 @@ export class EndTurn {
   constructor() {}
 }
 
+export class Conditional<T> {
+  public readonly tag: "Conditional" = "Conditional";
+
+  constructor(
+    public readonly cond: Var<boolean, T>,
+    public readonly actionThen: Action<T>,
+    public readonly actionElse: Action<T>,
+  ) {}
+}
+
 export type Action<T>
   = Regen<T>
   | Summon
@@ -89,4 +99,5 @@ export type Action<T>
   | Death<T>
   | NoAction
   | EndTurn
+  | Conditional<T>
   ;

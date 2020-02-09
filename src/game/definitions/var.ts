@@ -31,12 +31,30 @@ export class Div<T> {
   ) {}
 }
 
-export function mkDiv<T>(x1: Var<number, T>, x2: Var<number, T>, rounding: "floor" | "ceil",): Var<number, T> {
+export function mkDiv<T>(x1: Var<number, T>, x2: Var<number, T>, rounding: "floor" | "ceil"): Var<number, T> {
   return new Div(x1, x2, rounding);
+}
+
+export class Equals<T> {
+  public readonly tag: "Equals" = "Equals";
+
+  constructor(
+    public readonly f: <R>(f: <A>(equalsk: EqualsK<A, T>) => R) => R,
+  ) {}
+}
+
+type EqualsK<X, T> = {
+  x1: Var<X, T>,
+  x2: Var<X, T>,
+}
+
+export function mkEquals<A, T>(x1: Var<A, T>, x2: Var<A, T>): Var<boolean, T> {
+  return new Equals(k => k({ x1, x2 }));
 }
 
 export type Var<A, T>
   = Constant<A>
   | CountAbility<T>
   | Div<T>
+  | Equals<T>
   ;

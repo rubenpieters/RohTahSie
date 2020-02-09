@@ -184,6 +184,14 @@ export function applyAction(
       }
       return { animation: new Noop(), newActions: [] };
     }
+    case "Conditional": {
+      const evalCond = evalVar(state, action.cond);
+      if (evalCond) {
+        return { animation: new Noop(), newActions: [action.actionThen] };
+      } else {
+        return { animation: new Noop(), newActions: [action.actionElse] };
+      }
+    }
     case "Death": {
       if (action.target.tag === "EnemyTarget") {
         if (state.enemy !== undefined) {
@@ -263,6 +271,7 @@ export function actionExpl<T extends AbstractTarget>(
     case "EndTurn": return `EndTurn`;
     case "NoAction": return `NoAction`;
     case "Summon": return `Summon ${action.enemyId}`;
+    case "Conditional": return `TODO: conditional expl`;
   }
 }
 
@@ -279,6 +288,13 @@ export function concretizeAction(
       return { ...action, target: concretizeTarget(action.target, source) };
     case "Damage":
       return { ...action, target: concretizeTarget(action.target, source), value: concretizeVar(action.value, source) };
+    case "Conditional":
+      return {
+        ...action,
+        cond: concretizeVar(action.cond, source),
+        actionThen: concretizeAction(action.actionThen, source),
+        actionElse: concretizeAction(action.actionElse, source),
+      };
     default: return action;
   }
 }

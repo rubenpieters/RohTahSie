@@ -71,6 +71,18 @@ export class Community {
   ];
 }
 
+export class Isolation {
+  public readonly name: "Isolation" = "Isolation"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(4, "tah", new Self()),
+    new A.Conditional(
+      V.mkEquals(V.mkCountAbility("Isolation", mkSelf), new V.Constant(1)),
+      new A.Damage(new V.Constant(10), new Other()),
+      new A.NoAction()
+    ),
+  ];
+}
+
 export type Ability
   = Rest
   | Meditation
@@ -80,4 +92,5 @@ export type Ability
   | Demon
   | Initiate
   | Community
+  | Isolation
   ;
