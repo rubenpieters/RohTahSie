@@ -44,7 +44,7 @@ export function eqTarget(
 
 export function targetExpl(
   target: AbstractTarget,
-) {
+): string {
   switch (target.tag) {
     case "PlayerTarget": return "Player";
     case "EnemyTarget": return "Enemy";

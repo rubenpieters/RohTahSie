@@ -1,8 +1,9 @@
 import { GameState } from "./state"
 import { Var, mkEquals } from "./definitions/var";
 import { ConcreteTarget, AbstractTarget } from "./definitions/target";
-import { concretizeTarget } from "./target";
+import { concretizeTarget, targetExpl } from "./target";
 import deepEqual from "deep-equal";
+import lo from "lodash";
 
 export function evalVar<A>(
   state: GameState,
@@ -54,5 +55,58 @@ export function concretizeVar<A>(
       return mkEquals(concretized1, concretized2) as Var<A, ConcreteTarget>;
     }
     default: return varDef;
+  }
+}
+
+export function varExpl<A>(
+  varDef: Var<A, AbstractTarget>,
+) {
+  return _varExpl({}, varDef);
+}
+
+function _varExpl<A>(
+  varExpl: { [K in string]: string },
+  varDef: Var<A, AbstractTarget>,
+): { mainExpl: string, varExpl: { [K in string]: string } } {
+  switch (varDef.tag) {
+    case "Constant": return { mainExpl: `${varDef.a}`, varExpl: {} };
+    case "CountAbility": {
+      const varName = newVarName(varExpl);
+      const newVarExpl = lo.cloneDeep(varExpl);
+      newVarExpl[varName] = `${varName} is count of ${varDef.ability} on layout`;
+      return {
+        mainExpl: `${varName}`,
+        varExpl: newVarExpl,
+      };
+    }
+    case "Div": {
+      const result1 = _varExpl(varExpl, varDef.x1);
+      const result2 = _varExpl(result1.varExpl, varDef.x2);
+      return {
+        mainExpl: `${result1.mainExpl} / ${result2.mainExpl}`,
+        varExpl: result2.varExpl
+      };
+    }
+    case "Equals": {
+      return varDef.f(({ x1, x2 }) => {
+        const result1 = _varExpl(varExpl, x1);
+        const result2 = _varExpl(result1.varExpl, x2);
+        return {
+          mainExpl: `${result1.mainExpl} == ${result2.mainExpl}`,
+          varExpl: result2.varExpl
+        };
+      });
+    }
+  }
+}
+
+function newVarName(
+  varExpl: { [K in string]: string },
+): string {
+  switch (Object.keys(varExpl).length) {
+    case 0: return "X";
+    case 1: return "Y";
+    case 2: return "Z";
+    default: throw "newVarName: Unsupported Variable Count";
   }
 }

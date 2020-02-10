@@ -12,7 +12,7 @@ import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget } from "./def
 import { targetToEntity, targetToEntityDisplay, targetExpl, concretizeTarget } from "./target";
 import { updateGemText } from "../craft/card";
 import { resourceMaxField } from "./entity";
-import { evalVar, concretizeVar } from "./var";
+import { evalVar, concretizeVar, varExpl } from "./var";
 
 export function applyAction(
   action: Action<ConcreteTarget>,
@@ -266,7 +266,7 @@ export function actionExpl<T extends AbstractTarget>(
     case "Cost": return `-${action.value} ${action.resource} to ${targetExpl(action.target)}`;
     case "AddStatus": return `Add Status`;
     case "ChangeShield": return `${action.resource} Concentration`;
-    case "Damage": return `-${action.value} Essence to ${targetExpl(action.target)}`;
+    case "Damage": return `-${varExpl(action.value).mainExpl} Essence to ${targetExpl(action.target)}`;
     case "Death": return `Death`;
     case "EndTurn": return `EndTurn`;
     case "NoAction": return `NoAction`;

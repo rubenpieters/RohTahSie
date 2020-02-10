@@ -21,7 +21,7 @@ export function nodeSprite(
     case "Rest": return "rest";
     case "Meditation": return "meditation";
     case "Requiem": return "requiem";
-    case "Discussion": return "sword";
+    case "Discussion": return "discussion";
     case "Community": return "sword";
     case "Isolation": return "sword";
     case "Dormant": return "skip";
