@@ -91,6 +91,12 @@ export class Eff {
   ) {}
 }
 
+export function mkEff<A>(
+  effk: EffK<A>,
+): Eff {
+  return new Eff(k => k(effk));
+}
+
 type ParticleK<A extends PIXI.DisplayObject> = {
   animation: (particle: A) => Anim,
   pool: Pool<A>,
@@ -123,12 +129,6 @@ export class Delay {
   constructor(
     public readonly delay: number,
   ) {}
-}
-
-export function mkEff<A>(
-  effk: EffK<A>,
-): Eff {
-  return new Eff(k => k(effk));
 }
 
 export type Anim

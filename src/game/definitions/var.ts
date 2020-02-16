@@ -35,6 +35,19 @@ export function mkDiv<T>(x1: Var<number, T>, x2: Var<number, T>, rounding: "floo
   return new Div(x1, x2, rounding);
 }
 
+export class Add<T> {
+  public readonly tag: "Add" = "Add";
+
+  constructor(
+    public readonly x1: Var<number, T>,
+    public readonly x2: Var<number, T>,
+  ) {}
+}
+
+export function mkAdd<T>(x1: Var<number, T>, x2: Var<number, T>): Var<number, T> {
+  return new Add(x1, x2);
+}
+
 export class Equals<T> {
   public readonly tag: "Equals" = "Equals";
 
@@ -57,4 +70,5 @@ export type Var<A, T>
   | CountAbility<T>
   | Div<T>
   | Equals<T>
+  | Add<T>
   ;

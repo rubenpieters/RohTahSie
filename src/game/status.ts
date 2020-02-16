@@ -8,7 +8,7 @@ import { StateStatus } from "./entity";
 import { evalVar } from "./var";
 import { Constant } from "./definitions/var";
 
-
+/*
 export function statusSprite(
   status: Status,
 ): CacheValues {
@@ -99,3 +99,4 @@ function applyStatus(
     }
   }
 }
+*/

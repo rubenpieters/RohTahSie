@@ -4,6 +4,7 @@ import * as S from "./status";
 import { PlayerTarget, EnemyTarget, AbstractTarget, Self, Other, mkSelf, mkOther } from "./target";
 import { EnemyKey } from "../enemy";
 import * as V from "./var";
+import { demonStatus } from "./status2";
 
 export class Rest {
   public readonly name: "Rest" = "Rest"
@@ -44,7 +45,7 @@ export class Demon {
   public readonly name: "Demon" = "Demon"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(6, "sie", new Self()),
-    new A.AddStatus(new S.Dmg1(1, 1, 8), new Self()),
+    new A.AddStatus(demonStatus, new Self()),
   ]
 }
 

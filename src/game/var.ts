@@ -28,6 +28,9 @@ export function evalVar<A>(
         case "floor": return Math.floor(beforeRound) as any;
       }
     }
+    case "Add": {
+      return evalVar(state, varDef.x1) + evalVar(state, varDef.x2) as any;
+    }
     case "Equals": {
       const isEqual = varDef.f(({ x1, x2 }) => {
         const evaled1 = evalVar(state, x1);
@@ -46,6 +49,7 @@ export function concretizeVar<A>(
   switch (varDef.tag) {
     case "CountAbility": return { ...varDef, target: concretizeTarget(varDef.target, source) };
     case "Div": return { ...varDef, x1: concretizeVar(varDef.x1, source), x2: concretizeVar(varDef.x2, source) };
+    case "Add": return { ...varDef, x1: concretizeVar(varDef.x1, source), x2: concretizeVar(varDef.x2, source) };
     case "Equals": {
       const { concretized1, concretized2 } = varDef.f(({ x1, x2 }) => {
         const concretized1 = concretizeVar(x1, source);
@@ -84,6 +88,14 @@ function _varExpl<A>(
       const result2 = _varExpl(result1.varExpl, varDef.x2);
       return {
         mainExpl: `${result1.mainExpl} / ${result2.mainExpl}`,
+        varExpl: result2.varExpl
+      };
+    }
+    case "Add": {
+      const result1 = _varExpl(varExpl, varDef.x1);
+      const result2 = _varExpl(result1.varExpl, varDef.x2);
+      return {
+        mainExpl: `${result1.mainExpl} + ${result2.mainExpl}`,
         varExpl: result2.varExpl
       };
     }

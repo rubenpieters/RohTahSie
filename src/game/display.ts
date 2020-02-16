@@ -11,7 +11,7 @@ import { Pools } from "../app/pool";
 import { PlayerTarget, EnemyTarget, AbstractTarget } from "./definitions/target";
 import { applyAction } from "./action";
 import { Transforming, Applying } from "./definitions/phase";
-import { applyStatuses } from "./status";
+import { applyStatuses } from "./status2";
 import { MenuDisplay } from "../menu/menu";
 import { CardCraftDisplay } from "../craft/card";
 import { ZoneOverviewDisplay } from "../zone/zone";
@@ -112,7 +112,7 @@ export function transformingAnimation(
     eff: () => {
       const origin = source === "player" ? new PlayerTarget() : new EnemyTarget();
       const concretized = concretizeAction(action, source);
-      const { transformed, newActions } = applyStatuses(concretized, origin, state);
+      const { transformed, newActions } = applyStatuses(concretized, origin, state, display, cache);
       state.phase.afterTransform = transformed;
       state.phase.actionQueue = (newActions as Action<AbstractTarget>[]).concat(state.phase.actionQueue);
       return new Noop();

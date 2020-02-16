@@ -1,12 +1,10 @@
 import { Cache } from "../app/main";
 import { ResourceType } from "./types";
-import { ConcreteTarget, StatusTarget } from "./definitions/target";
-import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, Particle, mkParticle } from "../app/animation";
+import { ConcreteTarget } from "./definitions/target";
+import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, mkParticle } from "../app/animation";
 import { Display } from "./display";
-import { Pool, mkPool } from "../app/pool";
-import { Status } from "./definitions/status";
-import { statusSprite } from "./status";
-import { findStatus, GameState } from "./state";
+import { Status2 } from "./definitions/status2";
+import { statusSprite } from "./status2";
 
 const statusAmountX = 3;
 const statusAmountY = 5;
@@ -52,7 +50,7 @@ const resourceVarAxis = {
   sie: "y",
 } as const;
 
-export type StateStatus = Status & {
+export type StateStatus = Status2 & {
   id: number,
   hp: number,
 }
