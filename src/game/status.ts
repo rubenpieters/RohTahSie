@@ -1,102 +1,62 @@
-import { Status } from "./definitions/status";
-import { CacheValues } from "../app/main";
+import { Action } from "./definitions/action";
+import { ConcreteTarget, PlayerTarget, EnemyTarget } from "./definitions/target";
 import { GameState } from "./state";
-import { Action, Damage, NoAction, Death } from "./definitions/action";
-import { ConcreteTarget, PlayerTarget, EnemyTarget, StatusTarget } from "./definitions/target";
-import { eqTarget } from "./target";
-import { StateStatus } from "./entity";
-import { evalVar } from "./var";
-import { Constant } from "./definitions/var";
-
-/*
-export function statusSprite(
-  status: Status,
-): CacheValues {
-  switch (status.tag) {
-    case "Armor1": {
-      return "status1";
-    }
-    case "Armor2": {
-      return "status1";
-    }
-    case "Dmg1": {
-      return "status1";
-    }
-  }
-}
+import { Status } from "./definitions/status";
+import { checkCondition } from "./condition";
+import { applyStatusAction, concretizeStatusAction } from "./statusAction";
+import { Cache, CacheValues } from "../app/main";
+import { Display } from "./display";
+import { concretizeAction } from "./action";
 
 export function applyStatuses(
   action: Action<ConcreteTarget>,
   origin: ConcreteTarget,
   state: GameState,
+  display: Display,
+  cache: Cache,
 ): { transformed: Action<ConcreteTarget>, newActions: Action<ConcreteTarget>[] } {
-  const pStatuses = state.player.entity.statuses.map(x => Object.assign(x, { owner: new PlayerTarget() as ConcreteTarget }));
-  const eStatuses = state.enemy === undefined ? [] : state.enemy.entity.statuses.map(x => Object.assign(x, { owner: new EnemyTarget() as ConcreteTarget }));
+  const pStatuses = state.player.entity.statuses.map(x => Object.assign(x, { owner: "player" as ("player" | "enemy") }));
+  const eStatuses = state.enemy === undefined ? [] : state.enemy.entity.statuses.map(x => Object.assign(x, { owner: "enemy" as ("player" | "enemy") }));
   const statuses = pStatuses.concat(eStatuses);
   let transformed = action;
   let newActions: Action<ConcreteTarget>[] = [];
   for (const status of statuses) {
-    const result = applyStatus(transformed, origin, status, state);
+    const result = applyStatus(transformed, origin, status, state, display, cache);
     transformed = result.transformed;
     newActions = newActions.concat(result.newActions);
   }
   return { transformed, newActions };
 }
 
-function applyStatus(
+export function applyStatus(
   action: Action<ConcreteTarget>,
   origin: ConcreteTarget,
-  status: StateStatus & { owner: ConcreteTarget },
+  status: Status & { owner: "player" | "enemy" },
   state: GameState,
+  display: Display,
+  cache: Cache,
 ): { transformed: Action<ConcreteTarget>, newActions: Action<ConcreteTarget>[] } {
-  switch (status.tag) {
-    case "Armor1": {
-      if (
-        action.tag === "Damage" &&
-        eqTarget(status.owner, action.target)
-      ) {
-        const varValue = evalVar(state, action.value);
-        const newValue = varValue - status.value;
-        const transformed = newValue <= 0 ?
-          new NoAction() :
-          new Damage(new Constant(newValue), action.target);
-        const newActions: Action<ConcreteTarget>[] = [
-          new Death(new StatusTarget(status.id)),
-        ];
-        return { transformed, newActions };
-      } else {
-        return { transformed: action, newActions: [] };
-      }
+  return status.f(({ condition, actions }) => {
+    const filteredAction = checkCondition(condition, action, status.owner);
+    if (filteredAction === "conditionFalse") {
+      return { transformed: action, newActions: [] };
+    } else {
+      let newActions: Action<ConcreteTarget>[] = [];
+      let transformed: Action<ConcreteTarget> = action;
+      actions.forEach(action => {
+        const concretizedAction = concretizeStatusAction(action, status.owner);
+        const result = applyStatusAction(transformed, concretizedAction, state, display, cache);
+        newActions = newActions.concat(result.newActions);
+        transformed = result.transformed;
+      });
+      return { transformed, newActions };
     }
-    case "Armor2": {
-      if (
-        action.tag === "Damage" &&
-        eqTarget(status.owner, action.target)
-      ) {
-        const varValue = evalVar(state, action.value);
-        const newValue = varValue - status.value;
-        const transformed = newValue <= 0 ?
-          new NoAction() :
-          new Damage(new Constant(newValue), action.target);
-        const newActions: Action<ConcreteTarget>[] = [
-          new Damage(new Constant(status.loseValue), new StatusTarget(status.id)),
-        ];
-        return { transformed, newActions };
-      } else {
-        return { transformed: action, newActions: [] };
-      }
-    }
-    case "Dmg1": {
-      if (action.tag === "EndTurn") {
-        const newActions = [
-          new Damage(new Constant(1), new EnemyTarget()),
-          new Damage(new Constant(status.loseValue), new StatusTarget(status.id)),
-        ];
-        return { transformed: action, newActions };
-      } else {
-        return { transformed: action, newActions: [] };
-      }
-    }
-  }
+  });
 }
-*/
+
+
+export function statusSprite(
+  status: Status,
+): CacheValues {
+  return "status1";
+}

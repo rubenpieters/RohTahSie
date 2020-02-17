@@ -7,7 +7,7 @@ import { barLocation, newLayoutAnim } from "./layout";
 import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
 import { allEnemies } from "./enemy";
-import { applyStatuses } from "./status2";
+import { applyStatuses } from "./status";
 import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget } from "./definitions/target";
 import { targetToEntity, targetToEntityDisplay, targetExpl, concretizeTarget } from "./target";
 import { updateGemText } from "../craft/card";

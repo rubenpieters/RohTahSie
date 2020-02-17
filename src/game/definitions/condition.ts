@@ -1,5 +1,5 @@
 import { Action, Summon } from "./action";
-import { ConcreteTarget, PlayerTarget } from "./target";
+import { ConcreteTarget, PlayerTarget, AbstractTarget } from "./target";
 
 export class IsTag<Before extends Action<ConcreteTarget>, After> {
   public readonly tag: "IsTag" = "IsTag";
@@ -31,8 +31,17 @@ export class And<Before extends Action<ConcreteTarget>, After extends Action<Con
   ) {}
 }
 
+export class HasTarget {
+  public readonly tag: "HasTarget" = "HasTarget";
+
+  constructor(
+    public readonly target: AbstractTarget,
+  ) {}
+}
+
 export type Condition<Before extends Action<ConcreteTarget>, After extends Action<ConcreteTarget>>
   = IsTag<Before, After>
   | OnSelf
   | And<Before, After>
+  | HasTarget
   ;

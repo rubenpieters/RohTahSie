@@ -48,9 +48,9 @@ export function allCardCrafts(): CardCrafts {
     },
     {
       node: new Ab.Demon(),
-      included: 0,
-      available: 0,
-      cost: 4,
+      included: 1,
+      available: 1,
+      cost: 0,
     },
   ];
 }

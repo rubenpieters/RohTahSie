@@ -11,7 +11,7 @@ import { Pools } from "../app/pool";
 import { PlayerTarget, EnemyTarget, AbstractTarget } from "./definitions/target";
 import { applyAction } from "./action";
 import { Transforming, Applying } from "./definitions/phase";
-import { applyStatuses } from "./status2";
+import { applyStatuses } from "./status";
 import { MenuDisplay } from "../menu/menu";
 import { CardCraftDisplay } from "../craft/card";
 import { ZoneOverviewDisplay } from "../zone/zone";

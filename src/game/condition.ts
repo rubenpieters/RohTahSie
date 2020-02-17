@@ -1,12 +1,12 @@
-import { ConcreteTarget, PlayerTarget } from "./definitions/target";
+import { ConcreteTarget, PlayerTarget, EnemyTarget } from "./definitions/target";
 import { Action, Summon, Damage, NoAction } from "./definitions/action";
 import { Condition, OnSelf, mkIsTag, And } from "./definitions/condition";
-import { eqTarget } from "./target";
+import { eqTarget, concretizeTarget } from "./target";
 
 export function checkCondition<Before extends Action<ConcreteTarget>, After extends Action<ConcreteTarget>>(
   condition: Condition<Before, After>,
   action: Before,
-  owner: ConcreteTarget,
+  owner: "player" | "enemy",
 ): After | "conditionFalse" {
   switch (condition.tag) {
     case "IsTag": {
@@ -17,7 +17,8 @@ export function checkCondition<Before extends Action<ConcreteTarget>, After exte
       }
     }
     case "OnSelf": {
-      if ((action as any).target !== undefined && eqTarget((action as any).target, owner)) {
+      const ownerTarget = owner === "player" ? new PlayerTarget() : new EnemyTarget();
+      if ((action as any).target !== undefined && eqTarget((action as any).target, ownerTarget)) {
         return action as any;
       } else {
         return "conditionFalse";
@@ -31,12 +32,22 @@ export function checkCondition<Before extends Action<ConcreteTarget>, After exte
         return checkCondition(condition.cond2, action as any, owner);
       }
     }
+    case "HasTarget": {
+      // concretize condition target with respect to status owner
+      const conditionTarget = concretizeTarget(condition.target, owner);
+      if ((action as any).target !== undefined && eqTarget((action as any).target, conditionTarget)) {
+        return action as any;
+      } else {
+        return "conditionFalse";
+      }
+    }
   }
 }
 
+/*
 checkCondition(mkIsTag("Summon"), new NoAction(), undefined as any);
 
 checkCondition(new OnSelf(), new Damage(undefined as any, new PlayerTarget()), undefined as any);
 checkCondition(new OnSelf(), new NoAction(), undefined as any);
 
-checkCondition(new And(mkIsTag("Summon"), new OnSelf()), new NoAction(), undefined as any);
+checkCondition(new And(mkIsTag("Summon"), new OnSelf()), new NoAction(), undefined as any);*/

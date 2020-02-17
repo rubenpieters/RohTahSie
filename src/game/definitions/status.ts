@@ -1,35 +1,42 @@
-export class Armor1 {
-  public readonly tag: "Armor1" = "Armor1";
+import { ConcreteTarget, AbstractTarget } from "./target";
+import { Action, Damage } from "./action";
+import { Condition } from "./condition";
+import * as C from "./condition";
+import * as V from "./var";
+import * as T from "./target";
+import { StatusAction, Increase } from "./statusAction";
 
-  constructor(
-    public readonly value: number,
-    public readonly maxHp: number,
-  ) {}
+type StatusK<A extends Action<ConcreteTarget>> = {
+  condition: Condition<Action<ConcreteTarget>, A>
+  actions: StatusAction<AbstractTarget>[]
 }
 
-export class Armor2 {
-  public readonly tag: "Armor2" = "Armor2";
-
-  constructor(
-    public readonly value: number,
-    public readonly loseValue: number,
-    public readonly maxHp: number,
-  ) {}
+export type Status = {
+  maxHp: number,
+  f: <R>(f: <A extends Action<ConcreteTarget>>(statusk: StatusK<A>) => R) => R,
 }
 
-export class Dmg1 {
-  public readonly tag: "Dmg1" = "Dmg1";
-
-  constructor(
-    public readonly value: number,
-    public readonly loseValue: number,
-    public readonly maxHp: number,
-  ) {}
+export function mkStatus<A extends Action<ConcreteTarget>>(
+  maxHp: number,
+  statusk: StatusK<A>,
+): Status {
+  return { maxHp, f: k => k(statusk) };
 }
 
-export type Status
-  = Armor1
-  | Armor2
-  | Dmg1
-  ;
-  
+export const demonStatus: Status = mkStatus(
+  6,
+  {
+    condition: C.mkIsTag("EndTurn"),
+    actions: [
+      new Damage(new V.Constant(1), new T.Other()),
+    ],
+  });
+
+export const incrStatus: Status = mkStatus(
+  1,
+  {
+    condition: C.mkIsTag("Damage"),
+    actions: [
+      new Increase("value", 1),
+    ],
+  });

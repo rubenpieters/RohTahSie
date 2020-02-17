@@ -1,10 +1,10 @@
 import { Cache } from "../app/main";
 import { Display } from "./display";
 import { GameState } from "./state";
-import { ConcreteTarget } from "./definitions/target";
+import { ConcreteTarget, AbstractTarget } from "./definitions/target";
 import { Action } from "./definitions/action";
 import { StatusAction } from "./definitions/statusAction";
-import { applyAction } from "./action";
+import { applyAction, concretizeAction } from "./action";
 import * as V from "./definitions/var";
 import { Anim, Noop } from "../app/animation";
 import { cloneDeep } from "lodash";
@@ -27,5 +27,15 @@ export function applyStatusAction(
     default: {
       return { animation: new Noop(), transformed: action, newActions: [statusAction] };
     }
+  }
+}
+
+export function concretizeStatusAction(
+  action: StatusAction<AbstractTarget>,
+  source: "player" | "enemy",
+): StatusAction<ConcreteTarget> {
+  switch (action.tag) {
+    case "Increase": return action;
+    default: return concretizeAction(action, source);
   }
 }

@@ -3,8 +3,8 @@ import { ResourceType } from "./types";
 import { ConcreteTarget } from "./definitions/target";
 import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, mkParticle } from "../app/animation";
 import { Display } from "./display";
-import { Status2 } from "./definitions/status2";
-import { statusSprite } from "./status2";
+import { Status } from "./definitions/status";
+import { statusSprite } from "./status";
 
 const statusAmountX = 3;
 const statusAmountY = 5;
@@ -50,7 +50,7 @@ const resourceVarAxis = {
   sie: "y",
 } as const;
 
-export type StateStatus = Status2 & {
+export type StateStatus = Status & {
   id: number,
   hp: number,
 }

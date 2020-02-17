@@ -1,10 +1,9 @@
 import { Action } from "./action";
 import * as A from "./action";
-import * as S from "./status";
 import { PlayerTarget, EnemyTarget, AbstractTarget, Self, Other, mkSelf, mkOther } from "./target";
 import { EnemyKey } from "../enemy";
 import * as V from "./var";
-import { demonStatus } from "./status2";
+import { demonStatus } from "./status";
 
 export class Rest {
   public readonly name: "Rest" = "Rest"
