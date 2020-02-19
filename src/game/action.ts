@@ -284,6 +284,7 @@ export function concretizeAction(
     case "Regen": // fallthrough
     case "Death": // fallthrough
     case "AddStatus": // fallthrough
+    case "EndTurn": // fallthrough
     case "ChangeShield":
       return { ...action, target: concretizeTarget(action.target, source) };
     case "Damage":

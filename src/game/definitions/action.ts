@@ -73,10 +73,12 @@ export class NoAction {
   constructor() {}
 }
 
-export class EndTurn {
+export class EndTurn<T> {
   public readonly tag: "EndTurn" = "EndTurn";
 
-  constructor() {}
+  constructor(
+    public readonly target: T,
+  ) {}
 }
 
 export class Conditional<T> {
@@ -98,6 +100,6 @@ export type Action<T>
   | AddStatus<T>
   | Death<T>
   | NoAction
-  | EndTurn
+  | EndTurn<T>
   | Conditional<T>
   ;

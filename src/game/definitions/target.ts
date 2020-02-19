@@ -41,9 +41,16 @@ export class Other {
 
 export const mkOther: AbstractTarget = new Other();
 
+export class ThisStatus {
+  public readonly tag: "ThisStatus" = "ThisStatus";
+
+  constructor() {}
+}
+
 export type AbstractTarget
   = Self
   | Other
+  | ThisStatus
   | ConcreteTarget
   ;
 

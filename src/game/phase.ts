@@ -2,6 +2,7 @@ import * as lo from "lodash";
 import { GameState } from "./state";
 import { GamePhase, Transforming, Applying, Charging, Finalizing } from "./definitions/phase";
 import { EndTurn } from "./definitions/action";
+import { EnemyTarget, PlayerTarget } from "./definitions/target";
 
 export function nextPhase(
   state: GameState,
@@ -9,7 +10,7 @@ export function nextPhase(
   switch (state.phase.tag) {
     case "Charging": {
       const actionQueue = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].actions);
-      actionQueue.push(new EndTurn());
+      actionQueue.push(new EndTurn(new PlayerTarget()));
       return new Transforming(actionQueue, "player");
     }
     case "Transforming": {
@@ -19,7 +20,7 @@ export function nextPhase(
           return new Finalizing();
         } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
           const actionQueue = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
-          actionQueue.push(new EndTurn());
+          actionQueue.push(new EndTurn(new EnemyTarget()));
           return new Transforming(actionQueue, "enemy");
         } else {
           return new Finalizing();
@@ -36,7 +37,7 @@ export function nextPhase(
           return new Finalizing();
         } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
           const actionQueue = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
-          actionQueue.push(new EndTurn());
+          actionQueue.push(new EndTurn(new EnemyTarget()));
           return new Transforming(actionQueue, "enemy");
         } else {
           return new Finalizing();

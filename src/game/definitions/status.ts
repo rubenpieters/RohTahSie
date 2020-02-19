@@ -26,7 +26,7 @@ export function mkStatus<A extends Action<ConcreteTarget>>(
 export const demonStatus: Status = mkStatus(
   6,
   {
-    condition: C.mkIsTag("EndTurn"),
+    condition: new C.And(C.mkIsTag("EndTurn"), new C.HasTarget(new T.Self())),
     actions: [
       new Damage(new V.Constant(1), new T.Other()),
     ],
