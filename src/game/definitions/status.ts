@@ -29,6 +29,7 @@ export const demonStatus: Status = mkStatus(
     condition: new C.And(C.mkIsTag("EndTurn"), new C.HasTarget(new T.Self())),
     actions: [
       new Damage(new V.Constant(1), new T.Other()),
+      new Damage(new V.Constant(1), new T.ThisStatus()),
     ],
   });
 

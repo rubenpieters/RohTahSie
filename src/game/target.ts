@@ -1,4 +1,4 @@
-import { ConcreteTarget, AbstractTarget, PlayerTarget, EnemyTarget } from "./definitions/target";
+import { ConcreteTarget, AbstractTarget, PlayerTarget, EnemyTarget, StatusTarget } from "./definitions/target";
 import { Display } from "./display";
 import { EntityDisplay, Entity } from "./entity";
 import { GameState } from "./state";
@@ -51,18 +51,24 @@ export function targetExpl(
     case "StatusTarget": return `Status ${target.id}`;
     case "Self": return "Self";
     case "Other": return "Other";
+    case "ThisStatus": return "This Status"; // TODO: expl with status type
   }
 }
 
 export function concretizeTarget(
   target: AbstractTarget,
   source: "player" | "enemy",
+  thisStatus?: StatusTarget,
 ): ConcreteTarget {
-  if (target.tag === "Self") {
-    return source === "player" ? new PlayerTarget() : new EnemyTarget();
-  } else if (target.tag === "Other") {
-    return source === "player" ? new EnemyTarget() : new PlayerTarget();
-  } else {
-    return target;
+  switch (target.tag) {
+    case "Self": return source === "player" ? new PlayerTarget() : new EnemyTarget();
+    case "Other": return source === "player" ? new EnemyTarget() : new PlayerTarget();
+    case "ThisStatus": {
+      if (thisStatus === undefined) {
+        throw "concretizeTarget: Not in Context of Status";
+      }
+      return thisStatus;
+    }
+    default: return target;
   }
 }

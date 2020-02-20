@@ -1,7 +1,7 @@
 import { Cache } from "../app/main";
 import { Display } from "./display";
 import { GameState } from "./state";
-import { ConcreteTarget, AbstractTarget } from "./definitions/target";
+import { ConcreteTarget, AbstractTarget, StatusTarget } from "./definitions/target";
 import { Action } from "./definitions/action";
 import { StatusAction } from "./definitions/statusAction";
 import { applyAction, concretizeAction } from "./action";
@@ -33,9 +33,10 @@ export function applyStatusAction(
 export function concretizeStatusAction(
   action: StatusAction<AbstractTarget>,
   source: "player" | "enemy",
+  thisStatus: StatusTarget,
 ): StatusAction<ConcreteTarget> {
   switch (action.tag) {
     case "Increase": return action;
-    default: return concretizeAction(action, source);
+    default: return concretizeAction(action, source, thisStatus);
   }
 }

@@ -278,6 +278,7 @@ export function actionExpl<T extends AbstractTarget>(
 export function concretizeAction(
   action: Action<AbstractTarget>,
   source: "player" | "enemy",
+  thisStatus?: StatusTarget,
 ): Action<ConcreteTarget> {
   switch (action.tag) {
     case "Cost": // fallthrough
@@ -286,15 +287,15 @@ export function concretizeAction(
     case "AddStatus": // fallthrough
     case "EndTurn": // fallthrough
     case "ChangeShield":
-      return { ...action, target: concretizeTarget(action.target, source) };
+      return { ...action, target: concretizeTarget(action.target, source, thisStatus) };
     case "Damage":
-      return { ...action, target: concretizeTarget(action.target, source), value: concretizeVar(action.value, source) };
+      return { ...action, target: concretizeTarget(action.target, source, thisStatus), value: concretizeVar(action.value, source) };
     case "Conditional":
       return {
         ...action,
         cond: concretizeVar(action.cond, source),
-        actionThen: concretizeAction(action.actionThen, source),
-        actionElse: concretizeAction(action.actionElse, source),
+        actionThen: concretizeAction(action.actionThen, source, thisStatus),
+        actionElse: concretizeAction(action.actionElse, source, thisStatus),
       };
     default: return action;
   }

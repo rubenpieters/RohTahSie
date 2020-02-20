@@ -1,5 +1,5 @@
 import { Action } from "./definitions/action";
-import { ConcreteTarget, PlayerTarget, EnemyTarget } from "./definitions/target";
+import { ConcreteTarget, PlayerTarget, EnemyTarget, StatusTarget } from "./definitions/target";
 import { GameState } from "./state";
 import { Status } from "./definitions/status";
 import { checkCondition } from "./condition";
@@ -31,7 +31,7 @@ export function applyStatuses(
 export function applyStatus(
   action: Action<ConcreteTarget>,
   origin: ConcreteTarget,
-  status: Status & { owner: "player" | "enemy" },
+  status: Status & { id: number, hp: number, owner: "player" | "enemy" },
   state: GameState,
   display: Display,
   cache: Cache,
@@ -44,7 +44,7 @@ export function applyStatus(
       let newActions: Action<ConcreteTarget>[] = [];
       let transformed: Action<ConcreteTarget> = action;
       actions.forEach(action => {
-        const concretizedAction = concretizeStatusAction(action, status.owner);
+        const concretizedAction = concretizeStatusAction(action, status.owner, new StatusTarget(status.id));
         const result = applyStatusAction(transformed, concretizedAction, state, display, cache);
         newActions = newActions.concat(result.newActions);
         transformed = result.transformed;
