@@ -3,7 +3,7 @@ import * as A from "./action";
 import { PlayerTarget, EnemyTarget, AbstractTarget, Self, Other, mkSelf, mkOther } from "./target";
 import { EnemyKey } from "../enemy";
 import * as V from "./var";
-import { demonStatus } from "./status";
+import * as S from "./status";
 
 export class Rest {
   public readonly name: "Rest" = "Rest"
@@ -44,7 +44,7 @@ export class Demon {
   public readonly name: "Demon" = "Demon"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(6, "sie", new Self()),
-    new A.AddStatus(demonStatus, new Self()),
+    new A.AddStatus(S.demonStatus, new Self()),
   ]
 }
 
@@ -83,6 +83,14 @@ export class Isolation {
   ];
 }
 
+export class Infection {
+  public readonly name: "Infection" = "Infection"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(6, "roh", new Self()),
+    new A.AddStatus(S.infectionStatus, new Other()),
+  ]
+}
+
 export type Ability
   = Rest
   | Meditation
@@ -93,4 +101,5 @@ export type Ability
   | Initiate
   | Community
   | Isolation
+  | Infection
   ;

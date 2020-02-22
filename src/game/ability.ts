@@ -27,5 +27,6 @@ export function nodeSprite(
     case "Dormant": return "skip";
     case "Initiate": return "creep";
     case "Demon": return "ability1";
+    case "Infection": return "ability1";
   }
 }

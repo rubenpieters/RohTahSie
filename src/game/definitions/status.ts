@@ -33,6 +33,16 @@ export const demonStatus: Status = mkStatus(
     ],
   });
 
+export const infectionStatus: Status = mkStatus(
+  6,
+  {
+    condition: new C.And(C.mkIsTag("EndTurn"), new C.HasTarget(new T.Self())),
+    actions: [
+      new Damage(new V.Constant(1), new T.Self()),
+      new Damage(new V.Constant(1), new T.ThisStatus()),
+    ],
+  });
+
 export const incrStatus: Status = mkStatus(
   1,
   {

@@ -98,7 +98,7 @@ const enemy2: Entity = {
 
 const layout3: Layout = {
   nodes: [
-    new Ab.Dormant,
+    new Ab.Infection,
     new Ab.Dormant,
     new Ab.Dormant,
     new Ab.Dormant,
