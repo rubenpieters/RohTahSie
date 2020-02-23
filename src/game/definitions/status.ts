@@ -13,18 +13,21 @@ type StatusK<A extends Action<ConcreteTarget>> = {
 
 export type Status = {
   maxHp: number,
+  size: number,
   f: <R>(f: <A extends Action<ConcreteTarget>>(statusk: StatusK<A>) => R) => R,
 }
 
 export function mkStatus<A extends Action<ConcreteTarget>>(
   maxHp: number,
+  size: number,
   statusk: StatusK<A>,
 ): Status {
-  return { maxHp, f: k => k(statusk) };
+  return { maxHp, size, f: k => k(statusk) };
 }
 
 export const demonStatus: Status = mkStatus(
   6,
+  1,
   {
     condition: new C.And(C.mkIsTag("EndTurn"), new C.HasTarget(new T.Self())),
     actions: [
@@ -35,6 +38,7 @@ export const demonStatus: Status = mkStatus(
 
 export const infectionStatus: Status = mkStatus(
   6,
+  1,
   {
     condition: new C.And(C.mkIsTag("EndTurn"), new C.HasTarget(new T.Self())),
     actions: [
@@ -45,19 +49,11 @@ export const infectionStatus: Status = mkStatus(
 
 export const voodooDollStatus: Status = mkStatus(
   1,
+  5,
   {
     condition: new C.And(C.mkIsTag("Damage"), new C.HasTarget(new T.Other())),
     actions: [
       new Increase("value", 8),
       new Damage(new V.Constant(1), new T.ThisStatus()),
-    ],
-  });
-
-export const incrStatus: Status = mkStatus(
-  1,
-  {
-    condition: C.mkIsTag("Damage"),
-    actions: [
-      new Increase("value", 1),
     ],
   });

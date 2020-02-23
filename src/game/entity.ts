@@ -276,16 +276,18 @@ export function updateEntityStatusDisplay(
   statusHpSprites: PIXI.Sprite[],
   cache: Cache,
 ) {
-  for (let i = 0; i < statusAmount; i++) {
+  let sizeOffset = 0;
+  for (let i = 0; i < statusAmount - sizeOffset; i++) {
     const status: StateStatus | undefined = entity.statuses[i];
-    statusSprites[i].alpha = 1;
+    statusSprites[i + sizeOffset].alpha = 1;
     if (status === undefined) {
-      statusSprites[i].texture = PIXI.Texture.EMPTY;
-      statusHpSprites[i].visible = false;
+      statusSprites[i + sizeOffset].texture = PIXI.Texture.EMPTY;
+      statusHpSprites[i + sizeOffset].visible = false;
     } else {
-      statusSprites[i].texture = cache[statusSprite(status)];
-      statusHpSprites[i].visible = true;
-      statusHpSprites[i].width = status.hp * 25 / status.maxHp;
+      statusSprites[i + sizeOffset].texture = cache[statusSprite(status)];
+      statusHpSprites[i + sizeOffset].visible = true;
+      statusHpSprites[i + sizeOffset].width = status.hp * 25 / status.maxHp;
+      sizeOffset += status.size - 1;
     }
   }
 }
@@ -486,4 +488,13 @@ export function playerInitialEntity(): Entity {
     dirty: false,
     statuses: [],
   };
+}
+
+export function sizeUsed(
+  entity: Entity,
+): number {
+  return entity.statuses
+    .map(x => x.size)
+    .reduce((prev, acc) => prev + acc, 0)
+  ; 
 }

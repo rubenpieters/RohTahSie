@@ -2,7 +2,7 @@ import * as lo from "lodash";
 import { GameState, findStatus } from "./state";
 import { Anim, Noop, mkEff, Par, Seq, TweenTo, mkAccessTarget, mkParticle } from "../app/animation";
 import { Display } from "./display";
-import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim, damageStatusAnim } from "./entity";
+import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim, damageStatusAnim, sizeUsed } from "./entity";
 import { barLocation, newLayoutAnim } from "./layout";
 import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
@@ -167,7 +167,8 @@ export function applyAction(
         const targetEntityDisplay = targetToEntityDisplay(action.target, display);
         if (
           targetEntity !== undefined &&
-          targetEntity.statuses.length < statusAmount
+          targetEntity.statuses.length < statusAmount &&
+          sizeUsed(targetEntity) + action.status.size <= statusAmount
         ) {
           const id = state.idCounter;
           const stateStatus = { ...action.status, id, hp: action.status.maxHp };

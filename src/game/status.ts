@@ -7,6 +7,7 @@ import { applyStatusAction, concretizeStatusAction } from "./statusAction";
 import { Cache, CacheValues } from "../app/main";
 import { Display } from "./display";
 import { concretizeAction } from "./action";
+import { Entity } from "./entity";
 
 export function applyStatuses(
   action: Action<ConcreteTarget>,

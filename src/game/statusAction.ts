@@ -21,9 +21,7 @@ export function applyStatusAction(
       const transformed = cloneDeep(action);
       // TODO: make this typesafe
       const currentVal = (transformed as any)[statusAction.field];
-      console.log(`BEFORE: ${JSON.stringify((transformed as any)[statusAction.field])}`);
       (transformed as any)[statusAction.field] = new V.Add(currentVal, new V.Constant(statusAction.value));
-      console.log(`AFTER: ${JSON.stringify((transformed as any)[statusAction.field])}`);
       return { animation: new Noop(), transformed, newActions: [] };
     }
     default: {
