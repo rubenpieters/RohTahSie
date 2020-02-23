@@ -91,6 +91,14 @@ export class Infection {
   ]
 }
 
+export class VoodooDoll {
+  public readonly name: "VoodooDoll" = "VoodooDoll"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(5, "sie", new Self()),
+    new A.AddStatus(S.voodooDollStatus, new Self()),
+  ]
+}
+
 export type Ability
   = Rest
   | Meditation
@@ -102,4 +110,5 @@ export type Ability
   | Community
   | Isolation
   | Infection
+  | VoodooDoll
   ;

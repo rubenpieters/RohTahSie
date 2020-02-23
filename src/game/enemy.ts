@@ -50,36 +50,17 @@ const layout2: Layout = {
     new Ab.Dormant,
     new Ab.Dormant,
     new Ab.Dormant,
-    new Ab.Dormant,
+    new Ab.Discussion,
 
     new Ab.Dormant,
     new Ab.Dormant,
     new Ab.Dormant,
-    new Ab.Dormant,
+    new Ab.Discussion,
 
     new Ab.Dormant,
     new Ab.Dormant,
     new Ab.Dormant,
-    new Ab.Dormant,
-    /*new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new AttackNode(10, new PlayerTarget()),
-
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new AttackNode(10, new PlayerTarget()),
-
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new AttackNode(10, new PlayerTarget()),
-
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new AttackNode(10, new PlayerTarget()),*/
+    new Ab.Discussion,
   ],
   currentIndex: 0,
 }

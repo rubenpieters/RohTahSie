@@ -43,6 +43,16 @@ export const infectionStatus: Status = mkStatus(
     ],
   });
 
+export const voodooDollStatus: Status = mkStatus(
+  1,
+  {
+    condition: new C.And(C.mkIsTag("Damage"), new C.HasTarget(new T.Other())),
+    actions: [
+      new Increase("value", 8),
+      new Damage(new V.Constant(1), new T.ThisStatus()),
+    ],
+  });
+
 export const incrStatus: Status = mkStatus(
   1,
   {
