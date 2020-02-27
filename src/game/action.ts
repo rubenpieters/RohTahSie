@@ -259,20 +259,55 @@ export function applyAction(
   }
 }
 
+// TODO: extract status info / var info here and return it
+// TODO: combine info in compositional actions (such as conditional)
 export function actionExpl<T extends AbstractTarget>(
   action: Action<T>,
-) {
+): { mainExpl: string, sideExpl: { [K in string]: string } } {
   switch (action.tag) {
-    case "Regen": return `+${action.value} ${action.resource} to ${targetExpl(action.target)}`;
-    case "Cost": return `-${action.value} ${action.resource} to ${targetExpl(action.target)}`;
-    case "AddStatus": return `Add Status`;
-    case "ChangeShield": return `${action.resource} Concentration`;
-    case "Damage": return `-${varExpl(action.value).mainExpl} Essence to ${targetExpl(action.target)}`;
-    case "Death": return `Death`;
-    case "EndTurn": return `EndTurn`;
-    case "NoAction": return `NoAction`;
-    case "Summon": return `Summon ${action.enemyId}`;
-    case "Conditional": return `TODO: conditional expl`;
+    case "Regen": return {
+      mainExpl: `+${action.value} ${action.resource} to ${targetExpl(action.target)}`,
+      sideExpl: {},
+    };
+    case "Cost": return {
+      mainExpl: `-${action.value} ${action.resource} to ${targetExpl(action.target)}`,
+      sideExpl: {},
+    };
+    case "AddStatus": return {
+      mainExpl: `Add Status`,
+      sideExpl: {},
+    };
+    case "ChangeShield": return {
+      mainExpl: `${action.resource} Concentration`,
+      sideExpl: {},
+    };
+    case "Damage": {
+      const varExpls = varExpl(action.value);
+      return {
+        mainExpl: `-${varExpls.mainExpl} Essence to ${targetExpl(action.target)}`,
+        sideExpl: varExpls.sideExpl,
+      };
+    }
+    case "Death": return {
+      mainExpl: `Death`,
+      sideExpl: {},
+    };
+    case "EndTurn": return {
+      mainExpl: `EndTurn`,
+      sideExpl: {},
+    };
+    case "NoAction": return {
+      mainExpl: `NoAction`,
+      sideExpl: {},
+    };
+    case "Summon": return {
+      mainExpl: `Summon ${action.enemyId}`,
+      sideExpl: {},
+    };
+    case "Conditional": return {
+      mainExpl: `TODO: conditional expl`,
+      sideExpl: {},
+    };
   }
 }
 

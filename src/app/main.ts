@@ -53,6 +53,7 @@ const cache = {
   "portrait_sie": PIXI.Texture.from("assets/sprites/portrait_sie.png"),
   "bg": PIXI.Texture.from("assets/sprites/bg.jpg"),
   "node_expl_bg": PIXI.Texture.from("assets/sprites/node_expl_bg.png"),
+  "status_expl_bg": PIXI.Texture.from("assets/sprites/status_expl_bg.png"),
   "skip": PIXI.Texture.from("assets/sprites/skip.png"),
   "shield_roh": PIXI.Texture.from("assets/sprites/shield_roh.png"),
   "shield_tah": PIXI.Texture.from("assets/sprites/shield_tah.png"),
@@ -65,6 +66,8 @@ const cache = {
   "refresh": PIXI.Texture.from("assets/sprites/refresh.png"),
   "gem": PIXI.Texture.from("assets/sprites/gem.png"),
   "hotbar_bg": PIXI.Texture.from("assets/sprites/hotbar_bg.png"),
+  "layout_bg": PIXI.Texture.from("assets/sprites/layout_bg.png"),
+  "status_bg": PIXI.Texture.from("assets/sprites/status_bg.png"),
   "status_slot": PIXI.Texture.from("assets/sprites/status_slot.png"),
   "status1": PIXI.Texture.from("assets/sprites/status1.png"),
   "ability1": PIXI.Texture.from("assets/sprites/ability1.png"),
@@ -125,14 +128,14 @@ function main(): void {
 
   let display: Display = {} as Display;
   display.player = {
+    layout: initializeLayout(state.player.layout, 37.5, 190, combatContainer, state, display, cache, "player"),
     entity: initializeEntity(state.player.entity, 40, 40, combatContainer, display, cache),
-    layout: initializeLayout(state.player.layout, 50, 200, combatContainer, state, display, cache, "player"),
-    hotbar: initializeHotbar(state.player.hotbar, 100, 455, combatContainer, state, display, cache),
+    hotbar: initializeHotbar(state.player.hotbar, 40, 425, combatContainer, state, display, cache),
     nodeExpl: undefined as any, // initialized later for z-index
   };
   display.enemy = {
+    layout: initializeLayout(undefined, 277.5, 190, combatContainer, state, display, cache, "enemy"),
     entity: initializeEntity(undefined, 270, 40, combatContainer, display, cache),
-    layout: initializeLayout(undefined, 280, 200, combatContainer, state, display, cache, "enemy"),
   };
   display.pools = initializePools(combatContainer);
   display.player.nodeExpl = initializeNodeExpl(appContainer, cache);

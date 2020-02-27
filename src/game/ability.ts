@@ -4,14 +4,25 @@ import { CacheValues } from "src/app/main";
 
 export function abilityExpl(
   ability: Ability,
-): string[] {
-  return ability.actions.map(actionExpl);
+): { mainExpl: string[], sideExpl: { [K in string]: string } } {
+  const mainExpl: string[] = [];
+  let sideExpl = {};
+  ability.actions.forEach(action => {
+    const expl = actionExpl(action);
+    mainExpl.push(expl.mainExpl);
+    sideExpl = { ...sideExpl, ...expl.sideExpl };
+  });
+  return { mainExpl, sideExpl };
 }
 
 export function abilityExplFormatted(
   ability: Ability,
-): string {
-  return "- " + abilityExpl(ability).join("\n- ");
+): { mainExpl: string, sideExpl: { [K in string]: string } } {
+  const { mainExpl, sideExpl } = abilityExpl(ability);
+  return {
+    mainExpl: "- " + mainExpl.join("\n- "),
+    sideExpl,
+  };
 }
 
 export function nodeSprite(

@@ -64,48 +64,48 @@ export function concretizeVar<A>(
 
 export function varExpl<A>(
   varDef: Var<A, AbstractTarget>,
-) {
+): { mainExpl: string, sideExpl: { [K in string]: string } } {
   return _varExpl({}, varDef);
 }
 
 function _varExpl<A>(
   varExpl: { [K in string]: string },
   varDef: Var<A, AbstractTarget>,
-): { mainExpl: string, varExpl: { [K in string]: string } } {
+): { mainExpl: string, sideExpl: { [K in string]: string } } {
   switch (varDef.tag) {
-    case "Constant": return { mainExpl: `${varDef.a}`, varExpl: {} };
+    case "Constant": return { mainExpl: `${varDef.a}`, sideExpl: varExpl };
     case "CountAbility": {
       const varName = newVarName(varExpl);
       const newVarExpl = lo.cloneDeep(varExpl);
       newVarExpl[varName] = `${varName} is count of ${varDef.ability} on layout`;
       return {
         mainExpl: `${varName}`,
-        varExpl: newVarExpl,
+        sideExpl: newVarExpl,
       };
     }
     case "Div": {
       const result1 = _varExpl(varExpl, varDef.x1);
-      const result2 = _varExpl(result1.varExpl, varDef.x2);
+      const result2 = _varExpl(result1.sideExpl, varDef.x2);
       return {
         mainExpl: `${result1.mainExpl} / ${result2.mainExpl}`,
-        varExpl: result2.varExpl
+        sideExpl: result2.sideExpl
       };
     }
     case "Add": {
       const result1 = _varExpl(varExpl, varDef.x1);
-      const result2 = _varExpl(result1.varExpl, varDef.x2);
+      const result2 = _varExpl(result1.sideExpl, varDef.x2);
       return {
         mainExpl: `${result1.mainExpl} + ${result2.mainExpl}`,
-        varExpl: result2.varExpl
+        sideExpl: result2.sideExpl
       };
     }
     case "Equals": {
       return varDef.f(({ x1, x2 }) => {
         const result1 = _varExpl(varExpl, x1);
-        const result2 = _varExpl(result1.varExpl, x2);
+        const result2 = _varExpl(result1.sideExpl, x2);
         return {
           mainExpl: `${result1.mainExpl} == ${result2.mainExpl}`,
-          varExpl: result2.varExpl
+          sideExpl: result2.sideExpl
         };
       });
     }

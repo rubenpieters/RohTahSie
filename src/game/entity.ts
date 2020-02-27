@@ -79,6 +79,7 @@ export type EntityDisplay = {
   tahText: PIXI.BitmapText,
   sieText: PIXI.BitmapText,
   shield: PIXI.Sprite,
+  statusBg: PIXI.Sprite,
   statusSprites: PIXI.Sprite[],
   statusHpSprites: PIXI.Sprite[],
   statusSlotSprites: PIXI.Sprite[],
@@ -146,6 +147,13 @@ export function initializeEntity(
   // initialize shield
   const shield = new PIXI.Sprite();
   container.addChild(shield);
+
+  // initialize status bg
+  const statusBg = new PIXI.Sprite(cache["status_bg"]);
+  statusBg.x = 160 - 12.5;
+  statusBg.y = 15 - 12.5;
+  statusBg.alpha = 0.5;
+  container.addChild(statusBg);
 
   // initialize status icons
   let statusSprites: PIXI.Sprite[] = [];
@@ -249,7 +257,7 @@ export function initializeEntity(
     container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar,
     rohText, tahText, sieText,
     shield,
-    statusSprites, statusHpSprites, statusSlotSprites,
+    statusBg, statusSprites, statusHpSprites, statusSlotSprites,
   };
 }
 

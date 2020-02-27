@@ -11,7 +11,16 @@ export type NodeExplDisplay = {
   title: PIXI.BitmapText,
   effects: PIXI.BitmapText,
   loading: PIXI.Sprite,
+  statuses: StatusExplDisplay[],
 }
+
+export type StatusExplDisplay = {
+  container: PIXI.Container,
+  bg: PIXI.Sprite,
+  expl: PIXI.BitmapText,
+}
+
+const maxSideExpl = 3;
 
 export function initializeNodeExpl(
   parentContainer: PIXI.Container,
@@ -50,6 +59,30 @@ export function initializeNodeExpl(
   Object.assign(effects, { x: 30, y: 100 });
   container.addChild(effects);
 
+  // initializes status expl
+  const statuses: StatusExplDisplay[] = [];
+  for (let i = 0; i < maxSideExpl; i++) {
+    const explContainer = new PIXI.Container();
+    explContainer.x = 280;
+    explContainer.visible = false;
+    container.addChild(explContainer);
+
+    const statusExplBg = new PIXI.Sprite(cache["status_expl_bg"]);
+    statusExplBg.y = 220 * i;
+    explContainer.addChild(statusExplBg);
+    // intialize side text
+    const expl = new PIXI.BitmapText("", {
+      font: {
+        name: "Bahnschrift",
+        size: 24,
+      },
+      tint: 0xFF0000,
+    });
+    Object.assign(expl, { x: 20, y: 20 + 220 * i });
+    explContainer.addChild(expl);
+    statuses.push({ bg: statusExplBg, expl, container: explContainer, });
+  }
+
   // loading screen, obscures rest while loading the expl window
   const loading = new PIXI.Sprite(PIXI.Texture.WHITE);
   loading.tint = 0x000000;
@@ -61,7 +94,7 @@ export function initializeNodeExpl(
 
   parentContainer.addChild(container);
 
-  return { container, bg, nameBg, title, effects, loading };
+  return { container, bg, nameBg, title, effects, loading, statuses };
 }
 
 export function loadNodeExpl(
@@ -74,6 +107,9 @@ export function loadNodeExpl(
       eff: () => {
         display.container.visible = true;
         display.loading.visible = true;
+        for (let i = 0; i < maxSideExpl; i++) {
+          display.statuses[i].container.visible = false;
+        }
       },
       k : () => new Noop(),
     }),
@@ -82,7 +118,20 @@ export function loadNodeExpl(
       eff: () => {
         display.loading.visible = false;
         display.title.text = ability.name;
-        display.effects.text = abilityExplFormatted(ability);
+        const expl = abilityExplFormatted(ability);
+        display.effects.text = expl.mainExpl;
+        let i = 0;
+        Object.keys(expl.sideExpl).forEach(varName => {
+          console.log(`true: ${i}`);
+          display.statuses[i].expl.text = expl.sideExpl[varName];
+          display.statuses[i].container.visible = true;
+          i++;
+        });
+        while (i < maxSideExpl) {
+          console.log(`false: ${i}`);
+          display.statuses[i].container.visible = false;
+          i++;
+        }
       },
       k : () => new Noop(),
     }),
@@ -98,7 +147,18 @@ export function showNodeExpl(
       eff: () => {
         display.container.visible = true;
         display.title.text = ability.name;
-        display.effects.text = abilityExplFormatted(ability);
+        const expl = abilityExplFormatted(ability);
+        display.effects.text = expl.mainExpl;
+        let i = 0;
+        Object.keys(expl.sideExpl).forEach(varName => {
+          display.statuses[i].expl.text = expl.sideExpl[varName];
+          display.statuses[i].container.visible = true;
+          i++;
+        });
+        while (i < maxSideExpl) {
+          display.statuses[i].container.visible = false;
+          i++;
+        }
       },
       k: () => new Noop(),
     }),

@@ -43,8 +43,7 @@ export function initializeHotbar(
   Object.assign(container, { x, y });
 
   const bg = new PIXI.Sprite(cache["hotbar_bg"]);
-  bg.x = -45;
-  bg.y = -45;
+  bg.alpha = 0.5;
   container.addChild(bg);
 
   let elements: PIXI.Sprite[] = [];
@@ -52,8 +51,8 @@ export function initializeHotbar(
   for (let i = 0; i < hotbarSize; i++) {
     const element = hotbar.elements[i];
     const box = new PIXI.Sprite(cache[nodeSprite(element.node)]);
-    box.x = (i % xAmount) * 55;
-    box.y = Math.floor(i / xAmount) * 55;
+    box.x = 40 + (i % xAmount) * 55;
+    box.y = 35 + Math.floor(i / xAmount) * 45;
     box.pivot.set(25, 25);
 
     box.interactive = true;
@@ -66,8 +65,8 @@ export function initializeHotbar(
   }
 
   const refreshBtn = new PIXI.Sprite(cache["refresh"]);
-  refreshBtn.x = 370;
-  refreshBtn.y = 12.5;
+  refreshBtn.x = 400;
+  refreshBtn.y = 42.5;
   container.addChild(refreshBtn);
 
   refreshBtn.interactive = true;
