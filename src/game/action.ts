@@ -259,8 +259,6 @@ export function applyAction(
   }
 }
 
-// TODO: extract status info / var info here and return it
-// TODO: combine info in compositional actions (such as conditional)
 export function actionExpl<T extends AbstractTarget>(
   action: Action<T>,
 ): { mainExpl: string, sideExpl: { [K in string]: string } } {
@@ -273,10 +271,13 @@ export function actionExpl<T extends AbstractTarget>(
       mainExpl: `-${action.value} ${action.resource} to ${targetExpl(action.target)}`,
       sideExpl: {},
     };
-    case "AddStatus": return {
-      mainExpl: `Add Status`,
-      sideExpl: {},
-    };
+    case "AddStatus": {
+      action.status
+      return {
+        mainExpl: `Add Status`,
+        sideExpl: {},
+      };
+    }
     case "ChangeShield": return {
       mainExpl: `${action.resource} Concentration`,
       sideExpl: {},

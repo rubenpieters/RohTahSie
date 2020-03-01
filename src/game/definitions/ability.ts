@@ -44,7 +44,7 @@ export class Demon {
   public readonly name: "Demon" = "Demon"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(6, "sie", new Self()),
-    new A.AddStatus(S.demonStatus, new Self()),
+    new A.AddStatus(new S.DemonStatus(), new Self()),
   ]
 }
 
@@ -87,7 +87,7 @@ export class Infection {
   public readonly name: "Infection" = "Infection"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(6, "roh", new Self()),
-    new A.AddStatus(S.infectionStatus, new Other()),
+    new A.AddStatus(new S.InfectionStatus(), new Other()),
   ]
 }
 
@@ -95,7 +95,7 @@ export class VoodooDoll {
   public readonly name: "VoodooDoll" = "VoodooDoll"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(5, "sie", new Self()),
-    new A.AddStatus(S.voodooDollStatus, new Self()),
+    new A.AddStatus(new S.VoodooDollStatus(), new Self()),
   ]
 }
 

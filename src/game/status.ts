@@ -37,7 +37,7 @@ export function applyStatus(
   display: Display,
   cache: Cache,
 ): { transformed: Action<ConcreteTarget>, newActions: Action<ConcreteTarget>[] } {
-  return status.f(({ condition, actions }) => {
+  return status.ca(({ condition, actions }) => {
     const filteredAction = checkCondition(condition, action, status.owner);
     if (filteredAction === "conditionFalse") {
       return { transformed: action, newActions: [] };

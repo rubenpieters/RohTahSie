@@ -11,49 +11,58 @@ type StatusK<A extends Action<ConcreteTarget>> = {
   actions: StatusAction<AbstractTarget>[]
 }
 
-export type Status = {
-  maxHp: number,
-  size: number,
-  f: <R>(f: <A extends Action<ConcreteTarget>>(statusk: StatusK<A>) => R) => R,
-}
+export type StatusCA = <R>(f: <A extends Action<ConcreteTarget>>(statusk: StatusK<A>) => R) => R
 
-export function mkStatus<A extends Action<ConcreteTarget>>(
-  maxHp: number,
-  size: number,
+export function mkStatusCA<A extends Action<ConcreteTarget>>(
   statusk: StatusK<A>,
-): Status {
-  return { maxHp, size, f: k => k(statusk) };
+): StatusCA {
+  return k => k(statusk);
 }
 
-export const demonStatus: Status = mkStatus(
-  6,
-  1,
-  {
+export class DemonStatus {
+  public readonly name: "DemonStatus" = "DemonStatus";
+  public readonly maxHp = 6;
+  public readonly size = 1;
+
+  public readonly ca = mkStatusCA({
     condition: new C.And(C.mkIsTag("EndTurn"), new C.HasTarget(new T.Self())),
     actions: [
       new Damage(new V.Constant(1), new T.Other()),
       new Damage(new V.Constant(1), new T.ThisStatus()),
     ],
   });
+}
 
-export const infectionStatus: Status = mkStatus(
-  6,
-  1,
-  {
+export class InfectionStatus {
+  public readonly name: "InfectionStatus" = "InfectionStatus";
+  public readonly maxHp = 6;
+  public readonly size = 1;
+
+  public readonly ca = mkStatusCA({
     condition: new C.And(C.mkIsTag("EndTurn"), new C.HasTarget(new T.Self())),
     actions: [
       new Damage(new V.Constant(1), new T.Self()),
       new Damage(new V.Constant(1), new T.ThisStatus()),
     ],
   });
+}
 
-export const voodooDollStatus: Status = mkStatus(
-  1,
-  5,
-  {
+export class VoodooDollStatus {
+  public readonly name: "VoodooDollStatus" = "VoodooDollStatus";
+  public readonly maxHp = 1;
+  public readonly size = 5;
+
+  public readonly ca = mkStatusCA({
     condition: new C.And(C.mkIsTag("Damage"), new C.HasTarget(new T.Other())),
     actions: [
       new Increase("value", 8),
       new Damage(new V.Constant(1), new T.ThisStatus()),
     ],
   });
+}
+
+export type Status
+  = DemonStatus
+  | InfectionStatus
+  | VoodooDollStatus
+  ;
