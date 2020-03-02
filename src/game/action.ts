@@ -274,7 +274,7 @@ export function actionExpl<T extends AbstractTarget>(
     case "AddStatus": {
       action.status
       return {
-        mainExpl: `Add Status`,
+        mainExpl: `Add ${action.status.name} Status`,
         sideExpl: {},
       };
     }
@@ -305,10 +305,15 @@ export function actionExpl<T extends AbstractTarget>(
       mainExpl: `Summon ${action.enemyId}`,
       sideExpl: {},
     };
-    case "Conditional": return {
-      mainExpl: `TODO: conditional expl`,
-      sideExpl: {},
-    };
+    case "Conditional": {
+      const condExpl = varExpl(action.cond);
+      const thenExpl = actionExpl(action.actionThen);
+      const elseExpl = actionExpl(action.actionElse);
+      return {
+        mainExpl: `if ${condExpl.mainExpl}\n   * then: ${thenExpl.mainExpl}\n   * else: ${elseExpl.mainExpl}`,
+        sideExpl: { ...condExpl.sideExpl, ...thenExpl.sideExpl, ...elseExpl.sideExpl },
+      };
+    }
   }
 }
 
