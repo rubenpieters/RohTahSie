@@ -134,6 +134,43 @@ const enemy3: Entity = {
   statuses: [],
 };
 
+const layout4: Layout = {
+  nodes: [
+    new Ab.VoodooDoll,
+    new Ab.VoodooDoll,
+    new Ab.VoodooDoll,
+    new Ab.Discussion,
+
+    new Ab.Rest,
+    new Ab.Requiem,
+    new Ab.Requiem,
+    new Ab.Requiem,
+
+    new Ab.VoodooDoll,
+    new Ab.VoodooDoll,
+    new Ab.VoodooDoll,
+    new Ab.Discussion,
+
+    new Ab.Rest,
+    new Ab.Requiem,
+    new Ab.Meditation,
+    new Ab.Requiem,
+  ],
+  currentIndex: 0,
+}
+
+const enemy4: Entity = {
+  roh: 100,
+  maxRoh: 100,
+  tah: 100,
+  maxTah: 100,
+  sie: 100,
+  maxSie: 100,
+  shield: "roh",
+  dirty: false,
+  statuses: [],
+};
+
 type Enemies = typeof allEnemies;
 export type EnemyKey = keyof Enemies;
 export const allEnemies = {
@@ -151,5 +188,10 @@ export const allEnemies = {
     entity: enemy3,
     layout: layout3,
     reward: 3,
+  },
+  "en4": {
+    entity: enemy4,
+    layout: layout4,
+    reward: 10,
   },
 }

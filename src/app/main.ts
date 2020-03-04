@@ -78,6 +78,7 @@ const cache = {
   "rest": PIXI.Texture.from("assets/sprites/rest.png"),
   "requiem": PIXI.Texture.from("assets/sprites/requiem.png"),
   "discussion": PIXI.Texture.from("assets/sprites/discussion.png"),
+  "test": PIXI.Texture.from("assets/sprites/test.png"),
 };
 
 let animations: Anim[] = [];

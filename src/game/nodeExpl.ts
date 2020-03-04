@@ -122,13 +122,11 @@ export function loadNodeExpl(
         display.effects.text = expl.mainExpl;
         let i = 0;
         Object.keys(expl.sideExpl).forEach(varName => {
-          console.log(`true: ${i}`);
           display.statuses[i].expl.text = expl.sideExpl[varName];
           display.statuses[i].container.visible = true;
           i++;
         });
         while (i < maxSideExpl) {
-          console.log(`false: ${i}`);
           display.statuses[i].container.visible = false;
           i++;
         }

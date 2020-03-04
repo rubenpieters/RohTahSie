@@ -61,7 +61,7 @@ export function findStatus(
     state.enemy !== undefined
   ) {
     // else look in enemy statuses
-    const enemyStatus = entityFindStatus(state.player.entity, statusId);
+    const enemyStatus = entityFindStatus(state.enemy.entity, statusId);
     return enemyStatus === undefined ? undefined : { statusIndex: enemyStatus, owner: "enemy" };
   } else {
     // status is not found

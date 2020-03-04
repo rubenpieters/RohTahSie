@@ -13,7 +13,7 @@ export function allZones(): Zones {
       selected: true,
     },
     {
-      enemyIds: [],
+      enemyIds: ["en4"],
       selected: false,
     },
   ];

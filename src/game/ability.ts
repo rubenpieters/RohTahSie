@@ -37,7 +37,7 @@ export function nodeSprite(
     case "Isolation": return "sword";
     case "Dormant": return "skip";
     case "Initiate": return "creep";
-    case "Demon": return "ability1";
+    case "Demon": return "test";
     case "Infection": return "ability1";
     case "VoodooDoll": return "ability1";
   }
