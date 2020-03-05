@@ -1,13 +1,12 @@
 import { Action } from "./definitions/action";
-import { ConcreteTarget, PlayerTarget, EnemyTarget, StatusTarget } from "./definitions/target";
+import { ConcreteTarget, StatusTarget } from "./definitions/target";
 import { GameState } from "./state";
 import { Status } from "./definitions/status";
-import { checkCondition } from "./condition";
-import { applyStatusAction, concretizeStatusAction } from "./statusAction";
+import { checkCondition, conditionExpl } from "./condition";
+import { applyStatusAction, concretizeStatusAction, statusActionExpl } from "./statusAction";
 import { Cache, CacheValues } from "../app/main";
 import { Display } from "./display";
-import { concretizeAction } from "./action";
-import { Entity } from "./entity";
+import { combineExpl } from "./nodeExpl";
 
 export function applyStatuses(
   action: Action<ConcreteTarget>,
@@ -55,9 +54,23 @@ export function applyStatus(
   });
 }
 
-
 export function statusSprite(
   status: Status,
 ): CacheValues {
   return "status1";
+}
+
+export function statusExpl(
+  status: Status,
+): { mainExpl: string, sideExpl: { [K in string]: string } } {
+  const { mainExpl, sideExpl, condExpl } = status.ca(({ condition, actions }) => {
+    // TODO: add condition expl
+    const sActionsExpl = combineExpl(actions, statusActionExpl);
+    const condExpl = conditionExpl(condition);
+    return { ...sActionsExpl, condExpl };
+  });
+  return {
+    mainExpl: `- ${condExpl}\n- ` + mainExpl.join("\n- "),
+    sideExpl,
+  };
 }

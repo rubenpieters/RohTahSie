@@ -7,7 +7,7 @@ import { barLocation, newLayoutAnim } from "./layout";
 import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
 import { allEnemies } from "./enemy";
-import { applyStatuses } from "./status";
+import { applyStatuses, statusExpl } from "./status";
 import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget } from "./definitions/target";
 import { targetToEntity, targetToEntityDisplay, targetExpl, concretizeTarget } from "./target";
 import { updateGemText } from "../craft/card";
@@ -272,10 +272,11 @@ export function actionExpl<T extends AbstractTarget>(
       sideExpl: {},
     };
     case "AddStatus": {
-      action.status
+      const sExpl = statusExpl(action.status);
       return {
         mainExpl: `Add ${action.status.name} Status`,
-        sideExpl: {},
+        // TODO: add status with proper id
+        sideExpl: {...{ "1": sExpl.mainExpl}, ...sExpl.sideExpl },
       };
     }
     case "ChangeShield": return {

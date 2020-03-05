@@ -186,3 +186,17 @@ export function resetNodeExpl(
   display.container.y = 15;
   display.container.alpha = 0;
 }
+
+export function combineExpl<A>(
+  as: A[],
+  f: (a: A) => { mainExpl: string, sideExpl: { [K in string]: string } }
+): { mainExpl: string[], sideExpl: { [K in string]: string } } {
+  const mainExpl: string[] = [];
+  let sideExpl = {};
+  as.forEach(a => {
+    const expl = f(a);
+    mainExpl.push(expl.mainExpl);
+    sideExpl = { ...sideExpl, ...expl.sideExpl };
+  });
+  return { mainExpl, sideExpl };
+}

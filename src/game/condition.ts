@@ -1,7 +1,7 @@
 import { ConcreteTarget, PlayerTarget, EnemyTarget } from "./definitions/target";
 import { Action, Summon, Damage, NoAction } from "./definitions/action";
 import { Condition, OnSelf, mkIsTag, And } from "./definitions/condition";
-import { eqTarget, concretizeTarget } from "./target";
+import { eqTarget, concretizeTarget, targetExpl } from "./target";
 
 export function checkCondition<Before extends Action<ConcreteTarget>, After extends Action<ConcreteTarget>>(
   condition: Condition<Before, After>,
@@ -51,3 +51,14 @@ checkCondition(new OnSelf(), new Damage(undefined as any, new PlayerTarget()), u
 checkCondition(new OnSelf(), new NoAction(), undefined as any);
 
 checkCondition(new And(mkIsTag("Summon"), new OnSelf()), new NoAction(), undefined as any);*/
+
+export function conditionExpl<Before extends Action<ConcreteTarget>, After extends Action<ConcreteTarget>>(
+  condition: Condition<Before, After>,
+): string {
+  switch (condition.tag) {
+    case "IsTag": return `when ${condition.actionTag}`;
+    case "OnSelf": return "on self";
+    case "HasTarget": return `(${targetExpl(condition.target)})`;
+    case "And": return `${conditionExpl(condition.cond1)} and ${conditionExpl(condition.cond2)}`;
+  }
+}

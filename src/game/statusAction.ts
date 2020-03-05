@@ -4,7 +4,7 @@ import { GameState } from "./state";
 import { ConcreteTarget, AbstractTarget, StatusTarget } from "./definitions/target";
 import { Action } from "./definitions/action";
 import { StatusAction } from "./definitions/statusAction";
-import { applyAction, concretizeAction } from "./action";
+import { applyAction, concretizeAction, actionExpl } from "./action";
 import * as V from "./definitions/var";
 import { Anim, Noop } from "../app/animation";
 import { cloneDeep } from "lodash";
@@ -38,5 +38,19 @@ export function concretizeStatusAction(
   switch (action.tag) {
     case "Increase": return action;
     default: return concretizeAction(action, source, thisStatus);
+  }
+}
+
+export function statusActionExpl<T extends AbstractTarget>(
+  statusAction: StatusAction<T>,
+): { mainExpl: string, sideExpl: { [K in string]: string } } {
+  switch (statusAction.tag) {
+    case "Increase": {
+      return {
+        mainExpl: `Increase by ${statusAction.value}`,
+        sideExpl: {},
+      };
+    }
+    default: return actionExpl(statusAction);
   }
 }

@@ -1,18 +1,12 @@
 import { Ability } from "./definitions/ability";
 import { actionExpl } from "./action";
 import { CacheValues } from "src/app/main";
+import { combineExpl } from "./nodeExpl";
 
 export function abilityExpl(
   ability: Ability,
 ): { mainExpl: string[], sideExpl: { [K in string]: string } } {
-  const mainExpl: string[] = [];
-  let sideExpl = {};
-  ability.actions.forEach(action => {
-    const expl = actionExpl(action);
-    mainExpl.push(expl.mainExpl);
-    sideExpl = { ...sideExpl, ...expl.sideExpl };
-  });
-  return { mainExpl, sideExpl };
+  return combineExpl(ability.actions, actionExpl);
 }
 
 export function abilityExplFormatted(
