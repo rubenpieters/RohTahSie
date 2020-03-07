@@ -27,14 +27,12 @@ export function initializeNodeExpl(
   cache: Cache,
 ): NodeExplDisplay {
   const container = new PIXI.Container();
-  Object.assign(container, { x: 70, y: 15 });
+  Object.assign(container, { x: 30, y: 15 });
 
   // initialize bgs
   const bg = new PIXI.Sprite(cache["card_bg"]);
   container.addChild(bg);
   const nameBg = new PIXI.Sprite(cache["card_name_bg"]);
-  nameBg.y = 0;
-  nameBg.x = -24.5;
   container.addChild(nameBg);
 
   // initialize title text
@@ -45,7 +43,7 @@ export function initializeNodeExpl(
     },
     tint: 0xFF0000,
   });
-  Object.assign(title, { x: 30, y: 25 });
+  Object.assign(title, { x: 5, y: 5 });
   container.addChild(title);
 
   // intialize effect text
@@ -56,21 +54,23 @@ export function initializeNodeExpl(
     },
     tint: 0xFF0000,
   });
-  Object.assign(effects, { x: 30, y: 100 });
+  Object.assign(effects, { x: 15, y: 60 });
   container.addChild(effects);
 
   // initializes status expl
   const statuses: StatusExplDisplay[] = [];
   for (let i = 0; i < maxSideExpl; i++) {
     const explContainer = new PIXI.Container();
-    explContainer.x = 280;
+    explContainer.x = 15;
+    explContainer.y = 320 + 100 * i;
     explContainer.visible = false;
     container.addChild(explContainer);
 
-    const statusExplBg = new PIXI.Sprite(cache["status_expl_bg"]);
-    statusExplBg.y = 220 * i;
+    const statusExplBg = new PIXI.Sprite(PIXI.Texture.WHITE);
+    statusExplBg.width = 480;
+    statusExplBg.height = 50;
     explContainer.addChild(statusExplBg);
-    // intialize side text
+    // initialize side text
     const expl = new PIXI.BitmapText("", {
       font: {
         name: "Bahnschrift",
@@ -78,7 +78,7 @@ export function initializeNodeExpl(
       },
       tint: 0xFF0000,
     });
-    Object.assign(expl, { x: 20, y: 20 + 220 * i });
+    Object.assign(expl, { x: 20, y: 10 });
     explContainer.addChild(expl);
     statuses.push({ bg: statusExplBg, expl, container: explContainer, });
   }
@@ -86,8 +86,8 @@ export function initializeNodeExpl(
   // loading screen, obscures rest while loading the expl window
   const loading = new PIXI.Sprite(PIXI.Texture.WHITE);
   loading.tint = 0x000000;
-  loading.width = 250;
-  loading.height = 400;
+  loading.width = 480 ;
+  loading.height = 300;
   container.addChild(loading);
 
   container.visible = false;
