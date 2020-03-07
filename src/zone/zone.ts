@@ -2,6 +2,8 @@ import { Display } from "../game/display";
 import { Cache } from "../app/main";
 import { Zones } from "./all";
 
+const maxZoneX = 5;
+
 export type ZoneDisplay = {
   zoneContainer: PIXI.Container,
   bg: PIXI.Sprite,
@@ -24,6 +26,8 @@ export function initializeZones(
   // initialize icons
   let zones: ZoneDisplay[] = [];
   for (let i = 0; i < allZones.length; i++) {
+    const row = Math.floor(i % maxZoneX);
+    const col = Math.floor(i / maxZoneX);
     const zone = allZones[i];
     const zoneContainer = new PIXI.Container();
     zoneContainer.interactive = true;
@@ -33,8 +37,8 @@ export function initializeZones(
 
     const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
     bg.tint = 0x00AAAA;
-    bg.x = i * 60 + 45;
-    bg.y = 50;
+    bg.x = col * 60 + 45;
+    bg.y = row * 100 + 50;
     bg.width = 50;
     bg.height = 75;
 

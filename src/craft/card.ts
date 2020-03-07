@@ -5,6 +5,8 @@ import { Display } from "../game/display";
 import { loadNodeExpl } from "../game/nodeExpl";
 import { nodeSprite } from "../game/ability";
 
+const maxCardX = 5;
+
 export type CardDisplay = {
   cardContainer: PIXI.Container,
   bg: PIXI.Sprite,
@@ -31,26 +33,28 @@ export function initializeCraftCards(
   // initialize icons
   let cards: CardDisplay[] = [];
   for (let i = 0; i < cardCrafts.length; i++) {
+    const row = Math.floor(i / maxCardX);
+    const col = Math.floor(i % maxCardX);
     const card = cardCrafts[i];
     const cardContainer = new PIXI.Container();
     cardContainer.width = 60;
     cardContainer.height = 75;
 
     const sprite = new PIXI.Sprite(cache[nodeSprite(card.node)]);
-    sprite.x = i * 60 + 50;
-    sprite.y = 50;
+    sprite.x = col * 60 + 50;
+    sprite.y = row * 100 + 50;
 
     const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
     bg.tint = 0x00AAAA;
-    bg.x = i * 60 + 45;
-    bg.y = 50;
+    bg.x = col * 60 + 45;
+    bg.y = row * 100 + 50;
     bg.width = 50;
     bg.height = 75;
 
     const addBtn = new PIXI.Sprite(PIXI.Texture.WHITE);
     addBtn.tint = 0x00000000;
-    addBtn.x = i * 60 + 45;
-    addBtn.y = 135;
+    addBtn.x = col * 60 + 45;
+    addBtn.y = row * 100 + 130;
     addBtn.width = 50;
     addBtn.height = 10;
 
