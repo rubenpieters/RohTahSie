@@ -8,6 +8,7 @@ import { applyAction, concretizeAction, actionExpl } from "./action";
 import * as V from "./definitions/var";
 import { Anim, Noop } from "../app/animation";
 import { cloneDeep } from "lodash";
+import { SideExpl } from "./nodeExpl";
 
 export function applyStatusAction(
   action: Action<ConcreteTarget>,
@@ -43,12 +44,12 @@ export function concretizeStatusAction(
 
 export function statusActionExpl<T extends AbstractTarget>(
   statusAction: StatusAction<T>,
-): { mainExpl: string, sideExpl: { [K in string]: string } } {
+): { mainExpl: string, sideExpl: SideExpl[] } {
   switch (statusAction.tag) {
     case "Increase": {
       return {
         mainExpl: `Increase by ${statusAction.value}`,
-        sideExpl: {},
+        sideExpl: [],
       };
     }
     default: return actionExpl(statusAction);

@@ -13,6 +13,7 @@ import { targetToEntity, targetToEntityDisplay, targetExpl, concretizeTarget } f
 import { updateGemText } from "../craft/card";
 import { resourceMaxField } from "./entity";
 import { evalVar, concretizeVar, varExpl } from "./var";
+import { SideExpl, StatusExpl } from "./nodeExpl"
 
 export function applyAction(
   action: Action<ConcreteTarget>,
@@ -261,27 +262,26 @@ export function applyAction(
 
 export function actionExpl<T extends AbstractTarget>(
   action: Action<T>,
-): { mainExpl: string, sideExpl: { [K in string]: string } } {
+): { mainExpl: string, sideExpl: SideExpl[] } {
   switch (action.tag) {
     case "Regen": return {
       mainExpl: `+${action.value} ${action.resource} to ${targetExpl(action.target)}`,
-      sideExpl: {},
+      sideExpl: [],
     };
     case "Cost": return {
       mainExpl: `-${action.value} ${action.resource} to ${targetExpl(action.target)}`,
-      sideExpl: {},
+      sideExpl: [],
     };
     case "AddStatus": {
       const sExpl = statusExpl(action.status);
       return {
         mainExpl: `Add ${action.status.name} Status`,
-        // TODO: add status with proper id
-        sideExpl: {...{ "1": sExpl.mainExpl}, ...sExpl.sideExpl },
+        sideExpl: sExpl.sideExpl.concat([new StatusExpl(sExpl.mainExpl)]),
       };
     }
     case "ChangeShield": return {
       mainExpl: `${action.resource} Concentration`,
-      sideExpl: {},
+      sideExpl: [],
     };
     case "Damage": {
       const varExpls = varExpl(action.value);
@@ -292,19 +292,19 @@ export function actionExpl<T extends AbstractTarget>(
     }
     case "Death": return {
       mainExpl: `Death`,
-      sideExpl: {},
+      sideExpl: [],
     };
     case "EndTurn": return {
       mainExpl: `EndTurn`,
-      sideExpl: {},
+      sideExpl: [],
     };
     case "NoAction": return {
       mainExpl: `NoAction`,
-      sideExpl: {},
+      sideExpl: [],
     };
     case "Summon": return {
       mainExpl: `Summon ${action.enemyId}`,
-      sideExpl: {},
+      sideExpl: [],
     };
     case "Conditional": {
       const condExpl = varExpl(action.cond);
@@ -312,7 +312,7 @@ export function actionExpl<T extends AbstractTarget>(
       const elseExpl = actionExpl(action.actionElse);
       return {
         mainExpl: `if ${condExpl.mainExpl}\n   * then: ${thenExpl.mainExpl}\n   * else: ${elseExpl.mainExpl}`,
-        sideExpl: { ...condExpl.sideExpl, ...thenExpl.sideExpl, ...elseExpl.sideExpl },
+        sideExpl: condExpl.sideExpl.concat(thenExpl.sideExpl).concat(elseExpl.sideExpl),
       };
     }
   }

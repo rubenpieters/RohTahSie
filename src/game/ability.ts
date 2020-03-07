@@ -1,17 +1,17 @@
 import { Ability } from "./definitions/ability";
 import { actionExpl } from "./action";
 import { CacheValues } from "src/app/main";
-import { combineExpl } from "./nodeExpl";
+import { combineExpl, SideExpl } from "./nodeExpl";
 
 export function abilityExpl(
   ability: Ability,
-): { mainExpl: string[], sideExpl: { [K in string]: string } } {
+): { mainExpl: string[], sideExpl: SideExpl[] } {
   return combineExpl(ability.actions, actionExpl);
 }
 
 export function abilityExplFormatted(
   ability: Ability,
-): { mainExpl: string, sideExpl: { [K in string]: string } } {
+): { mainExpl: string, sideExpl: SideExpl[] } {
   const { mainExpl, sideExpl } = abilityExpl(ability);
   return {
     mainExpl: "- " + mainExpl.join("\n- "),

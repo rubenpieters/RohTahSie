@@ -4,6 +4,7 @@ import { ConcreteTarget, AbstractTarget } from "./definitions/target";
 import { concretizeTarget, targetExpl } from "./target";
 import deepEqual from "deep-equal";
 import lo from "lodash";
+import { SideExpl, nextVarId, VarExpl, varIdToVarName } from "./nodeExpl";
 
 export function evalVar<A>(
   state: GameState,
@@ -64,23 +65,23 @@ export function concretizeVar<A>(
 
 export function varExpl<A>(
   varDef: Var<A, AbstractTarget>,
-): { mainExpl: string, sideExpl: { [K in string]: string } } {
-  return _varExpl({}, varDef);
+): { mainExpl: string, sideExpl: SideExpl[] } {
+  return _varExpl([], varDef);
 }
 
 function _varExpl<A>(
-  varExpl: { [K in string]: string },
+  varExpl: SideExpl[],
   varDef: Var<A, AbstractTarget>,
-): { mainExpl: string, sideExpl: { [K in string]: string } } {
+): { mainExpl: string, sideExpl: SideExpl[] } {
   switch (varDef.tag) {
     case "Constant": return { mainExpl: `${varDef.a}`, sideExpl: varExpl };
     case "CountAbility": {
-      const varName = newVarName(varExpl);
-      const newVarExpl = lo.cloneDeep(varExpl);
-      newVarExpl[varName] = `${varName} is count of ${varDef.ability} on layout`;
+      const varId = nextVarId(varExpl);
+      const varName = varIdToVarName(varId);
+      const toAddExpl = new VarExpl(varId, `${varName} is count of ${varDef.ability} on layout`);
       return {
         mainExpl: `${varName}`,
-        sideExpl: newVarExpl,
+        sideExpl: varExpl.concat([toAddExpl]),
       };
     }
     case "Div": {
@@ -109,16 +110,5 @@ function _varExpl<A>(
         };
       });
     }
-  }
-}
-
-function newVarName(
-  varExpl: { [K in string]: string },
-): string {
-  switch (Object.keys(varExpl).length) {
-    case 0: return "X";
-    case 1: return "Y";
-    case 2: return "Z";
-    default: throw "newVarName: Unsupported Variable Count";
   }
 }

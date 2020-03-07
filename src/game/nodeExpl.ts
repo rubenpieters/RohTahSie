@@ -125,8 +125,8 @@ export function loadNodeExpl(
         const expl = abilityExplFormatted(ability);
         display.effects.text = expl.mainExpl;
         let i = 0;
-        Object.keys(expl.sideExpl).forEach(varName => {
-          display.statuses[i].expl.text = expl.sideExpl[varName];
+        expl.sideExpl.forEach(explText => {
+          display.statuses[i].expl.text = explText.expl;
           display.statuses[i].container.visible = true;
           i++;
         });
@@ -152,8 +152,8 @@ export function showNodeExpl(
         const expl = abilityExplFormatted(ability);
         display.effects.text = expl.mainExpl;
         let i = 0;
-        Object.keys(expl.sideExpl).forEach(varName => {
-          display.statuses[i].expl.text = expl.sideExpl[varName];
+        expl.sideExpl.forEach(explText => {
+          display.statuses[i].expl.text = explText.expl;
           display.statuses[i].container.visible = true;
           i++;
         });
@@ -195,14 +195,64 @@ export function resetNodeExpl(
 
 export function combineExpl<A>(
   as: A[],
-  f: (a: A) => { mainExpl: string, sideExpl: { [K in string]: string } }
-): { mainExpl: string[], sideExpl: { [K in string]: string } } {
+  f: (a: A) => { mainExpl: string, sideExpl: SideExpl[] }
+): { mainExpl: string[], sideExpl: SideExpl[] } {
   const mainExpl: string[] = [];
-  let sideExpl = {};
+  let sideExpl: SideExpl[] = [];
   as.forEach(a => {
     const expl = f(a);
     mainExpl.push(expl.mainExpl);
-    sideExpl = { ...sideExpl, ...expl.sideExpl };
+    sideExpl = sideExpl.concat(expl.sideExpl);
   });
   return { mainExpl, sideExpl };
+}
+
+export class StatusExpl {
+  public readonly tag: "StatusExpl" = "StatusExpl";
+
+  constructor(
+    public readonly expl: string,
+  ) {}
+}
+
+export class VarExpl {
+  public readonly tag: "VarExpl" = "VarExpl";
+
+  constructor(
+    public readonly varId: number,
+    public readonly expl: string,
+  ) {}
+}
+
+export type SideExpl
+   = StatusExpl
+   | VarExpl
+   ;
+
+export function varIdToVarName(
+  varId: number
+): string {
+  switch (varId) {
+    case 0: return "X";
+    case 1: return "Y";
+    case 2: return "Z";
+    default: throw `varIdToVarName: Unsupported Variable Count: ${varId}`;
+  }
+}
+
+export function nextVarId(
+  sideExpl: SideExpl[]
+): number {
+  if (sideExpl.length === 0) {
+    return 0;
+  }
+  const varIds = sideExpl.map(e => {
+    switch (e.tag) {
+      // return -1 here so, if this happens to be the maximum
+      // then the final return value is 0
+      case "StatusExpl": return -1;
+      case "VarExpl": return e.varId;
+    }
+  });
+  return Math.max(...varIds) + 1;
 }

@@ -6,7 +6,7 @@ import { checkCondition, conditionExpl } from "./condition";
 import { applyStatusAction, concretizeStatusAction, statusActionExpl } from "./statusAction";
 import { Cache, CacheValues } from "../app/main";
 import { Display } from "./display";
-import { combineExpl } from "./nodeExpl";
+import { combineExpl, SideExpl } from "./nodeExpl";
 
 export function applyStatuses(
   action: Action<ConcreteTarget>,
@@ -62,15 +62,14 @@ export function statusSprite(
 
 export function statusExpl(
   status: Status,
-): { mainExpl: string, sideExpl: { [K in string]: string } } {
+): { mainExpl: string, sideExpl: SideExpl[] } {
   const { mainExpl, sideExpl, condExpl } = status.ca(({ condition, actions }) => {
-    // TODO: add condition expl
     const sActionsExpl = combineExpl(actions, statusActionExpl);
     const condExpl = conditionExpl(condition);
     return { ...sActionsExpl, condExpl };
   });
   return {
     mainExpl: `- ${condExpl}\n- ` + mainExpl.join("\n- "),
-    sideExpl,
+    sideExpl: [],
   };
 }
