@@ -4,9 +4,7 @@ import { GameState } from "./state";
 import { Anim, TweenTo, mkAccessTarget, Par, mkEff, Noop } from "../app/animation";
 import { IPoint } from "pixi.js";
 import { Display } from "./display";
-import { showNodeExpl, NodeExplDisplay, hideNodeExpl, resetNodeExpl, loadNodeExpl } from "./nodeExpl";
-import { AddStatus } from "./definitions/action";
-import { PlayerTarget, EnemyTarget } from "./definitions/target";
+import { loadNodeExpl } from "./nodeExpl";
 import { CardCrafts } from "../craft/all";
 import { filterUndefined, fillUndefinedUpTo } from "../util/util";
 import { Zones } from "src/zone/all";
@@ -95,6 +93,7 @@ function hotbarMouseOutAnim<A extends { scale: IPoint }>(
   ]);
 }
 
+/*
 function hotbarMouseOutCb(
   state: GameState,
   box: PIXI.Sprite,
@@ -108,6 +107,7 @@ function hotbarMouseOutCb(
     attachExplWindowAnimation(hideNodeExpl(display.player.nodeExpl));
   };
 }
+*/
 
 function hotbarPointerUpCb(
   state: GameState,

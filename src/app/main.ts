@@ -139,7 +139,7 @@ function main(): void {
     entity: initializeEntity(undefined, 270, 40, combatContainer, display, cache),
   };
   display.pools = initializePools(combatContainer);
-  display.player.nodeExpl = initializeNodeExpl(appContainer, cache);
+  display.player.nodeExpl = initializeNodeExpl(appContainer, display, cache);
   display.menu = initializeMenu(appContainer, cache, display, state);
   display.combatContainer = combatContainer;
   display.craftContainer = craftContainer;

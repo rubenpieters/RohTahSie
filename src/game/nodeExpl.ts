@@ -3,6 +3,7 @@ import { Cache } from "../app/main";
 import { mkAccessTarget, TweenTo, Par, Seq, mkEff, Noop, Anim, Delay, embedEff } from "../app/animation";
 import { easeOutQuint } from "../app/interpolation";
 import { abilityExplFormatted } from "./ability";
+import { Display } from "./display";
 
 export type NodeExplDisplay = {
   container: PIXI.Container,
@@ -24,6 +25,7 @@ const maxSideExpl = 3;
 
 export function initializeNodeExpl(
   parentContainer: PIXI.Container,
+  display: Display,
   cache: Cache,
 ): NodeExplDisplay {
   const container = new PIXI.Container();
@@ -86,11 +88,16 @@ export function initializeNodeExpl(
   // loading screen, obscures rest while loading the expl window
   const loading = new PIXI.Sprite(PIXI.Texture.WHITE);
   loading.tint = 0x000000;
-  loading.width = 480 ;
+  loading.width = 480;
   loading.height = 300;
   container.addChild(loading);
 
   container.visible = false;
+
+  container.interactive = true;
+  container.on("pointerdown", () => {
+    display.player.nodeExpl.container.visible = false;
+  });
 
   parentContainer.addChild(container);
 
@@ -164,6 +171,7 @@ export function showNodeExpl(
   ]);
 }
 
+/*
 export function hideNodeExpl(
   display: NodeExplDisplay,
 ): Anim {
@@ -183,6 +191,7 @@ export function resetNodeExpl(
   display.container.y = 15;
   display.container.alpha = 0;
 }
+*/
 
 export function combineExpl<A>(
   as: A[],
