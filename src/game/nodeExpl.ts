@@ -1,6 +1,6 @@
 import { Ability } from "./definitions/ability";
 import { Cache } from "../app/main";
-import { mkAccessTarget, TweenTo, Par, Seq, mkEff, Noop, Anim, Delay } from "../app/animation";
+import { mkAccessTarget, TweenTo, Par, Seq, mkEff, Noop, Anim, Delay, embedEff } from "../app/animation";
 import { easeOutQuint } from "../app/interpolation";
 import { abilityExplFormatted } from "./ability";
 
@@ -103,15 +103,12 @@ export function loadNodeExpl(
 ): Anim {
   return new Seq([
     new Delay(0.15),
-    mkEff({
-      eff: () => {
-        display.container.visible = true;
-        display.loading.visible = true;
-        for (let i = 0; i < maxSideExpl; i++) {
-          display.statuses[i].container.visible = false;
-        }
-      },
-      k : () => new Noop(),
+    embedEff(() => {
+      display.container.visible = true;
+      display.loading.visible = true;
+      for (let i = 0; i < maxSideExpl; i++) {
+        display.statuses[i].container.visible = false;
+      }
     }),
     new Delay(0.1),
     mkEff({

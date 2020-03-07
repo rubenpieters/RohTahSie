@@ -97,6 +97,16 @@ export function mkEff<A>(
   return new Eff(k => k(effk));
 }
 
+export function embedEff(
+  f: () => void,
+): Eff {
+  const effk = {
+    eff: f,
+    k: () => new Noop(),
+  };
+  return new Eff(k => k(effk));
+}
+
 type ParticleK<A extends PIXI.DisplayObject> = {
   animation: (particle: A) => Anim,
   pool: Pool<A>,
