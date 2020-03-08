@@ -2,7 +2,7 @@ import { Ability } from "./definitions/ability";
 import { Cache } from "../app/main";
 import { mkAccessTarget, TweenTo, Par, Seq, mkEff, Noop, Anim, Delay, embedEff } from "../app/animation";
 import { easeOutQuint } from "../app/interpolation";
-import { abilityExplFormatted } from "./ability";
+import { abilityExpl } from "./ability";
 import { Display } from "./display";
 
 export type NodeExplDisplay = {
@@ -32,7 +32,10 @@ export function initializeNodeExpl(
   Object.assign(container, { x: 30, y: 15 });
 
   // initialize bgs
-  const bg = new PIXI.Sprite(cache["card_bg"]);
+  const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
+  bg.tint = 0xFFAE42;
+  bg.width = 480;
+  bg.height = 100;
   container.addChild(bg);
   const nameBg = new PIXI.Sprite(cache["card_name_bg"]);
   container.addChild(nameBg);
@@ -120,20 +123,30 @@ export function loadNodeExpl(
     new Delay(0.1),
     mkEff({
       eff: () => {
-        display.loading.visible = false;
         display.title.text = ability.name;
-        const expl = abilityExplFormatted(ability);
-        display.effects.text = expl.mainExpl;
+        // main expl
+        const expl = abilityExpl(ability);
+        const formattedExpl = formatExpl(expl.mainExpl);
+        const mainHeight = explNewlines(formattedExpl) * 35 + 60;
+        display.bg.height = mainHeight;
+        display.effects.text = formattedExpl;
+        //side expl
         let i = 0;
+        let sideHeightAcc = 0;
         expl.sideExpl.forEach(explText => {
+          const sideHeight = explNewlines(explText.expl) * 35;
+          display.statuses[i].container.y = sideHeightAcc + mainHeight + 10;
+          display.statuses[i].bg.height = sideHeight;
           display.statuses[i].expl.text = explText.expl;
           display.statuses[i].container.visible = true;
+          sideHeightAcc += sideHeight;
           i++;
         });
         while (i < maxSideExpl) {
           display.statuses[i].container.visible = false;
           i++;
         }
+        display.loading.visible = false;
       },
       k : () => new Noop(),
     }),
@@ -149,8 +162,8 @@ export function showNodeExpl(
       eff: () => {
         display.container.visible = true;
         display.title.text = ability.name;
-        const expl = abilityExplFormatted(ability);
-        display.effects.text = expl.mainExpl;
+        const expl = abilityExpl(ability);
+        display.effects.text = formatExpl(expl.mainExpl);
         let i = 0;
         expl.sideExpl.forEach(explText => {
           display.statuses[i].expl.text = explText.expl;
@@ -192,6 +205,18 @@ export function resetNodeExpl(
   display.container.alpha = 0;
 }
 */
+
+export function formatExpl(
+  expl: string[]
+): string {
+  return "- " + expl.join("\n- ");
+}
+
+export function explNewlines(
+  expl: string
+) {
+  return expl.split(/\r\n|\r|\n/).length;
+}
 
 export function combineExpl<A>(
   as: A[],

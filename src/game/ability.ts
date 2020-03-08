@@ -9,16 +9,6 @@ export function abilityExpl(
   return combineExpl(ability.actions, actionExpl);
 }
 
-export function abilityExplFormatted(
-  ability: Ability,
-): { mainExpl: string, sideExpl: SideExpl[] } {
-  const { mainExpl, sideExpl } = abilityExpl(ability);
-  return {
-    mainExpl: "- " + mainExpl.join("\n- "),
-    sideExpl,
-  };
-}
-
 export function nodeSprite(
   ability: Ability,
 ): CacheValues {
