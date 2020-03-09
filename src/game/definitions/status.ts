@@ -61,8 +61,22 @@ export class VoodooDollStatus {
   });
 }
 
+export class NetworkStatus {
+  public readonly name: "NetworkStatus" = "NetworkStatus";
+  public readonly maxHp = 1;
+  public readonly size = 1;
+
+  public readonly ca = mkStatusCA({
+    condition: new C.And(C.mkIsTag("Damage"), undefined as any /* Below(NewValue, 5) */),
+    actions: [
+      
+    ],
+  });
+}
+
 export type Status
   = DemonStatus
   | InfectionStatus
   | VoodooDollStatus
+  | NetworkStatus
   ;

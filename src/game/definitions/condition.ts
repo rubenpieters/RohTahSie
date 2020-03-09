@@ -1,5 +1,6 @@
 import { Action, Summon } from "./action";
 import { ConcreteTarget, PlayerTarget, AbstractTarget } from "./target";
+import * as V from "./var";
 
 export class IsTag<Before extends Action<ConcreteTarget>, After> {
   public readonly tag: "IsTag" = "IsTag";

@@ -40,6 +40,9 @@ export function evalVar<A>(
       });
       return isEqual as any;
     }
+    case "LT": {
+      return evalVar(state, varDef.x1) < evalVar(state, varDef.x2) as any;
+    }
   }
 }
 

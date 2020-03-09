@@ -65,10 +65,24 @@ export function mkEquals<A, T>(x1: Var<A, T>, x2: Var<A, T>): Var<boolean, T> {
   return new Equals(k => k({ x1, x2 }));
 }
 
+export class LT<T> {
+  public readonly tag: "LT" = "LT";
+
+  constructor(
+    public readonly x1: Var<number, T>,
+    public readonly x2: Var<number, T>,
+  ) {}
+}
+
+export function mkLT<T>(x1: Var<number, T>, x2: Var<number, T>): Var<boolean, T> {
+  return new LT(x1, x2);
+}
+
 export type Var<A, T>
   = Constant<A>
   | CountAbility<T>
   | Div<T>
   | Equals<T>
   | Add<T>
+  | LT<T>
   ;
