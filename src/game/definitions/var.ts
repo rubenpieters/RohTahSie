@@ -78,6 +78,32 @@ export function mkLT<T>(x1: Var<number, T>, x2: Var<number, T>): Var<boolean, T>
   return new LT(x1, x2);
 }
 
+export class Below<T> {
+  public readonly tag: "Below" = "Below";
+
+  constructor(
+    public readonly x1: Var<number, T>,
+    public readonly v: number,
+  ) {}
+}
+
+export function mkBelow<T>(x1: Var<number, T>, v: number): Var<boolean, T> {
+  return new Below(x1, v);
+}
+
+export class Resource<T> {
+  public readonly tag: "Resource" = "Resource";
+
+  constructor(
+    public readonly target: T,
+    public readonly res: "roh" | "tah" | "sie",
+  ) {}
+}
+
+export function mkResource<T>(target: T, res: "roh" | "tah" | "sie"): Var<number, T> {
+  return new Resource(target, res);
+}
+
 export type Var<A, T>
   = Constant<A>
   | CountAbility<T>
@@ -85,4 +111,6 @@ export type Var<A, T>
   | Equals<T>
   | Add<T>
   | LT<T>
+  | Below<T>
+  | Resource<T>
   ;

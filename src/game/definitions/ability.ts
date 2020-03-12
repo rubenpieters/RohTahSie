@@ -99,6 +99,14 @@ export class VoodooDoll {
   ]
 }
 
+export class Network {
+  public readonly name: "Network" = "Network"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(5, "sie", new Self()),
+    //new A.AddStatus(new S.NetworkStatus(), new Self()),
+  ]
+}
+
 export type Ability
   = Rest
   | Meditation

@@ -20,6 +20,7 @@ export function applyAction(
   state: GameState,
   display: Display,
   cache: Cache,
+  source: "player" | "enemy",
 ): { animation: Anim, newActions: Action<ConcreteTarget>[] } {
   switch (action.tag) {
     case "Regen": {
@@ -70,7 +71,7 @@ export function applyAction(
         if (targetEntity !== undefined) {
           const shieldType = targetEntity.shield;
           const prevValue = targetEntity[shieldType];
-          const varValue = evalVar(state, action.value);
+          const varValue = evalVar(state, action.value, source);
           targetEntity[shieldType] = Math.max(0, targetEntity[shieldType] - varValue);
           const valueChange = prevValue - targetEntity[shieldType];
           // decrease resource animation
@@ -87,7 +88,7 @@ export function applyAction(
         if (status !== undefined) {
           // if a status is found on enemy, then it is not undefined
           const targetEntity = state[status.owner]!.entity;
-          const varValue = evalVar(state, action.value);
+          const varValue = evalVar(state, action.value, source);
           const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - varValue);
           targetEntity.statuses[status.statusIndex].hp = newHp;
           const animation = damageStatusAnim(status, targetEntity, display, cache);
@@ -187,7 +188,7 @@ export function applyAction(
       return { animation: new Noop(), newActions: [] };
     }
     case "Conditional": {
-      const evalCond = evalVar(state, action.cond);
+      const evalCond = evalVar(state, action.cond, source);
       if (evalCond) {
         return { animation: new Noop(), newActions: [action.actionThen] };
       } else {

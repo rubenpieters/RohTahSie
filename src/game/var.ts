@@ -9,6 +9,7 @@ import { SideExpl, nextVarId, VarExpl, varIdToVarName } from "./nodeExpl";
 export function evalVar<A>(
   state: GameState,
   varDef: Var<A, ConcreteTarget>,
+  source: "player" | "enemy",
 ): A {
   switch (varDef.tag) {
     case "Constant": return varDef.a;
@@ -23,25 +24,38 @@ export function evalVar<A>(
       return target.layout.nodes.filter(x => x.name === varDef.ability).length as any;
     }
     case "Div": {
-      const beforeRound = evalVar(state, varDef.x1) / evalVar(state, varDef.x2);
+      const beforeRound = evalVar(state, varDef.x1, source) / evalVar(state, varDef.x2, source);
       switch (varDef.rounding) {
         case "ceil": return Math.ceil(beforeRound) as any;
         case "floor": return Math.floor(beforeRound) as any;
       }
     }
     case "Add": {
-      return evalVar(state, varDef.x1) + evalVar(state, varDef.x2) as any;
+      return evalVar(state, varDef.x1, source) + evalVar(state, varDef.x2, source) as any;
     }
     case "Equals": {
       const isEqual = varDef.f(({ x1, x2 }) => {
-        const evaled1 = evalVar(state, x1);
-        const evaled2 = evalVar(state, x2);
+        const evaled1 = evalVar(state, x1, source);
+        const evaled2 = evalVar(state, x2, source);
         return deepEqual(evaled1, evaled2);
       });
       return isEqual as any;
     }
     case "LT": {
-      return evalVar(state, varDef.x1) < evalVar(state, varDef.x2) as any;
+      return evalVar(state, varDef.x1, source) < evalVar(state, varDef.x2, source) as any;
+    }
+    case "Below": {
+      return evalVar(state, varDef.x1, source) < varDef.v as any;
+    }
+    case "Resource": {
+      const concTarget = concretizeTarget(varDef.target, source);
+      if (concTarget.tag === "StatusTarget") {
+        throw "Resource Var: invalid target";
+      } else {
+        const targetEntity = concTarget.tag === "PlayerTarget" ? "player" : "enemy";
+        const result = state[targetEntity]?.entity[varDef.res];
+        return result === undefined ? 0 : result as any;
+      }
     }
   }
 }
@@ -51,9 +65,12 @@ export function concretizeVar<A>(
   source: "player" | "enemy",
 ): Var<A, ConcreteTarget> {
   switch (varDef.tag) {
-    case "CountAbility": return { ...varDef, target: concretizeTarget(varDef.target, source) };
-    case "Div": return { ...varDef, x1: concretizeVar(varDef.x1, source), x2: concretizeVar(varDef.x2, source) };
+    case "LT": // fallthrough
+    case "Div": // fallthrough
     case "Add": return { ...varDef, x1: concretizeVar(varDef.x1, source), x2: concretizeVar(varDef.x2, source) };
+    case "Below": return { ...varDef, x1: concretizeVar(varDef.x1, source) };
+    case "Resource": // fallthrough
+    case "CountAbility": return { ...varDef, target: concretizeTarget(varDef.target, source) };
     case "Equals": {
       const { concretized1, concretized2 } = varDef.f(({ x1, x2 }) => {
         const concretized1 = concretizeVar(x1, source);
@@ -112,6 +129,30 @@ function _varExpl<A>(
           sideExpl: result2.sideExpl
         };
       });
+    }
+    case "LT": {
+      const result1 = _varExpl(varExpl, varDef.x1);
+      const result2 = _varExpl(result1.sideExpl, varDef.x2);
+      return {
+        mainExpl: `${result1.mainExpl} < ${result2.mainExpl}`,
+        sideExpl: result2.sideExpl
+      };
+    }
+    case "Below": {
+      const result1 = _varExpl(varExpl, varDef.x1);
+      return {
+        mainExpl: `${result1.mainExpl} < ${varDef.v}`,
+        sideExpl: result1.sideExpl
+      }
+    }
+    case "Resource": {
+      const varId = nextVarId(varExpl);
+      const varName = varIdToVarName(varId);
+      const toAddExpl = new VarExpl(varId, `${varName} is ${targetExpl(varDef.target)} ${varDef.res}`);
+      return {
+        mainExpl: `${varName}`,
+        sideExpl: varExpl.concat([toAddExpl]),
+      };
     }
   }
 }

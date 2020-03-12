@@ -87,7 +87,7 @@ export function applyingAnimation(
     ]);
   return mkEff({
     eff: () => {
-      const { animation, newActions } = applyAction(state.phase.nextAction, state, display, cache);
+      const { animation, newActions } = applyAction(state.phase.nextAction, state, display, cache, source);
       const newActionQueue = (newActions as Action<AbstractTarget>[]).concat(state.phase.actionQueue);
       state.phase.actionQueue = newActionQueue;
       return animation;
