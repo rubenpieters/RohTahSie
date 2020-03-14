@@ -7,6 +7,11 @@ import { applyStatusAction, concretizeStatusAction, statusActionExpl } from "./s
 import { Cache, CacheValues } from "../app/main";
 import { Display } from "./display";
 import { combineExpl, SideExpl } from "./nodeExpl";
+import { Trigger } from "./definitions/trigger";
+import { actionExpl } from "./action";
+import { varExpl } from "./var";
+import { mapRecord } from "src/util/util";
+import { StateStatus } from "./entity";
 
 export function applyStatuses(
   action: Action<ConcreteTarget>,
@@ -21,9 +26,11 @@ export function applyStatuses(
   let transformed = action;
   let newActions: Action<ConcreteTarget>[] = [];
   for (const status of statuses) {
-    const result = applyStatus(transformed, origin, status, state, display, cache);
-    transformed = result.transformed;
-    newActions = newActions.concat(result.newActions);
+    if (status.type === "Status") {
+      const result = applyStatus(transformed, origin, status, state, display, cache);
+      transformed = result.transformed;
+      newActions = newActions.concat(result.newActions);
+    }
   }
   return { transformed, newActions };
 }
@@ -31,7 +38,7 @@ export function applyStatuses(
 export function applyStatus(
   action: Action<ConcreteTarget>,
   origin: ConcreteTarget,
-  status: Status & { id: number, hp: number, owner: "player" | "enemy" },
+  status: StateStatus,
   state: GameState,
   display: Display,
   cache: Cache,
@@ -55,21 +62,33 @@ export function applyStatus(
 }
 
 export function statusSprite(
-  status: Status,
+  status: Status | Trigger,
 ): CacheValues {
   return "status1";
 }
 
 export function statusExpl(
-  status: Status,
+  status: Status | Trigger,
 ): { mainExpl: string, sideExpl: SideExpl[] } {
-  const { mainExpl, sideExpl, condExpl } = status.ca(({ condition, actions }) => {
-    const sActionsExpl = combineExpl(actions, statusActionExpl);
-    const condExpl = conditionExpl(condition);
-    return { ...sActionsExpl, condExpl };
-  });
-  return {
-    mainExpl: `- ${condExpl}\n- ` + mainExpl.join("\n- "),
-    sideExpl: [],
-  };
+  switch (status.type) {
+    case "Status": {
+      const { mainExpl, sideExpl, condExpl } = status.ca(({ condition, actions }) => {
+        const sActionsExpl = combineExpl(actions, statusActionExpl);
+        const condExpl = conditionExpl(condition);
+        return { ...sActionsExpl, condExpl };
+      });
+      return {
+        mainExpl: `- ${condExpl}\n- ` + mainExpl.join("\n- "),
+        sideExpl,
+      };
+    }
+    case "Trigger": {
+      const actionsExpl = combineExpl(status.actions, actionExpl);
+      const condExpl = varExpl(status.condition);
+      return {
+        mainExpl: `- ${condExpl.mainExpl}\n- ` + actionsExpl.mainExpl.join("\n- "),
+        sideExpl: actionsExpl.sideExpl.concat(condExpl.sideExpl),
+      };
+    }
+  }
 }

@@ -15,6 +15,7 @@ import { applyStatuses } from "./status";
 import { MenuDisplay } from "../menu/menu";
 import { CardCraftDisplay } from "../craft/card";
 import { ZoneOverviewDisplay } from "../zone/zone";
+import { checkTriggers } from "./trigger";
 
 export type Display = {
   player: {
@@ -87,8 +88,14 @@ export function applyingAnimation(
     ]);
   return mkEff({
     eff: () => {
+      // apply action
       const { animation, newActions } = applyAction(state.phase.nextAction, state, display, cache, source);
-      const newActionQueue = (newActions as Action<AbstractTarget>[]).concat(state.phase.actionQueue);
+      // check triggers
+      const triggerResult = checkTriggers(state, display, cache);
+      // create new action queue
+      const newActionQueue = (newActions as Action<AbstractTarget>[])
+        .concat(triggerResult.newActions)
+        .concat(state.phase.actionQueue);
       state.phase.actionQueue = newActionQueue;
       return animation;
     },

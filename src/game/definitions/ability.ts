@@ -4,6 +4,7 @@ import { PlayerTarget, EnemyTarget, AbstractTarget, Self, Other, mkSelf, mkOther
 import { EnemyKey } from "../enemy";
 import * as V from "./var";
 import * as S from "./status";
+import * as Tr from "./trigger";
 
 export class Rest {
   public readonly name: "Rest" = "Rest"
@@ -103,7 +104,7 @@ export class Network {
   public readonly name: "Network" = "Network"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(5, "sie", new Self()),
-    //new A.AddStatus(new S.NetworkStatus(), new Self()),
+    new A.AddStatus(new Tr.NetworkTrigger(), new Self()),
   ]
 }
 
@@ -119,4 +120,5 @@ export type Ability
   | Isolation
   | Infection
   | VoodooDoll
+  | Network
   ;

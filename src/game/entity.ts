@@ -54,12 +54,14 @@ const resourceVarAxis = {
 export type StateStatus = Status & {
   id: number,
   hp: number,
+  owner: "player" | "enemy",
 }
 
 export type StateTrigger = Trigger & {
   id: number,
   hp: number,
   cond: boolean,
+  owner: "player" | "enemy",
 }
 
 export type Entity = {

@@ -19,3 +19,15 @@ export function fillUndefinedUpTo<A>(
   }
   return l;
 }
+
+export function mapRecord<A, K extends keyof A, B>(
+  k: K,
+  a: A,
+  f: (ak: A[K]) => B,
+): Omit<A, K> & { [k in K]: B } {
+  const copy = cloneDeep(a);
+  // @ts-ignore
+  copy[k] = f(a[k]);
+  // @ts-ignore
+  return copy;
+}

@@ -7,6 +7,7 @@ import * as T from "./target";
 
 
 export class NetworkTrigger {
+  public readonly type: "Trigger" = "Trigger";
   public readonly name: "NetworkTrigger" = "NetworkTrigger";
   public readonly maxHp = 5;
   public readonly size = 1;

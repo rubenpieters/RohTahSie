@@ -20,6 +20,7 @@ export function mkStatusCA<A extends Action<ConcreteTarget>>(
 }
 
 export class DemonStatus {
+  public readonly type: "Status" = "Status";
   public readonly name: "DemonStatus" = "DemonStatus";
   public readonly maxHp = 6;
   public readonly size = 1;
@@ -34,6 +35,7 @@ export class DemonStatus {
 }
 
 export class InfectionStatus {
+  public readonly type: "Status" = "Status";
   public readonly name: "InfectionStatus" = "InfectionStatus";
   public readonly maxHp = 6;
   public readonly size = 1;
@@ -48,6 +50,7 @@ export class InfectionStatus {
 }
 
 export class VoodooDollStatus {
+  public readonly type: "Status" = "Status";
   public readonly name: "VoodooDollStatus" = "VoodooDollStatus";
   public readonly maxHp = 1;
   public readonly size = 5;
