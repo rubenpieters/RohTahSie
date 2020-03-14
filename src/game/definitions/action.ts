@@ -2,6 +2,7 @@ import { EnemyKey } from "../enemy";
 import { ResourceType } from "../types";
 import { Var } from "./var";
 import { Status } from "./status";
+import { Trigger } from "./trigger";
 
 export class Regen<T> {
   public readonly tag: "Regen" = "Regen";
@@ -44,7 +45,7 @@ export class AddStatus<T> {
   public readonly tag: "AddStatus" = "AddStatus";
 
   constructor(
-    public readonly status: Status,
+    public readonly status: Status | Trigger,
     public readonly target: T,
   ) {}
 }

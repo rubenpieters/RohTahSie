@@ -173,7 +173,7 @@ export function applyAction(
           sizeUsed(targetEntity) + action.status.size <= statusAmount
         ) {
           const id = state.idCounter;
-          const stateStatus = { ...action.status, id, hp: action.status.maxHp };
+          const stateStatus = { ...action.status, id, hp: action.status.maxHp, cond: false };
           state.idCounter++;
           targetEntity.statuses.push(stateStatus);
           const animation = mkEff({

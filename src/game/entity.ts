@@ -5,6 +5,7 @@ import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, mkParticle } from
 import { Display } from "./display";
 import { Status } from "./definitions/status";
 import { statusSprite } from "./status";
+import { Trigger } from "./definitions/trigger";
 
 const statusAmountX = 3;
 const statusAmountY = 5;
@@ -55,6 +56,12 @@ export type StateStatus = Status & {
   hp: number,
 }
 
+export type StateTrigger = Trigger & {
+  id: number,
+  hp: number,
+  cond: boolean,
+}
+
 export type Entity = {
   roh: number,
   maxRoh: number,
@@ -64,7 +71,7 @@ export type Entity = {
   maxSie: number,
   shield: ResourceType,
   dirty: boolean,
-  statuses: StateStatus[],
+  statuses: (StateStatus | StateTrigger)[],
 }
 
 export type EntityDisplay = {
@@ -286,7 +293,7 @@ export function updateEntityStatusDisplay(
 ) {
   let sizeOffset = 0;
   for (let i = 0; i < statusAmount - sizeOffset; i++) {
-    const status: StateStatus | undefined = entity.statuses[i];
+    const status: StateStatus | StateTrigger | undefined = entity.statuses[i];
     statusSprites[i + sizeOffset].alpha = 1;
     if (status === undefined) {
       statusSprites[i + sizeOffset].texture = PIXI.Texture.EMPTY;
