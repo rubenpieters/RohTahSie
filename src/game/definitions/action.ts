@@ -1,5 +1,5 @@
 import { EnemyKey } from "../enemy";
-import { ResourceType } from "../types";
+import { ResourceType, AbstractResourceType } from "../types";
 import { Var } from "./var";
 import { Status } from "./status";
 import { Trigger } from "./trigger";
@@ -9,8 +9,8 @@ export class Regen<T> {
   public readonly size = 1;
 
   constructor(
-    public readonly value: number,
-    public readonly resource: ResourceType,
+    public readonly value: Var<number, T>,
+    public readonly resource: AbstractResourceType,
     public readonly target: T,
   ) {}
 }

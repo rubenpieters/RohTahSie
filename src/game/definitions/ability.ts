@@ -30,21 +30,21 @@ export class FocusSie {
 export class Rest {
   public readonly name: "Rest" = "Rest"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Regen(10, "roh", mkSelf),
+    new A.Regen(new V.Constant(10), "roh", mkSelf),
   ]
 }
 
 export class Meditation {
   public readonly name: "Meditation" = "Meditation"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Regen(8, "tah", mkSelf),
+    new A.Regen(new V.Constant(8), "tah", mkSelf),
   ]
 }
 
 export class Requiem {
   public readonly name: "Requiem" = "Requiem"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Regen(6, "sie", mkSelf),
+    new A.Regen(new V.Constant(6), "sie", mkSelf),
   ]
 }
 
@@ -124,8 +124,16 @@ export class VoodooDoll {
 export class Network {
   public readonly name: "Network" = "Network"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Cost(5, "sie", new Self()),
+    new A.Cost(4, "tah", new Self()),
     new A.AddStatus(new Tr.NetworkTrigger(), new Self()),
+  ]
+}
+
+export class Prayer {
+  public readonly name: "Network" = "Network"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(5, "sie", new Self()),
+    new A.AddStatus(new Tr.PrayerTrigger(), new Self()),
   ]
 }
 
@@ -145,4 +153,5 @@ export type Ability
   | Infection
   | VoodooDoll
   | Network
+  | Prayer
   ;

@@ -31,13 +31,15 @@ export function applyAction(
       ) {
         const targetEntity = targetToEntity(action.target, state);
         if (targetEntity !== undefined) {
-          const prevValue = targetEntity[action.resource];
-          const maxValue = targetEntity[resourceMaxField(action.resource)];
-          targetEntity[action.resource] = Math.min(maxValue, targetEntity[action.resource] + action.value);
-          const valueChange = targetEntity[action.resource] - prevValue;
+          const resource = action.resource === "essence" ? targetEntity.shield : action.resource;
+          const prevValue = targetEntity[resource];
+          const maxValue = targetEntity[resourceMaxField(resource)];
+          const value = evalVar(state, action.value, source);
+          targetEntity[resource] = Math.min(maxValue, targetEntity[resource] + value);
+          const valueChange = targetEntity[resource] - prevValue;
           // increase resource animation
           const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
-          const animation = updateResourceAnim(targetEntity, display, action.resource, target, `+${valueChange}`)
+          const animation = updateResourceAnim(targetEntity, display, resource, target, `+${valueChange}`)
           return { animation, newActions: [] };
         }
       }
@@ -268,10 +270,13 @@ export function actionExpl<T extends AbstractTarget>(
   action: Action<T>,
 ): { mainExpl: string, sideExpl: SideExpl[] } {
   switch (action.tag) {
-    case "Regen": return {
-      mainExpl: `+${action.value} ${action.resource} to ${targetExpl(action.target)}`,
-      sideExpl: [],
-    };
+    case "Regen": {
+      const varExpls = varExpl(action.value);
+      return {
+        mainExpl: `+${varExpls.mainExpl} ${action.resource} to ${targetExpl(action.target)}`,
+        sideExpl: varExpls.sideExpl,
+      };
+    }
     case "Cost": return {
       mainExpl: `-${action.value} ${action.resource} to ${targetExpl(action.target)}`,
       sideExpl: [],
@@ -329,12 +334,12 @@ export function concretizeAction(
 ): Action<ConcreteTarget> {
   switch (action.tag) {
     case "Cost": // fallthrough
-    case "Regen": // fallthrough
     case "Death": // fallthrough
     case "AddStatus": // fallthrough
     case "EndTurn": // fallthrough
     case "ChangeShield":
       return { ...action, target: concretizeTarget(action.target, source, thisStatus) };
+    case "Regen": // fallthrough
     case "Damage":
       return { ...action, target: concretizeTarget(action.target, source, thisStatus), value: concretizeVar(action.value, source) };
     case "Conditional":

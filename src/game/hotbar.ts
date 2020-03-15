@@ -206,7 +206,7 @@ export function calcHotbar(
       return undefined;
     }
   });
-  const elementsUnfilled = filterUndefined(elementsUnfiltered).slice(0, craftedCardSize - 1);
+  const elementsUnfilled = filterUndefined(elementsUnfiltered).slice(0, craftedCardSize);
   const elementsCrafts = fillUndefinedUpTo(elementsUnfilled, { node: new Dormant(), selected: false }, craftedCardSize);
   // zone cards
   const selectedZone = zones.find(x => x.selected === true);

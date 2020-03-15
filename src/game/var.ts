@@ -52,9 +52,15 @@ export function evalVar<A>(
       if (concTarget.tag === "StatusTarget") {
         throw "Resource Var: invalid target";
       } else {
-        const targetEntity = concTarget.tag === "PlayerTarget" ? "player" : "enemy";
-        const result = state[targetEntity]?.entity[varDef.res];
-        return result === undefined ? 0 : result as any;
+        const target = concTarget.tag === "PlayerTarget" ? "player" : "enemy";
+        const targetEntity = state[target];
+        if (targetEntity !== undefined) {
+          const resource = varDef.res === "essence" ? targetEntity.entity.shield : varDef.res;
+          console.log(`RESULT: ${targetEntity.entity[resource]}`);
+          return targetEntity.entity[resource] as any;
+        }
+        // TODO: have some form of undefined result of condition evaluation?
+        return 0 as any;
       }
     }
   }

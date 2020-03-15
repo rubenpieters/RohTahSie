@@ -42,7 +42,7 @@ export function checkTrigger(
   
   trigger.cond = next;
   // if condition has changed, return trigger actions to add to queue
-  if (prev !== next) {
+  if (prev !== next && next) {
     const newActions = trigger.actions.map(x => concretizeAction(x, trigger.owner, new StatusTarget(trigger.id)));
     return { animation: new Noop(), newActions };
   } else {

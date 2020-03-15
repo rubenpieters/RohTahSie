@@ -1,4 +1,5 @@
 import { Ability } from "./ability";
+import { AbstractResourceType } from "../types";
 
 export class Constant<A> {
   public readonly tag: "Constant" = "Constant";
@@ -96,11 +97,11 @@ export class Resource<T> {
 
   constructor(
     public readonly target: T,
-    public readonly res: "roh" | "tah" | "sie",
+    public readonly res: AbstractResourceType,
   ) {}
 }
 
-export function mkResource<T>(target: T, res: "roh" | "tah" | "sie"): Var<number, T> {
+export function mkResource<T>(target: T, res: AbstractResourceType): Var<number, T> {
   return new Resource(target, res);
 }
 

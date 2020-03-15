@@ -54,13 +54,13 @@ export function allCardCrafts(): CardCrafts {
     },
     {
       node: new Ab.Community(),
-      included: 1,
+      included: 0,
       available: 1,
       cost: 0,
     },
     {
       node: new Ab.Isolation(),
-      included: 1,
+      included: 0,
       available: 1,
       cost: 0,
     },
@@ -78,6 +78,12 @@ export function allCardCrafts(): CardCrafts {
     },
     {
       node: new Ab.Network(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new Ab.Prayer(),
       included: 1,
       available: 1,
       cost: 0,
