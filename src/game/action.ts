@@ -14,6 +14,7 @@ import { updateGemText } from "../craft/card";
 import { resourceMaxField } from "./entity";
 import { evalVar, concretizeVar, varExpl } from "./var";
 import { SideExpl, StatusExpl } from "./nodeExpl"
+import { evalTriggerCondition } from "./trigger";
 
 export function applyAction(
   action: Action<ConcreteTarget>,
@@ -174,7 +175,8 @@ export function applyAction(
         ) {
           const id = state.idCounter;
           const targetOwner: "player" | "enemy" = action.target.tag === "PlayerTarget" ? "player" : "enemy";
-          const stateStatus = { ...action.status, id, hp: action.status.maxHp, cond: false, owner: targetOwner };
+          let cond = action.status.type === "Status" ? false : evalTriggerCondition(action.status, state, targetOwner);
+          const stateStatus = { ...action.status, id, hp: action.status.maxHp, cond, owner: targetOwner };
           state.idCounter++;
           targetEntity.statuses.push(stateStatus);
           const animation = mkEff({

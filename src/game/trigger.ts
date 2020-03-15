@@ -7,6 +7,7 @@ import { concretizeAction } from "./action";
 import { StatusTarget, ConcreteTarget } from "./definitions/target";
 import { Action } from "./definitions/action";
 import { Cache } from "../app/main";
+import { Trigger } from "./definitions/trigger";
 
 export function checkTriggers(
   state: GameState,
@@ -37,8 +38,7 @@ export function checkTrigger(
   // previous value of the condition
   const prev = trigger.cond;
   // calculate next value of the condition
-  const concreteCondition = concretizeVar(trigger.condition, trigger.owner);
-  const next = evalVar(state, concreteCondition, trigger.owner);
+  const next = evalTriggerCondition(trigger, state, trigger.owner);
   
   trigger.cond = next;
   // if condition has changed, return trigger actions to add to queue
@@ -48,4 +48,13 @@ export function checkTrigger(
   } else {
     return { animation: new Noop(), newActions: [] };
   }
+}
+
+export function evalTriggerCondition(
+  trigger: Trigger,
+  state: GameState,
+  owner: "player" | "enemy",
+) {
+  const concreteCondition = concretizeVar(trigger.condition, owner);
+  return evalVar(state, concreteCondition, owner);
 }

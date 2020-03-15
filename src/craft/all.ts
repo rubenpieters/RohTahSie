@@ -11,6 +11,24 @@ export type CardCrafts = {
 export function allCardCrafts(): CardCrafts {
   return [
     {
+      node: new Ab.FocusRoh(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new Ab.FocusTah(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new Ab.FocusSie(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
       node: new Ab.Rest(),
       included: 1,
       available: 1,
@@ -48,13 +66,13 @@ export function allCardCrafts(): CardCrafts {
     },
     {
       node: new Ab.Demon(),
-      included: 1,
+      included: 0,
       available: 1,
       cost: 0,
     },
     {
       node: new Ab.VoodooDoll(),
-      included: 1,
+      included: 0,
       available: 1,
       cost: 0,
     },

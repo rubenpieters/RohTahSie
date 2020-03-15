@@ -13,6 +13,9 @@ export function nodeSprite(
   ability: Ability,
 ): CacheValues {
   switch (ability.name) {
+    case "FocusRoh": return "sword";
+    case "FocusTah": return "sword";
+    case "FocusSie": return "sword";
     case "Rest": return "rest";
     case "Meditation": return "meditation";
     case "Requiem": return "requiem";

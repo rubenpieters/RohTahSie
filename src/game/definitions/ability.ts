@@ -6,24 +6,45 @@ import * as V from "./var";
 import * as S from "./status";
 import * as Tr from "./trigger";
 
+export class FocusRoh {
+  public readonly name: "FocusRoh" = "FocusRoh"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.ChangeShield("roh", mkSelf),
+  ]
+}
+
+export class FocusTah {
+  public readonly name: "FocusTah" = "FocusTah"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.ChangeShield("tah", mkSelf),
+  ]
+}
+
+export class FocusSie {
+  public readonly name: "FocusSie" = "FocusSie"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.ChangeShield("sie", mkSelf),
+  ]
+}
+
 export class Rest {
   public readonly name: "Rest" = "Rest"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Regen(10, "roh", new Self()),
+    new A.Regen(10, "roh", mkSelf),
   ]
 }
 
 export class Meditation {
   public readonly name: "Meditation" = "Meditation"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Regen(8, "tah", new Self()),
+    new A.Regen(8, "tah", mkSelf),
   ]
 }
 
 export class Requiem {
   public readonly name: "Requiem" = "Requiem"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Regen(6, "sie", new Self()),
+    new A.Regen(6, "sie", mkSelf),
   ]
 }
 
@@ -109,7 +130,10 @@ export class Network {
 }
 
 export type Ability
-  = Rest
+  = FocusRoh
+  | FocusTah
+  | FocusSie
+  | Rest
   | Meditation
   | Requiem
   | Discussion
