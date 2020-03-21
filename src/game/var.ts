@@ -63,6 +63,17 @@ export function evalVar<A>(
         return 0 as any;
       }
     }
+    case "GetVar": {
+      if (! (varDef.name in state.variables)) {
+        throw `Variable ${varDef.name} not in ${JSON.stringify(state.variables)}`;
+      }
+      const v = state.variables[varDef.name];
+      state.variables[varDef.name].count -= varDef.count;
+      if (state.variables[varDef.name].count == 0) {
+        delete state.variables[varDef.name];
+      }
+      return v.v as any;
+    }
   }
 }
 
@@ -91,13 +102,15 @@ export function concretizeVar<A>(
 
 export function varExpl<A>(
   varDef: Var<A, AbstractTarget>,
+  variables: Record<string, string>,
 ): { mainExpl: string, sideExpl: SideExpl[] } {
-  return _varExpl([], varDef);
+  return _varExpl([], varDef, variables);
 }
 
 function _varExpl<A>(
   varExpl: SideExpl[],
   varDef: Var<A, AbstractTarget>,
+  variables: Record<string, string>,
 ): { mainExpl: string, sideExpl: SideExpl[] } {
   switch (varDef.tag) {
     case "Constant": return { mainExpl: `${varDef.a}`, sideExpl: varExpl };
@@ -111,16 +124,16 @@ function _varExpl<A>(
       };
     }
     case "Div": {
-      const result1 = _varExpl(varExpl, varDef.x1);
-      const result2 = _varExpl(result1.sideExpl, varDef.x2);
+      const result1 = _varExpl(varExpl, varDef.x1, variables);
+      const result2 = _varExpl(result1.sideExpl, varDef.x2, variables);
       return {
         mainExpl: `${result1.mainExpl} / ${result2.mainExpl}`,
         sideExpl: result2.sideExpl
       };
     }
     case "Add": {
-      const result1 = _varExpl(varExpl, varDef.x1);
-      const result2 = _varExpl(result1.sideExpl, varDef.x2);
+      const result1 = _varExpl(varExpl, varDef.x1, variables);
+      const result2 = _varExpl(result1.sideExpl, varDef.x2, variables);
       return {
         mainExpl: `${result1.mainExpl} + ${result2.mainExpl}`,
         sideExpl: result2.sideExpl
@@ -128,8 +141,8 @@ function _varExpl<A>(
     }
     case "Equals": {
       return varDef.f(({ x1, x2 }) => {
-        const result1 = _varExpl(varExpl, x1);
-        const result2 = _varExpl(result1.sideExpl, x2);
+        const result1 = _varExpl(varExpl, x1, variables);
+        const result2 = _varExpl(result1.sideExpl, x2, variables);
         return {
           mainExpl: `${result1.mainExpl} == ${result2.mainExpl}`,
           sideExpl: result2.sideExpl
@@ -137,15 +150,15 @@ function _varExpl<A>(
       });
     }
     case "LT": {
-      const result1 = _varExpl(varExpl, varDef.x1);
-      const result2 = _varExpl(result1.sideExpl, varDef.x2);
+      const result1 = _varExpl(varExpl, varDef.x1, variables);
+      const result2 = _varExpl(result1.sideExpl, varDef.x2, variables);
       return {
         mainExpl: `${result1.mainExpl} < ${result2.mainExpl}`,
         sideExpl: result2.sideExpl
       };
     }
     case "Below": {
-      const result1 = _varExpl(varExpl, varDef.x1);
+      const result1 = _varExpl(varExpl, varDef.x1, variables);
       return {
         mainExpl: `${result1.mainExpl} < ${varDef.v}`,
         sideExpl: result1.sideExpl
@@ -158,6 +171,16 @@ function _varExpl<A>(
       return {
         mainExpl: `${varName}`,
         sideExpl: varExpl.concat([toAddExpl]),
+      };
+    }
+    case "GetVar": {
+      if (! (varDef.name in variables)) {
+        throw `Variable ${varDef.name} not in ${JSON.stringify(variables)}`;
+      }
+      const varName = variables[varDef.name];
+      return {
+        mainExpl: `${varName}`,
+        sideExpl: [],
       };
     }
   }

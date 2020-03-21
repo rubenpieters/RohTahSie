@@ -84,6 +84,12 @@ export function allCardCrafts(): CardCrafts {
     },
     {
       node: new Ab.Prayer(),
+      included: 0,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new Ab.Heresy(),
       included: 1,
       available: 1,
       cost: 0,

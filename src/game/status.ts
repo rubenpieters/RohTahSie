@@ -69,6 +69,7 @@ export function statusSprite(
 
 export function statusExpl(
   status: Status | Trigger,
+  variables: Record<string, string>,
 ): { mainExpl: string, sideExpl: SideExpl[] } {
   switch (status.type) {
     case "Status": {
@@ -84,7 +85,7 @@ export function statusExpl(
     }
     case "Trigger": {
       const actionsExpl = combineExpl(status.actions, actionExpl);
-      const condExpl = varExpl(status.condition);
+      const condExpl = varExpl(status.condition, variables);
       return {
         mainExpl: `- ${condExpl.mainExpl}\n- ` + actionsExpl.mainExpl.join("\n- "),
         sideExpl: actionsExpl.sideExpl.concat(condExpl.sideExpl),

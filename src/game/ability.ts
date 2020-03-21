@@ -28,5 +28,6 @@ export function nodeSprite(
     case "Infection": return "ability1";
     case "VoodooDoll": return "ability1";
     case "Network": return "ability1";
+    case "Heresy": return "ability1";
   }
 }

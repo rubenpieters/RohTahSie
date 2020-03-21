@@ -220,14 +220,18 @@ export function explNewlines(
 
 export function combineExpl<A>(
   as: A[],
-  f: (a: A) => { mainExpl: string, sideExpl: SideExpl[] }
+  f: (a: A, variables: Record<string, string>) => { mainExpl: (string | undefined), sideExpl: SideExpl[], variables: Record<string, string> }
 ): { mainExpl: string[], sideExpl: SideExpl[] } {
   const mainExpl: string[] = [];
   let sideExpl: SideExpl[] = [];
+  let variables: Record<string, string> = {};
   as.forEach(a => {
-    const expl = f(a);
-    mainExpl.push(expl.mainExpl);
+    const expl = f(a, variables);
+    if (expl.mainExpl !== undefined) {
+      mainExpl.push(expl.mainExpl);
+    }
     sideExpl = sideExpl.concat(expl.sideExpl);
+    variables = expl.variables;
   });
   return { mainExpl, sideExpl };
 }

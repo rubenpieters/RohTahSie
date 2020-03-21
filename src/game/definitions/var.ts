@@ -105,6 +105,15 @@ export function mkResource<T>(target: T, res: AbstractResourceType): Var<number,
   return new Resource(target, res);
 }
 
+export class GetVar {
+  public readonly tag: "GetVar" = "GetVar";
+
+  constructor(
+    public readonly name: string,
+    public readonly count: number,
+  ) {}
+}
+
 export type Var<A, T>
   = Constant<A>
   | CountAbility<T>
@@ -114,4 +123,5 @@ export type Var<A, T>
   | LT<T>
   | Below<T>
   | Resource<T>
+  | GetVar
   ;

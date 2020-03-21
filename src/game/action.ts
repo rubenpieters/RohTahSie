@@ -13,7 +13,7 @@ import { targetToEntity, targetToEntityDisplay, targetExpl, concretizeTarget } f
 import { updateGemText } from "../craft/card";
 import { resourceMaxField } from "./entity";
 import { evalVar, concretizeVar, varExpl } from "./var";
-import { SideExpl, StatusExpl } from "./nodeExpl"
+import { SideExpl, StatusExpl, varIdToVarName, nextVarId, VarExpl } from "./nodeExpl"
 import { evalTriggerCondition } from "./trigger";
 
 export function applyAction(
@@ -200,6 +200,14 @@ export function applyAction(
         return { animation: new Noop(), newActions: [action.actionElse] };
       }
     }
+    case "StoreVar": {
+      const evalV = evalVar(state, action.v, source);
+      if (action.name in state.variables) {
+        throw `Variable ${action.name} already defined in ${JSON.stringify(state.variables)}`;
+      }
+      state.variables[action.name] = { v: evalV, count: action.count };
+      return { animation: new Noop(), newActions: [] };
+    }
     case "Death": {
       if (action.target.tag === "EnemyTarget") {
         if (state.enemy !== undefined) {
@@ -268,60 +276,82 @@ export function applyAction(
 
 export function actionExpl<T extends AbstractTarget>(
   action: Action<T>,
-): { mainExpl: string, sideExpl: SideExpl[] } {
+  variables: Record<string, string>,
+): { mainExpl: string | undefined, sideExpl: SideExpl[], variables: Record<string, string>, } {
   switch (action.tag) {
     case "Regen": {
-      const varExpls = varExpl(action.value);
+      const varExpls = varExpl(action.value, variables);
       return {
         mainExpl: `+${varExpls.mainExpl} ${action.resource} to ${targetExpl(action.target)}`,
         sideExpl: varExpls.sideExpl,
+        variables,
       };
     }
     case "Cost": return {
       mainExpl: `-${action.value} ${action.resource} to ${targetExpl(action.target)}`,
       sideExpl: [],
+      variables,
     };
     case "AddStatus": {
-      const sExpl = statusExpl(action.status);
+      const sExpl = statusExpl(action.status, variables);
       return {
         mainExpl: `Add ${action.status.name} Status`,
         sideExpl: sExpl.sideExpl.concat([new StatusExpl(sExpl.mainExpl)]),
+        variables,
       };
     }
     case "ChangeShield": return {
       mainExpl: `${action.resource} Concentration`,
       sideExpl: [],
+      variables,
     };
     case "Damage": {
-      const varExpls = varExpl(action.value);
+      const varExpls = varExpl(action.value, variables);
       return {
         mainExpl: `-${varExpls.mainExpl} Essence to ${targetExpl(action.target)}`,
         sideExpl: varExpls.sideExpl,
+        variables,
       };
     }
     case "Death": return {
       mainExpl: `Death`,
       sideExpl: [],
+      variables,
     };
     case "EndTurn": return {
       mainExpl: `EndTurn`,
       sideExpl: [],
+      variables,
     };
     case "NoAction": return {
       mainExpl: `NoAction`,
       sideExpl: [],
+      variables,
     };
     case "Summon": return {
       mainExpl: `Summon ${action.enemyId}`,
       sideExpl: [],
+      variables,
     };
+    case "StoreVar": {
+      const vExpl = varExpl(action.v, variables);
+      const varId = nextVarId(vExpl.sideExpl);
+      const varName = varIdToVarName(varId);
+      const newExpl: SideExpl[] = [new VarExpl(varId, `${varName} is ${vExpl.mainExpl}`)];
+      return {
+        mainExpl: undefined,
+        sideExpl: newExpl.concat(vExpl.sideExpl),
+        variables: { ...variables, [action.name]: varName },
+      };
+    }
     case "Conditional": {
-      const condExpl = varExpl(action.cond);
-      const thenExpl = actionExpl(action.actionThen);
-      const elseExpl = actionExpl(action.actionElse);
+      const condExpl = varExpl(action.cond, variables);
+      const thenExpl = actionExpl(action.actionThen, variables);
+      const elseExpl = actionExpl(action.actionElse, thenExpl.variables);
       return {
         mainExpl: `if ${condExpl.mainExpl}\n   * then: ${thenExpl.mainExpl}\n   * else: ${elseExpl.mainExpl}`,
         sideExpl: condExpl.sideExpl.concat(thenExpl.sideExpl).concat(elseExpl.sideExpl),
+        variables: elseExpl.variables,
       };
     }
   }
@@ -348,6 +378,11 @@ export function concretizeAction(
         cond: concretizeVar(action.cond, source),
         actionThen: concretizeAction(action.actionThen, source, thisStatus),
         actionElse: concretizeAction(action.actionElse, source, thisStatus),
+      };
+    case "StoreVar":
+      return {
+        ...action,
+        v: concretizeVar(action.v, source),
       };
     default: return action;
   }

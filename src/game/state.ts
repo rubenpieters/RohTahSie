@@ -28,6 +28,7 @@ export type GameStateBase = {
   cardCrafts: CardCrafts,
   gems: number,
   zones: Zones,
+  variables: { [K in string]: { v: number, count: number } },
 };
 
 export type GameState = GameStateBase & {
@@ -47,6 +48,7 @@ export function initializeState(state: GameState): void {
   state.phase = new Charging();
   state.menuState = { menuSelected: "combat" };
   state.gems = 0;
+  state.variables = {};
 }
 
 export function findStatus(

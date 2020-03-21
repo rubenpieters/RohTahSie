@@ -44,14 +44,16 @@ export function concretizeStatusAction(
 
 export function statusActionExpl<T extends AbstractTarget>(
   statusAction: StatusAction<T>,
-): { mainExpl: string, sideExpl: SideExpl[] } {
+  variables: Record<string, string>
+): { mainExpl: string | undefined, sideExpl: SideExpl[], variables: Record<string, string> } {
   switch (statusAction.tag) {
     case "Increase": {
       return {
         mainExpl: `Increase by ${statusAction.value}`,
         sideExpl: [],
+        variables,
       };
     }
-    default: return actionExpl(statusAction);
+    default: return actionExpl(statusAction, variables);
   }
 }

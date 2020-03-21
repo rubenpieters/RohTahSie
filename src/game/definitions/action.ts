@@ -92,6 +92,16 @@ export class Conditional<T> {
   ) {}
 }
 
+export class StoreVar<T> {
+  public readonly tag: "StoreVar" = "StoreVar";
+
+  constructor(
+    public readonly v: Var<number, T>,
+    public readonly name: string,
+    public readonly count: number,
+  ) {}
+}
+
 export type Action<T>
   = Regen<T>
   | Summon
@@ -103,4 +113,5 @@ export type Action<T>
   | NoAction
   | EndTurn<T>
   | Conditional<T>
+  | StoreVar<T>
   ;

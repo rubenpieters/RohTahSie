@@ -137,6 +137,16 @@ export class Prayer {
   ]
 }
 
+export class Heresy {
+  public readonly name: "Heresy" = "Heresy"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(3, "tah", new Self()),
+    new A.StoreVar(new V.CountAbility("Rest", mkSelf), "X", 2),
+    new A.Damage(new V.GetVar("X", 1), mkOther),
+    new A.Damage(new V.GetVar("X", 1), mkOther),
+  ]
+}
+
 export type Ability
   = FocusRoh
   | FocusTah
@@ -154,4 +164,5 @@ export type Ability
   | VoodooDoll
   | Network
   | Prayer
+  | Heresy
   ;
