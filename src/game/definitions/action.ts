@@ -1,7 +1,7 @@
 import { EnemyKey } from "../enemy";
 import { ResourceType, AbstractResourceType } from "../types";
 import { Var } from "./var";
-import { Status } from "./status";
+import { Status, StatusType } from "./status";
 import { Trigger } from "./trigger";
 
 export class Regen<T> {
@@ -102,6 +102,16 @@ export class StoreVar<T> {
   ) {}
 }
 
+export class RemoveStatus<T> {
+  public readonly tag: "RemoveStatus" = "RemoveStatus";
+
+  constructor(
+    public readonly sType: StatusType,
+    public readonly amount: Var<number, T>,
+    public readonly target: T,
+  ) {}
+}
+
 export type Action<T>
   = Regen<T>
   | Summon
@@ -114,4 +124,5 @@ export type Action<T>
   | EndTurn<T>
   | Conditional<T>
   | StoreVar<T>
+  | RemoveStatus<T>
   ;

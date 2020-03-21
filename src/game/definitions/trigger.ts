@@ -5,11 +5,13 @@ import { Var } from "./var";
 import * as C from "./condition";
 import * as V from "./var";
 import * as T from "./target";
+import { StatusType } from "./status";
 
 
 export class NetworkTrigger {
   public readonly type: "Trigger" = "Trigger";
   public readonly name: "NetworkTrigger" = "NetworkTrigger";
+  public readonly sType: StatusType = "relation";
   public readonly maxHp = 5;
   public readonly size = 1;
 
@@ -23,6 +25,7 @@ export class NetworkTrigger {
 export class PrayerTrigger {
   public readonly type: "Trigger" = "Trigger";
   public readonly name: "PrayerTrigger" = "PrayerTrigger";
+  public readonly sType: StatusType = "spirit";
   public readonly maxHp = 1;
   public readonly size = 1;
 

@@ -192,6 +192,25 @@ export function applyAction(
       }
       return { animation: new Noop(), newActions: [] };
     }
+    case "RemoveStatus": {
+      if (
+        action.target.tag === "PlayerTarget" ||
+        action.target.tag === "EnemyTarget"
+      ) {
+        const targetEntity = targetToEntity(action.target, state);
+        if (targetEntity !== undefined) {
+          const amount = evalVar(state, action.amount, source);
+          const newActions = targetEntity.statuses
+            .filter(x => x.sType === action.sType)
+            .filter((x, i) => i < amount)
+            .map(x => new Death(new StatusTarget(x.id)))
+            ;
+          return { animation: new Noop(), newActions };
+        }
+        return { animation: new Noop(), newActions: [] };
+      }
+      return { animation: new Noop(), newActions: [] };
+    }
     case "Conditional": {
       const evalCond = evalVar(state, action.cond, source);
       if (evalCond) {
@@ -300,6 +319,14 @@ export function actionExpl<T extends AbstractTarget>(
         variables,
       };
     }
+    case "RemoveStatus": {
+      const amountExpl = varExpl(action.amount, variables);
+      return {
+        mainExpl: `Remove first ${amountExpl.mainExpl} ${action.sType} statuses from ${targetExpl(action.target)}`,
+        sideExpl: amountExpl.sideExpl,
+        variables,
+      };
+    }
     case "ChangeShield": return {
       mainExpl: `${action.resource} Concentration`,
       sideExpl: [],
@@ -339,7 +366,7 @@ export function actionExpl<T extends AbstractTarget>(
       const varName = varIdToVarName(varId);
       const newExpl: SideExpl[] = [new VarExpl(varId, `${varName} is ${vExpl.mainExpl}`)];
       return {
-        mainExpl: undefined,
+        mainExpl: `Store ${varName}`,
         sideExpl: newExpl.concat(vExpl.sideExpl),
         variables: { ...variables, [action.name]: varName },
       };
@@ -372,6 +399,8 @@ export function concretizeAction(
     case "Regen": // fallthrough
     case "Damage":
       return { ...action, target: concretizeTarget(action.target, source, thisStatus), value: concretizeVar(action.value, source) };
+    case "RemoveStatus":
+      return { ...action, target: concretizeTarget(action.target, source, thisStatus), amount: concretizeVar(action.amount, source) };
     case "Conditional":
       return {
         ...action,

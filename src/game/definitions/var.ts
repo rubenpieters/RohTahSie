@@ -1,5 +1,6 @@
 import { Ability } from "./ability";
 import { AbstractResourceType } from "../types";
+import { StatusType } from "./status";
 
 export class Constant<A> {
   public readonly tag: "Constant" = "Constant";
@@ -92,6 +93,19 @@ export function mkBelow<T>(x1: Var<number, T>, v: number): Var<boolean, T> {
   return new Below(x1, v);
 }
 
+export class Min<T> {
+  public readonly tag: "Min" = "Min";
+
+  constructor(
+    public readonly x1: Var<number, T>,
+    public readonly v: number,
+  ) {}
+}
+
+export function mkMin<T>(x1: Var<number, T>, v: number): Var<number, T> {
+  return new Min(x1, v);
+}
+
 export class Resource<T> {
   public readonly tag: "Resource" = "Resource";
 
@@ -114,6 +128,19 @@ export class GetVar {
   ) {}
 }
 
+export class CountStatusType<T> {
+  public readonly tag: "CountStatusType" = "CountStatusType";
+
+  constructor(
+    public readonly sType: StatusType,
+    public readonly target: T,
+  ) {}
+}
+
+export function mkCountStatusType<T>(sType: StatusType, target: T): Var<number, T> {
+  return new CountStatusType(sType, target);
+}
+
 export type Var<A, T>
   = Constant<A>
   | CountAbility<T>
@@ -122,6 +149,8 @@ export type Var<A, T>
   | Add<T>
   | LT<T>
   | Below<T>
+  | Min<T>
   | Resource<T>
   | GetVar
+  | CountStatusType<T>
   ;

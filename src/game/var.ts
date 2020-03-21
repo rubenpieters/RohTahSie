@@ -23,6 +23,16 @@ export function evalVar<A>(
       }
       return target.layout.nodes.filter(x => x.name === varDef.ability).length as any;
     }
+    case "CountStatusType": {
+      if (varDef.target.tag === "StatusTarget") {
+        throw "CountStatusType: Incorrect Target";
+      }
+      const target = varDef.target.tag === "PlayerTarget" ? state.player : state.enemy;
+      if (target === undefined) {
+        return 0 as any;
+      }
+      return target.entity.statuses.filter(x => x.sType === varDef.sType).length as any;
+    }
     case "Div": {
       const beforeRound = evalVar(state, varDef.x1, source) / evalVar(state, varDef.x2, source);
       switch (varDef.rounding) {
@@ -46,6 +56,9 @@ export function evalVar<A>(
     }
     case "Below": {
       return evalVar(state, varDef.x1, source) < varDef.v as any;
+    }
+    case "Min": {
+      return Math.min(evalVar(state, varDef.x1, source), varDef.v) as any;
     }
     case "Resource": {
       const concTarget = concretizeTarget(varDef.target, source);
@@ -85,8 +98,10 @@ export function concretizeVar<A>(
     case "LT": // fallthrough
     case "Div": // fallthrough
     case "Add": return { ...varDef, x1: concretizeVar(varDef.x1, source), x2: concretizeVar(varDef.x2, source) };
+    case "Min": // fallthrough
     case "Below": return { ...varDef, x1: concretizeVar(varDef.x1, source) };
     case "Resource": // fallthrough
+    case "CountStatusType": // fallthrough
     case "CountAbility": return { ...varDef, target: concretizeTarget(varDef.target, source) };
     case "Equals": {
       const { concretized1, concretized2 } = varDef.f(({ x1, x2 }) => {
@@ -164,6 +179,13 @@ function _varExpl<A>(
         sideExpl: result1.sideExpl
       }
     }
+    case "Min": {
+      const result1 = _varExpl(varExpl, varDef.x1, variables);
+      return {
+        mainExpl: `lowest of ${result1.mainExpl} and ${varDef.v}`,
+        sideExpl: result1.sideExpl
+      }
+    }
     case "Resource": {
       const varId = nextVarId(varExpl);
       const varName = varIdToVarName(varId);
@@ -181,6 +203,15 @@ function _varExpl<A>(
       return {
         mainExpl: `${varName}`,
         sideExpl: [],
+      };
+    }
+    case "CountStatusType": {
+      const varId = nextVarId(varExpl);
+      const varName = varIdToVarName(varId);
+      const toAddExpl = new VarExpl(varId, `${varName} is count of ${varDef.sType} statuses on ${targetExpl(varDef.target)}`);
+      return {
+        mainExpl: `${varName}`,
+        sideExpl: varExpl.concat([toAddExpl]),
       };
     }
   }

@@ -141,8 +141,8 @@ export class Heresy {
   public readonly name: "Heresy" = "Heresy"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(3, "tah", new Self()),
-    new A.StoreVar(new V.CountAbility("Rest", mkSelf), "X", 2),
-    new A.Damage(new V.GetVar("X", 1), mkOther),
+    new A.StoreVar(new V.Min(new V.CountStatusType("spirit", mkSelf), 3), "X", 2),
+    new A.RemoveStatus("spirit", new V.GetVar("X", 1), mkSelf),
     new A.Damage(new V.GetVar("X", 1), mkOther),
   ]
 }

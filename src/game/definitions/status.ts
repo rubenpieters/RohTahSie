@@ -6,6 +6,8 @@ import * as V from "./var";
 import * as T from "./target";
 import { StatusAction, Increase } from "./statusAction";
 
+export type StatusType = "spirit" | "relation" | "condition";
+
 type StatusK<A extends Action<ConcreteTarget>> = {
   condition: Condition<Action<ConcreteTarget>, A>
   actions: StatusAction<AbstractTarget>[]
@@ -22,6 +24,7 @@ export function mkStatusCA<A extends Action<ConcreteTarget>>(
 export class DemonStatus {
   public readonly type: "Status" = "Status";
   public readonly name: "DemonStatus" = "DemonStatus";
+  public readonly sType: StatusType = "spirit";
   public readonly maxHp = 6;
   public readonly size = 1;
 
@@ -37,6 +40,7 @@ export class DemonStatus {
 export class InfectionStatus {
   public readonly type: "Status" = "Status";
   public readonly name: "InfectionStatus" = "InfectionStatus";
+  public readonly sType: StatusType = "condition";
   public readonly maxHp = 6;
   public readonly size = 1;
 
@@ -52,6 +56,7 @@ export class InfectionStatus {
 export class VoodooDollStatus {
   public readonly type: "Status" = "Status";
   public readonly name: "VoodooDollStatus" = "VoodooDollStatus";
+  public readonly sType: StatusType = "spirit";
   public readonly maxHp = 1;
   public readonly size = 5;
 
