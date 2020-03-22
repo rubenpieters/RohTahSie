@@ -44,7 +44,7 @@ export function evalVar<A>(
       return evalVar(state, varDef.x1, source) + evalVar(state, varDef.x2, source) as any;
     }
     case "Minus": {
-      return Math.max(0, evalVar(state, varDef.x1, source) - evalVar(state, varDef.x2, source)) as any;
+      return evalVar(state, varDef.x1, source) - evalVar(state, varDef.x2, source) as any;
     }
     case "Mult": {
       return evalVar(state, varDef.x1, source) * evalVar(state, varDef.x2, source) as any;
@@ -75,8 +75,13 @@ export function evalVar<A>(
         const targetEntity = state[target];
         if (targetEntity !== undefined) {
           const resource = varDef.res === "essence" ? targetEntity.entity.shield : varDef.res;
-          console.log(`RESULT: ${targetEntity.entity[resource]}`);
-          return targetEntity.entity[resource] as any;
+          if (resource === "lowest") {
+            return Math.min(targetEntity.entity.roh, targetEntity.entity.tah, targetEntity.entity.sie) as any;
+          } else if (resource === "highest") {
+            return Math.max(targetEntity.entity.roh, targetEntity.entity.tah, targetEntity.entity.sie) as any;
+          } else {
+            return targetEntity.entity[resource] as any;
+          }
         }
         // TODO: have some form of undefined result of condition evaluation?
         return 0 as any;

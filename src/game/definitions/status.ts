@@ -31,8 +31,8 @@ export class DemonStatus {
   public readonly ca = mkStatusCA({
     condition: new C.And(C.mkIsTag("EndTurn"), new C.HasTarget(new T.Self())),
     actions: [
-      new Damage(new V.Constant(1), new T.Other()),
-      new Damage(new V.Constant(1), new T.ThisStatus()),
+      new Damage(new V.Constant(1), "essence", new T.Other()),
+      new Damage(new V.Constant(1), "essence", new T.ThisStatus()),
     ],
   });
 }
@@ -47,8 +47,8 @@ export class InfectionStatus {
   public readonly ca = mkStatusCA({
     condition: new C.And(C.mkIsTag("EndTurn"), new C.HasTarget(new T.Self())),
     actions: [
-      new Damage(new V.Constant(1), new T.Self()),
-      new Damage(new V.Constant(1), new T.ThisStatus()),
+      new Damage(new V.Constant(1), "essence", new T.Self()),
+      new Damage(new V.Constant(1), "essence", new T.ThisStatus()),
     ],
   });
 }
@@ -64,7 +64,7 @@ export class VoodooDollStatus {
     condition: new C.And(C.mkIsTag("Damage"), new C.HasTarget(new T.Other())),
     actions: [
       new Increase("value", 8),
-      new Damage(new V.Constant(1), new T.ThisStatus()),
+      new Damage(new V.Constant(1), "essence", new T.ThisStatus()),
     ],
   });
 }
@@ -80,7 +80,7 @@ export class GuardianAngelStatus {
     condition: new C.And(C.mkIsTag("Damage"), new C.HasTarget(new T.Self())),
     actions: [
       new Reduce("value", 1),
-      new Damage(new V.Constant(1), new T.ThisStatus()),
+      new Damage(new V.Constant(1), "essence", new T.ThisStatus()),
     ],
   });
 }

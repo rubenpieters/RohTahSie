@@ -17,8 +17,8 @@ export class NetworkTrigger {
 
   public readonly condition: Var<boolean, AbstractTarget> = V.mkBelow(V.mkResource(T.mkSelf, "tah"), 5);
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Damage(new V.Constant(2), T.mkOther),
-    new A.Damage(new V.Constant(1), new T.ThisStatus()),
+    new A.Damage(new V.Constant(2), "essence", T.mkOther),
+    new A.Damage(new V.Constant(1), "essence", new T.ThisStatus()),
   ];
 }
 
@@ -32,7 +32,7 @@ export class PrayerTrigger {
   public readonly condition: Var<boolean, AbstractTarget> = V.mkBelow(V.mkResource(T.mkSelf, "essence"), 5);
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Regen(new V.Constant(15), "essence", T.mkSelf),
-    new A.Damage(new V.Constant(1), new T.ThisStatus()),
+    new A.Damage(new V.Constant(1), "essence", new T.ThisStatus()),
   ];
 }
 

@@ -15,6 +15,7 @@ import { resourceMaxField } from "./entity";
 import { evalVar, concretizeVar, varExpl } from "./var";
 import { SideExpl, StatusExpl, varIdToVarName, nextVarId, VarExpl } from "./nodeExpl"
 import { evalTriggerCondition } from "./trigger";
+import { ResourceType } from "./types";
 
 export function applyAction(
   action: Action<ConcreteTarget>,
@@ -32,14 +33,37 @@ export function applyAction(
         const targetEntity = targetToEntity(action.target, state);
         if (targetEntity !== undefined) {
           const resource = action.resource === "essence" ? targetEntity.shield : action.resource;
-          const prevValue = targetEntity[resource];
-          const maxValue = targetEntity[resourceMaxField(resource)];
-          const value = evalVar(state, action.value, source);
-          targetEntity[resource] = Math.min(maxValue, targetEntity[resource] + value);
-          const valueChange = targetEntity[resource] - prevValue;
-          // increase resource animation
-          const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
-          const animation = updateResourceAnim(targetEntity, display, resource, target, `+${valueChange}`)
+          let resources: ResourceType[] = [];
+          if (resource === "lowest") {
+            const lowest = Math.min(targetEntity.roh, targetEntity.tah, targetEntity.sie);
+            resources = (["roh", "tah", "sie"] as ResourceType[])
+              .map((x: ResourceType) => { return { res: x, v: targetEntity[x] } })
+              .filter(({ res, v }) => v === lowest)
+              .map(({ res, v }) => res)
+              ;
+          } else if (resource === "highest") {
+            const highest = Math.max(targetEntity.roh, targetEntity.tah, targetEntity.sie);
+            resources = (["roh", "tah", "sie"] as ResourceType[])
+              .map((x: ResourceType) => { return { res: x, v: targetEntity[x] } })
+              .filter(({ res, v }) => v === highest)
+              .map(({ res, v }) => res)
+              ;
+          } else {
+            resources = [resource];
+          }
+          const animation = new Seq(
+            resources.map(res => {
+              const prevValue = targetEntity[res];
+              const maxValue = targetEntity[resourceMaxField(res)];
+              const value = evalVar(state, action.value, source);
+              targetEntity[res] = Math.min(maxValue, targetEntity[res] + value);
+              const valueChange = targetEntity[res] - prevValue;
+              // increase resource animation
+              const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
+              const animation = updateResourceAnim(targetEntity, display, res, target, `+${valueChange}`);
+              return animation;
+            })
+          );
           return { animation, newActions: [] };
         }
       }
@@ -72,36 +96,38 @@ export function applyAction(
       ) {
         const targetEntity = targetToEntity(action.target, state);
         if (targetEntity !== undefined) {
-          const shieldType = targetEntity.shield;
-          const prevValue = targetEntity[shieldType];
-          const varValue = evalVar(state, action.value, source);
-          targetEntity[shieldType] = Math.max(0, targetEntity[shieldType] - varValue);
-          const valueChange = prevValue - targetEntity[shieldType];
-          // decrease resource animation
-          const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
-          const animation = updateResourceAnim(targetEntity, display, shieldType, target, `-${valueChange}`);
-          let newActions: Action<ConcreteTarget>[] = [];
-          if (action.target.tag === "EnemyTarget" && targetEntity[shieldType] <= 0) {
-            newActions = [new Death(new EnemyTarget())];
+          const resource = action.resource === "essence" ? targetEntity.shield : action.resource;
+          let resources: ResourceType[] = [];
+          if (resource === "lowest") {
+            const lowest = Math.min(targetEntity.roh, targetEntity.tah, targetEntity.sie);
+            resources = (["roh", "tah", "sie"] as ResourceType[])
+              .map((x: ResourceType) => { return { res: x, v: targetEntity[x] } })
+              .filter(({ res, v }) => v === lowest)
+              .map(({ res, v }) => res)
+              ;
+          } else if (resource === "highest") {
+            const highest = Math.max(targetEntity.roh, targetEntity.tah, targetEntity.sie);
+            resources = (["roh", "tah", "sie"] as ResourceType[])
+              .map((x: ResourceType) => { return { res: x, v: targetEntity[x] } })
+              .filter(({ res, v }) => v === highest)
+              .map(({ res, v }) => res)
+              ;
+          } else {
+            resources = [resource];
           }
-          return { animation, newActions };
-        }
-      } else if (action.target.tag === "StatusTarget") {
-        const status = findStatus(state, action.target.id);
-        if (status !== undefined) {
-          // if a status is found on enemy, then it is not undefined
-          const targetEntity = state[status.owner]!.entity;
-          const varValue = evalVar(state, action.value, source);
-          const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - varValue);
-          targetEntity.statuses[status.statusIndex].hp = newHp;
-          const animation = damageStatusAnim(status, targetEntity, display, cache);
-          let newActions: Action<ConcreteTarget>[] = [];
-          if (newHp <= 0) {
-            newActions = [new Death(new StatusTarget(action.target.id))];
-          }
-          return { animation, newActions };
-        } else {
-          return { animation: new Noop(), newActions: [] };
+          const animation = new Seq(
+            resources.map(res => {
+              const prevValue = targetEntity[res];
+              const value = evalVar(state, action.value, source);
+              targetEntity[res] = Math.max(0, targetEntity[res] - value);
+              const valueChange = prevValue - targetEntity[res];
+              // decrease resource animation
+              const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
+              const animation = updateResourceAnim(targetEntity, display, res, target, `-${valueChange}`);
+              return animation;
+            })
+          );
+          return { animation, newActions: [] };
         }
       }
       return { animation: new Noop(), newActions: [] };

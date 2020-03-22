@@ -5,7 +5,7 @@ import { Display } from "../game/display";
 import { loadNodeExpl } from "../game/nodeExpl";
 import { nodeSprite } from "../game/ability";
 
-const maxCardX = 5;
+const maxCardX = 8;
 
 export type CardDisplay = {
   cardContainer: PIXI.Container,

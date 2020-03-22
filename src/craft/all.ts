@@ -95,7 +95,19 @@ export function allCardCrafts(): CardCrafts {
       cost: 0,
     },
     {
+      node: new Ab.Miracle(),
+      included: 0,
+      available: 1,
+      cost: 0,
+    },
+    {
       node: new Ab.GuardianAngel(),
+      included: 0,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new Ab.Homeostasis(),
       included: 1,
       available: 1,
       cost: 0,

@@ -58,7 +58,7 @@ export class Discussion {
   public readonly name: "Discussion" = "Discussion"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(3, "tah", new Self()),
-    new A.Damage(new V.Constant(5), new Other()),
+    new A.Damage(new V.Constant(5), "essence", new Other()),
   ]
 }
 
@@ -89,7 +89,7 @@ export class Community {
   public readonly name: "Community" = "Community"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(3, "tah", new Self()),
-    new A.Damage(new V.Div(V.mkCountAbility("Community", mkSelf), new V.Constant(2), "ceil"), mkOther),
+    new A.Damage(new V.Div(V.mkCountAbility("Community", mkSelf), new V.Constant(2), "ceil"), "essence", mkOther),
   ];
 }
 
@@ -99,7 +99,7 @@ export class Isolation {
     new A.Cost(4, "tah", new Self()),
     new A.Conditional(
       V.mkEquals(V.mkCountAbility("Isolation", mkSelf), new V.Constant(1)),
-      new A.Damage(new V.Constant(10), new Other()),
+      new A.Damage(new V.Constant(10), "essence", new Other()),
       new A.NoAction()
     ),
   ];
@@ -143,7 +143,7 @@ export class Heresy {
     new A.Cost(3, "tah", new Self()),
     new A.StoreVar(new V.Min(new V.CountStatusType("spirit", mkSelf), 3), "X", 2),
     new A.RemoveStatus("spirit", new V.GetVar("X", 1), mkSelf),
-    new A.Damage(new V.Mult(new V.GetVar("X", 1), new V.Constant(3)), mkOther),
+    new A.Damage(new V.Mult(new V.GetVar("X", 1), new V.Constant(3)), "essence", mkOther),
   ]
 }
 
@@ -153,7 +153,7 @@ export class Miracle {
     new A.Cost(3, "sie", new Self()),
     new A.Conditional(
       V.mkEquals(new V.Resource(mkSelf, "sie"), new V.Constant(1)),
-      new A.Damage(new V.Constant(13), mkOther),
+      new A.Damage(new V.Constant(13), "essence", mkOther),
       new A.NoAction(),
     ),
   ]
@@ -164,6 +164,15 @@ export class GuardianAngel {
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(2, "sie", new Self()),
     new A.AddStatus(new S.GuardianAngelStatus(), new Self()),
+  ]
+}
+
+export class Homeostasis {
+  public readonly name: "Homeostasis" = "Homeostasis"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(2, "roh", new Self()),
+    new A.Damage(new V.Constant(4), "highest", mkSelf),
+    new A.Regen(new V.Constant(15), "lowest", mkSelf),
   ]
 }
 
@@ -187,4 +196,5 @@ export type Ability
   | Heresy
   | Miracle
   | GuardianAngel
+  | Homeostasis
   ;

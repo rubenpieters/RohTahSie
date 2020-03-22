@@ -28,6 +28,7 @@ export class Damage<T> {
 
   constructor(
     public readonly value: Var<number, T>,
+    public readonly resource: AbstractResourceType,
     public readonly target: T,
   ) {}
 }
