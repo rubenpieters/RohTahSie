@@ -25,6 +25,12 @@ export function applyStatusAction(
       (transformed as any)[statusAction.field] = new V.Add(currentVal, new V.Constant(statusAction.value));
       return { animation: new Noop(), transformed, newActions: [] };
     }
+    case "Reduce": {
+      const transformed = cloneDeep(action);
+      const currentVal = (transformed as any)[statusAction.field];
+      (transformed as any)[statusAction.field] = new V.Minus(currentVal, new V.Constant(statusAction.value));
+      return { animation: new Noop(), transformed, newActions: [] };
+    }
     default: {
       return { animation: new Noop(), transformed: action, newActions: [statusAction] };
     }
@@ -38,6 +44,7 @@ export function concretizeStatusAction(
 ): StatusAction<ConcreteTarget> {
   switch (action.tag) {
     case "Increase": return action;
+    case "Reduce": return action;
     default: return concretizeAction(action, source, thisStatus);
   }
 }
@@ -50,6 +57,13 @@ export function statusActionExpl<T extends AbstractTarget>(
     case "Increase": {
       return {
         mainExpl: `Increase by ${statusAction.value}`,
+        sideExpl: [],
+        variables,
+      };
+    }
+    case "Reduce": {
+      return {
+        mainExpl: `Reduce by ${statusAction.value}`,
         sideExpl: [],
         variables,
       };

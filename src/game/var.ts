@@ -43,6 +43,12 @@ export function evalVar<A>(
     case "Add": {
       return evalVar(state, varDef.x1, source) + evalVar(state, varDef.x2, source) as any;
     }
+    case "Minus": {
+      return Math.max(0, evalVar(state, varDef.x1, source) - evalVar(state, varDef.x2, source)) as any;
+    }
+    case "Mult": {
+      return evalVar(state, varDef.x1, source) * evalVar(state, varDef.x2, source) as any;
+    }
     case "Equals": {
       const isEqual = varDef.f(({ x1, x2 }) => {
         const evaled1 = evalVar(state, x1, source);
@@ -97,6 +103,8 @@ export function concretizeVar<A>(
   switch (varDef.tag) {
     case "LT": // fallthrough
     case "Div": // fallthrough
+    case "Minus": // fallthrough
+    case "Mult": // fallthrough
     case "Add": return { ...varDef, x1: concretizeVar(varDef.x1, source), x2: concretizeVar(varDef.x2, source) };
     case "Min": // fallthrough
     case "Below": return { ...varDef, x1: concretizeVar(varDef.x1, source) };
@@ -151,6 +159,22 @@ function _varExpl<A>(
       const result2 = _varExpl(result1.sideExpl, varDef.x2, variables);
       return {
         mainExpl: `${result1.mainExpl} + ${result2.mainExpl}`,
+        sideExpl: result2.sideExpl
+      };
+    }
+    case "Minus": {
+      const result1 = _varExpl(varExpl, varDef.x1, variables);
+      const result2 = _varExpl(result1.sideExpl, varDef.x2, variables);
+      return {
+        mainExpl: `${result1.mainExpl} - ${result2.mainExpl}`,
+        sideExpl: result2.sideExpl
+      };
+    }
+    case "Mult": {
+      const result1 = _varExpl(varExpl, varDef.x1, variables);
+      const result2 = _varExpl(result1.sideExpl, varDef.x2, variables);
+      return {
+        mainExpl: `${result1.mainExpl} * ${result2.mainExpl}`,
         sideExpl: result2.sideExpl
       };
     }

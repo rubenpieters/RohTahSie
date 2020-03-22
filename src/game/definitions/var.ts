@@ -50,6 +50,32 @@ export function mkAdd<T>(x1: Var<number, T>, x2: Var<number, T>): Var<number, T>
   return new Add(x1, x2);
 }
 
+export class Minus<T> {
+  public readonly tag: "Minus" = "Minus";
+
+  constructor(
+    public readonly x1: Var<number, T>,
+    public readonly x2: Var<number, T>,
+  ) {}
+}
+
+export function mkMinus<T>(x1: Var<number, T>, x2: Var<number, T>): Var<number, T> {
+  return new Minus(x1, x2);
+}
+
+export class Mult<T> {
+  public readonly tag: "Mult" = "Mult";
+
+  constructor(
+    public readonly x1: Var<number, T>,
+    public readonly x2: Var<number, T>,
+  ) {}
+}
+
+export function mkMult<T>(x1: Var<number, T>, x2: Var<number, T>): Var<number, T> {
+  return new Mult(x1, x2);
+}
+
 export class Equals<T> {
   public readonly tag: "Equals" = "Equals";
 
@@ -147,6 +173,8 @@ export type Var<A, T>
   | Div<T>
   | Equals<T>
   | Add<T>
+  | Minus<T>
+  | Mult<T>
   | LT<T>
   | Below<T>
   | Min<T>

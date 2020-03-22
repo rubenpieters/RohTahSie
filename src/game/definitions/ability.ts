@@ -143,7 +143,27 @@ export class Heresy {
     new A.Cost(3, "tah", new Self()),
     new A.StoreVar(new V.Min(new V.CountStatusType("spirit", mkSelf), 3), "X", 2),
     new A.RemoveStatus("spirit", new V.GetVar("X", 1), mkSelf),
-    new A.Damage(new V.GetVar("X", 1), mkOther),
+    new A.Damage(new V.Mult(new V.GetVar("X", 1), new V.Constant(3)), mkOther),
+  ]
+}
+
+export class Miracle {
+  public readonly name: "Miracle" = "Miracle"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(3, "sie", new Self()),
+    new A.Conditional(
+      V.mkEquals(new V.Resource(mkSelf, "sie"), new V.Constant(1)),
+      new A.Damage(new V.Constant(13), mkOther),
+      new A.NoAction(),
+    ),
+  ]
+}
+
+export class GuardianAngel {
+  public readonly name: "GuardianAngel" = "GuardianAngel"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(2, "sie", new Self()),
+    new A.AddStatus(new S.GuardianAngelStatus(), new Self()),
   ]
 }
 
@@ -165,4 +185,6 @@ export type Ability
   | Network
   | Prayer
   | Heresy
+  | Miracle
+  | GuardianAngel
   ;

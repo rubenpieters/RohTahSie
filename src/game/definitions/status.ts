@@ -4,7 +4,7 @@ import { Condition } from "./condition";
 import * as C from "./condition";
 import * as V from "./var";
 import * as T from "./target";
-import { StatusAction, Increase } from "./statusAction";
+import { StatusAction, Increase, Reduce } from "./statusAction";
 
 export type StatusType = "spirit" | "relation" | "condition";
 
@@ -69,8 +69,25 @@ export class VoodooDollStatus {
   });
 }
 
+export class GuardianAngelStatus {
+  public readonly type: "Status" = "Status";
+  public readonly name: "GuardianAngelStatus" = "GuardianAngelStatus";
+  public readonly sType: StatusType = "spirit";
+  public readonly maxHp = 10;
+  public readonly size = 1;
+
+  public readonly ca = mkStatusCA({
+    condition: new C.And(C.mkIsTag("Damage"), new C.HasTarget(new T.Self())),
+    actions: [
+      new Reduce("value", 1),
+      new Damage(new V.Constant(1), new T.ThisStatus()),
+    ],
+  });
+}
+
 export type Status
   = DemonStatus
   | InfectionStatus
   | VoodooDollStatus
+  | GuardianAngelStatus
   ;
