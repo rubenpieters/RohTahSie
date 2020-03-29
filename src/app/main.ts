@@ -78,7 +78,12 @@ const cache = {
   "rest": PIXI.Texture.from("assets/sprites/rest.png"),
   "requiem": PIXI.Texture.from("assets/sprites/requiem.png"),
   "discussion": PIXI.Texture.from("assets/sprites/discussion.png"),
-  "test": PIXI.Texture.from("assets/sprites/test.png"),
+  "voodoodoll": PIXI.Texture.from("assets/sprites/voodoodoll.png"),
+  "infection": PIXI.Texture.from("assets/sprites/infection.png"),
+  "isolation": PIXI.Texture.from("assets/sprites/isolation.png"),
+  "initiate": PIXI.Texture.from("assets/sprites/initiate.png"),
+  "demon": PIXI.Texture.from("assets/sprites/demon.png"),
+  "heresy": PIXI.Texture.from("assets/sprites/heresy.png"),
 };
 
 let animations: Anim[] = [];

@@ -89,7 +89,6 @@ export function applyingAnimation(
   return mkEff({
     eff: () => {
       // apply action
-      console.log(`APPLYING ${state.phase.nextAction.tag}`);
       const { animation, newActions } = applyAction(state.phase.nextAction, state, display, cache, source);
       // check triggers
       const triggerResult = checkTriggers(state, display, cache);
