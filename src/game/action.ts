@@ -253,6 +253,10 @@ export function applyAction(
       state.variables[action.name] = { v: evalV, count: action.count };
       return { animation: new Noop(), newActions: [] };
     }
+    case "ClearVar": {
+      delete state.variables[action.name];
+      return { animation: new Noop(), newActions: [] };
+    }
     case "Death": {
       if (action.target.tag === "EnemyTarget") {
         if (state.enemy !== undefined) {
@@ -395,6 +399,13 @@ export function actionExpl<T extends AbstractTarget>(
         mainExpl: `Store ${varName}`,
         sideExpl: newExpl.concat(vExpl.sideExpl),
         variables: { ...variables, [action.name]: varName },
+      };
+    }
+    case "ClearVar": {
+      return {
+        mainExpl: undefined,
+        sideExpl: [],
+        variables,
       };
     }
     case "Conditional": {

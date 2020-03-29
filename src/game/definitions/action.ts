@@ -103,6 +103,14 @@ export class StoreVar<T> {
   ) {}
 }
 
+export class ClearVar {
+  public readonly tag: "ClearVar" = "ClearVar";
+
+  constructor(
+    public readonly name: string,
+  ) {}
+}
+
 export class RemoveStatus<T> {
   public readonly tag: "RemoveStatus" = "RemoveStatus";
 
@@ -125,5 +133,6 @@ export type Action<T>
   | EndTurn<T>
   | Conditional<T>
   | StoreVar<T>
+  | ClearVar
   | RemoveStatus<T>
   ;

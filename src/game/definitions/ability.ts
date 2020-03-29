@@ -144,6 +144,7 @@ export class Heresy {
     new A.StoreVar(new V.Min(new V.CountStatusType("spirit", mkSelf), 3), "X", 2),
     new A.RemoveStatus("spirit", new V.GetVar("X", 1), mkSelf),
     new A.Damage(new V.Mult(new V.GetVar("X", 1), new V.Constant(3)), "essence", mkOther),
+    new A.ClearVar("X"),
   ]
 }
 
