@@ -127,7 +127,14 @@ export function applyAction(
               return animation;
             })
           );
-          return { animation, newActions: [] };
+          let newActions: Action<ConcreteTarget>[] = [];
+          if (
+              action.target.tag === "EnemyTarget" &&
+              (targetEntity.roh <= 0 || targetEntity.tah <= 0 || targetEntity.sie <= 0)
+            ) {
+              newActions = [new Death(new EnemyTarget())];
+          }
+          return { animation, newActions };
         }
       }
       return { animation: new Noop(), newActions: [] };
