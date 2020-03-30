@@ -16,6 +16,7 @@ import { evalVar, concretizeVar, varExpl } from "./var";
 import { SideExpl, StatusExpl, varIdToVarName, nextVarId, VarExpl } from "./nodeExpl"
 import { evalTriggerCondition } from "./trigger";
 import { ResourceType } from "./types";
+import { indexInDir } from "./dir";
 
 export function applyAction(
   action: Action<ConcreteTarget>,
@@ -135,6 +136,23 @@ export function applyAction(
               newActions = [new Death(new EnemyTarget())];
           }
           return { animation, newActions };
+        }
+      } else if (action.target.tag === "StatusTarget") {
+        const status = findStatus(state, action.target.id);
+        if (status !== undefined) {
+          // if a status is found on enemy, then it is not undefined
+          const targetEntity = state[status.owner]!.entity;
+          const varValue = evalVar(state, action.value, source);
+          const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - varValue);
+          targetEntity.statuses[status.statusIndex].hp = newHp;
+          const animation = damageStatusAnim(status, targetEntity, display, cache);
+          let newActions: Action<ConcreteTarget>[] = [];
+          if (newHp <= 0) {
+            newActions = [new Death(new StatusTarget(action.target.id))];
+          }
+          return { animation, newActions };
+        } else {
+          return { animation: new Noop(), newActions: [] };
         }
       }
       return { animation: new Noop(), newActions: [] };
@@ -264,6 +282,27 @@ export function applyAction(
       delete state.variables[action.name];
       return { animation: new Noop(), newActions: [] };
     }
+    case "ActionFrom": {
+      if (
+        action.target.tag === "PlayerTarget" ||
+        action.target.tag === "EnemyTarget"
+      ) {
+        const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
+        const targetObj = state[target];
+        if (targetObj !== undefined) {
+          const layout = targetObj.layout;
+          const curr = layout.currentIndex;
+          const targetIndex = indexInDir(curr, action.from);
+          if (targetIndex !== undefined) {
+            const ability = layout.nodes[targetIndex];
+            const actions = lo.cloneDeep(ability.actions);
+            const concrActions = actions.map(a => concretizeAction(a, source));
+            return { animation: new Noop(), newActions: concrActions };
+          }
+        }
+      }
+      return { animation: new Noop(), newActions: [] };
+    }
     case "Death": {
       if (action.target.tag === "EnemyTarget") {
         if (state.enemy !== undefined) {
@@ -291,7 +330,7 @@ export function applyAction(
                       },
                       pool: display.pools.textParticlePool,
                       props: { text: `+${gainedGems}`, x: 10, y: 290, tint: 0x6600CC },
-                    }),
+                    }), 
                   ]),
                 ]);
               },
@@ -425,6 +464,11 @@ export function actionExpl<T extends AbstractTarget>(
         variables: elseExpl.variables,
       };
     }
+    case "ActionFrom": return {
+      mainExpl: `Action from ${action.from}`,
+      sideExpl: [],
+      variables,
+    };
   }
 }
 
@@ -438,6 +482,7 @@ export function concretizeAction(
     case "Death": // fallthrough
     case "AddStatus": // fallthrough
     case "EndTurn": // fallthrough
+    case "ActionFrom": // fallthrough
     case "ChangeShield":
       return { ...action, target: concretizeTarget(action.target, source, thisStatus) };
     case "Regen": // fallthrough

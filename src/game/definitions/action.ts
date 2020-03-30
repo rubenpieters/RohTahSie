@@ -121,6 +121,15 @@ export class RemoveStatus<T> {
   ) {}
 }
 
+export class ActionFrom<T> {
+  public readonly tag: "ActionFrom" = "ActionFrom";
+
+  constructor(
+    public readonly from: "up" | "down" | "left" | "right",
+    public readonly target: T,
+  ) {}
+}
+
 export type Action<T>
   = Regen<T>
   | Summon
@@ -135,4 +144,5 @@ export type Action<T>
   | StoreVar<T>
   | ClearVar
   | RemoveStatus<T>
+  | ActionFrom<T>
   ;

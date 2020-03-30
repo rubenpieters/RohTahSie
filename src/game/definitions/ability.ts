@@ -177,6 +177,14 @@ export class Homeostasis {
   ]
 }
 
+export class Reflex {
+  public readonly name: "Reflex" = "Reflex"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(1, "roh", new Self()),
+    new A.ActionFrom("up", new Self()),
+  ]
+}
+
 export type Ability
   = FocusRoh
   | FocusTah
@@ -198,4 +206,5 @@ export type Ability
   | Miracle
   | GuardianAngel
   | Homeostasis
+  | Reflex
   ;

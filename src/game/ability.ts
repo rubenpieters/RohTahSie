@@ -32,5 +32,6 @@ export function nodeSprite(
     case "Miracle": return "ability1";
     case "GuardianAngel": return "ability1";
     case "Homeostasis": return "ability1";
+    case "Reflex": return "ability1";
   }
 }

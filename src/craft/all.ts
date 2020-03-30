@@ -108,6 +108,12 @@ export function allCardCrafts(): CardCrafts {
     },
     {
       node: new Ab.Homeostasis(),
+      included: 0,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new Ab.Reflex(),
       included: 1,
       available: 1,
       cost: 0,
