@@ -12,6 +12,7 @@ import { actionExpl } from "./action";
 import { varExpl } from "./var";
 import { mapRecord } from "src/util/util";
 import { StateStatus } from "./entity";
+import { ActionInQueue } from "./definitions/phase";
 
 export function applyStatuses(
   action: Action<ConcreteTarget>,
@@ -19,12 +20,12 @@ export function applyStatuses(
   state: GameState,
   display: Display,
   cache: Cache,
-): { transformed: Action<ConcreteTarget>, newActions: Action<ConcreteTarget>[] } {
+): { transformed: Action<ConcreteTarget>, newActions: ActionInQueue[] } {
   const pStatuses = state.player.entity.statuses.map(x => Object.assign(x, { owner: "player" as ("player" | "enemy") }));
   const eStatuses = state.enemy === undefined ? [] : state.enemy.entity.statuses.map(x => Object.assign(x, { owner: "enemy" as ("player" | "enemy") }));
   const statuses = pStatuses.concat(eStatuses);
   let transformed = action;
-  let newActions: Action<ConcreteTarget>[] = [];
+  let newActions: ActionInQueue[] = [];
   for (const status of statuses) {
     if (status.type === "Status") {
       const result = applyStatus(transformed, origin, status, state, display, cache);
@@ -42,13 +43,13 @@ export function applyStatus(
   state: GameState,
   display: Display,
   cache: Cache,
-): { transformed: Action<ConcreteTarget>, newActions: Action<ConcreteTarget>[] } {
+): { transformed: Action<ConcreteTarget>, newActions: ActionInQueue[] } {
   return status.ca(({ condition, actions }) => {
     const filteredAction = checkCondition(condition, action, status.owner);
     if (filteredAction === "conditionFalse") {
       return { transformed: action, newActions: [] };
     } else {
-      let newActions: Action<ConcreteTarget>[] = [];
+      let newActions: ActionInQueue[] = [];
       let transformed: Action<ConcreteTarget> = action;
       actions.forEach(action => {
         const concretizedAction = concretizeStatusAction(action, status.owner, new StatusTarget(status.id));

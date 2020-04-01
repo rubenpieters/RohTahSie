@@ -181,7 +181,11 @@ export class Reflex {
   public readonly name: "Reflex" = "Reflex"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(1, "roh", new Self()),
-    new A.ActionFrom("up", new Self()),
+    new A.Conditional(
+      V.mkBelow(new V.Resource(mkSelf, "essence"), 30),
+      new A.ActionFrom("up", new Self()),
+      new A.ActionFrom("down", new Self()),
+    )
   ]
 }
 

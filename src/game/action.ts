@@ -17,6 +17,7 @@ import { SideExpl, StatusExpl, varIdToVarName, nextVarId, VarExpl } from "./node
 import { evalTriggerCondition } from "./trigger";
 import { ResourceType } from "./types";
 import { indexInDir } from "./dir";
+import { ActionInQueue } from "./definitions/phase";
 
 export function applyAction(
   action: Action<ConcreteTarget>,
@@ -24,7 +25,8 @@ export function applyAction(
   display: Display,
   cache: Cache,
   source: "player" | "enemy",
-): { animation: Anim, newActions: Action<ConcreteTarget>[] } {
+  indexSource: number | undefined,
+): { animation: Anim, newActions: ActionInQueue[] } {
   switch (action.tag) {
     case "Regen": {
       if (
@@ -128,12 +130,12 @@ export function applyAction(
               return animation;
             })
           );
-          let newActions: Action<ConcreteTarget>[] = [];
+          let newActions: ActionInQueue[] = [];
           if (
               action.target.tag === "EnemyTarget" &&
               (targetEntity.roh <= 0 || targetEntity.tah <= 0 || targetEntity.sie <= 0)
             ) {
-              newActions = [new Death(new EnemyTarget())];
+              newActions = [{ action: new Death(new EnemyTarget()), indexSource }];
           }
           return { animation, newActions };
         }
@@ -146,9 +148,9 @@ export function applyAction(
           const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - varValue);
           targetEntity.statuses[status.statusIndex].hp = newHp;
           const animation = damageStatusAnim(status, targetEntity, display, cache);
-          let newActions: Action<ConcreteTarget>[] = [];
+          let newActions: ActionInQueue[] = [];
           if (newHp <= 0) {
-            newActions = [new Death(new StatusTarget(action.target.id))];
+            newActions = [{ action: new Death(new StatusTarget(action.target.id)), indexSource }];
           }
           return { animation, newActions };
         } else {
@@ -171,9 +173,9 @@ export function applyAction(
           // decrease resource animation
           const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
           const animation = updateResourceAnim(targetEntity, display, shieldType, target, `-${valueChange}`);
-          let newActions: Action<ConcreteTarget>[] = [];
+          let newActions: ActionInQueue[] = [];
           if (action.target.tag === "EnemyTarget" && targetEntity[shieldType] <= 0) {
-            newActions = [new Death(new EnemyTarget())];
+            newActions = [{ action: new Death(new EnemyTarget()), indexSource }];
           }
           return { animation, newActions };
         }
@@ -185,9 +187,9 @@ export function applyAction(
           const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - action.value);
           targetEntity.statuses[status.statusIndex].hp = newHp;
           const animation = damageStatusAnim(status, targetEntity, display, cache);
-          let newActions: Action<ConcreteTarget>[] = [];
+          let newActions: ActionInQueue[] = [];
           if (newHp <= 0) {
-            newActions = [new Death(new StatusTarget(action.target.id))];
+            newActions = [{ action: new Death(new StatusTarget(action.target.id)), indexSource }];
           }
           return { animation, newActions };
         } else {
@@ -254,7 +256,7 @@ export function applyAction(
           const newActions = targetEntity.statuses
             .filter(x => x.sType === action.sType)
             .filter((x, i) => i < amount)
-            .map(x => new Death(new StatusTarget(x.id)))
+            .map(x => { return { action: new Death(new StatusTarget(x.id)), indexSource } })
             ;
           return { animation: new Noop(), newActions };
         }
@@ -265,9 +267,9 @@ export function applyAction(
     case "Conditional": {
       const evalCond = evalVar(state, action.cond, source);
       if (evalCond) {
-        return { animation: new Noop(), newActions: [action.actionThen] };
+        return { animation: new Noop(), newActions: [{ action: action.actionThen, indexSource }] };
       } else {
-        return { animation: new Noop(), newActions: [action.actionElse] };
+        return { animation: new Noop(), newActions: [{ action: action.actionElse, indexSource }] };
       }
     }
     case "StoreVar": {
@@ -283,6 +285,9 @@ export function applyAction(
       return { animation: new Noop(), newActions: [] };
     }
     case "ActionFrom": {
+      if (indexSource === undefined) {
+        throw "ActionFrom: undefined indexSource";
+      }
       if (
         action.target.tag === "PlayerTarget" ||
         action.target.tag === "EnemyTarget"
@@ -291,12 +296,15 @@ export function applyAction(
         const targetObj = state[target];
         if (targetObj !== undefined) {
           const layout = targetObj.layout;
-          const curr = layout.currentIndex;
+          const curr = indexSource;
           const targetIndex = indexInDir(curr, action.from);
           if (targetIndex !== undefined) {
             const ability = layout.nodes[targetIndex];
             const actions = lo.cloneDeep(ability.actions);
-            const concrActions = actions.map(a => concretizeAction(a, source));
+            const concrActions = actions.map(a => {
+              // update index source to index target by actionFrom
+              return { action: concretizeAction(a, source), indexSource: targetIndex };
+            });
             return { animation: new Noop(), newActions: concrActions };
           }
         }

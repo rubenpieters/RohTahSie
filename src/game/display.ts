@@ -10,7 +10,7 @@ import { NodeExplDisplay } from "./nodeExpl";
 import { Pools } from "../app/pool";
 import { PlayerTarget, EnemyTarget, AbstractTarget } from "./definitions/target";
 import { applyAction } from "./action";
-import { Transforming, Applying } from "./definitions/phase";
+import { Transforming, Applying, ActionInQueue } from "./definitions/phase";
 import { applyStatuses } from "./status";
 import { MenuDisplay } from "../menu/menu";
 import { CardCraftDisplay } from "../craft/card";
@@ -89,11 +89,13 @@ export function applyingAnimation(
   return mkEff({
     eff: () => {
       // apply action
-      const { animation, newActions } = applyAction(state.phase.nextAction, state, display, cache, source);
+      const nextAction = state.phase.nextAction.action;
+      const indexSource = state.phase.nextAction.indexSource;
+      const { animation, newActions } = applyAction(nextAction, state, display, cache, source, indexSource);
       // check triggers
       const triggerResult = checkTriggers(state, display, cache);
       // create new action queue
-      const newActionQueue = (newActions as Action<AbstractTarget>[])
+      const newActionQueue = newActions
         .concat(triggerResult.newActions)
         .concat(state.phase.actionQueue);
       state.phase.actionQueue = newActionQueue;
@@ -118,10 +120,13 @@ export function transformingAnimation(
   return mkEff({
     eff: () => {
       const origin = source === "player" ? new PlayerTarget() : new EnemyTarget();
-      const concretized = concretizeAction(action, source);
+      const concretized = concretizeAction(action.action, source);
       const { transformed, newActions } = applyStatuses(concretized, origin, state, display, cache);
-      state.phase.afterTransform = transformed;
-      state.phase.actionQueue = (newActions as Action<AbstractTarget>[]).concat(state.phase.actionQueue);
+      state.phase.afterTransform = {
+        action: transformed,
+        indexSource: action.indexSource,
+      };
+      state.phase.actionQueue = newActions.concat(state.phase.actionQueue);
       return new Noop();
     },
     k: (animation: Anim) => {

@@ -8,17 +8,18 @@ import { StatusTarget, ConcreteTarget } from "./definitions/target";
 import { Action } from "./definitions/action";
 import { Cache } from "../app/main";
 import { Trigger } from "./definitions/trigger";
+import { ActionInQueue } from "./definitions/phase";
 
 export function checkTriggers(
   state: GameState,
   display: Display,
   cache: Cache,
-): { animation: Anim, newActions: Action<ConcreteTarget>[] } {
+): { animation: Anim, newActions: ActionInQueue[] } {
   const pStatuses = state.player.entity.statuses.map(x => Object.assign(x, { owner: "player" as ("player" | "enemy") }));
   const eStatuses = state.enemy === undefined ? [] : state.enemy.entity.statuses.map(x => Object.assign(x, { owner: "enemy" as ("player" | "enemy") }));
   const statuses = pStatuses.concat(eStatuses);
   const anims: Anim[] = [];
-  let newActions: Action<ConcreteTarget>[] = [];
+  let newActions: ActionInQueue[] = [];
   for (const status of statuses) {
     if (status.type === "Trigger") {
       const result = checkTrigger(status, state, display, cache);
@@ -34,7 +35,7 @@ export function checkTrigger(
   state: GameState,
   display: Display,
   cache: Cache,
-): { animation: Anim, newActions: Action<ConcreteTarget>[] } {
+): { animation: Anim, newActions: ActionInQueue[] } {
   // previous value of the condition
   const prev = trigger.cond;
   // calculate next value of the condition
@@ -43,7 +44,10 @@ export function checkTrigger(
   trigger.cond = next;
   // if condition has changed, return trigger actions to add to queue
   if (prev !== next && next) {
-    const newActions = trigger.actions.map(x => concretizeAction(x, trigger.owner, new StatusTarget(trigger.id)));
+    const newActions = trigger.actions.map(x => { return {
+      action: concretizeAction(x, trigger.owner, new StatusTarget(trigger.id)),
+      indexSource: undefined,
+    }});
     return { animation: new Noop(), newActions };
   } else {
     return { animation: new Noop(), newActions: [] };

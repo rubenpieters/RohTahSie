@@ -9,6 +9,7 @@ import * as V from "./definitions/var";
 import { Anim, Noop } from "../app/animation";
 import { cloneDeep } from "lodash";
 import { SideExpl } from "./nodeExpl";
+import { ActionInQueue } from "./definitions/phase";
 
 export function applyStatusAction(
   action: Action<ConcreteTarget>,
@@ -16,7 +17,7 @@ export function applyStatusAction(
   state: GameState,
   display: Display,
   cache: Cache,
-): { animation: Anim, transformed: Action<ConcreteTarget>, newActions: Action<ConcreteTarget>[] } {
+): { animation: Anim, transformed: Action<ConcreteTarget>, newActions: ActionInQueue[] } {
   switch (statusAction.tag) {
     case "Increase": {
       const transformed = cloneDeep(action);
@@ -32,7 +33,10 @@ export function applyStatusAction(
       return { animation: new Noop(), transformed, newActions: [] };
     }
     default: {
-      return { animation: new Noop(), transformed: action, newActions: [statusAction] };
+      return { animation: new Noop(), transformed: action, newActions: [{
+        action: statusAction,
+        indexSource: undefined,
+      }] };
     }
   }
 }

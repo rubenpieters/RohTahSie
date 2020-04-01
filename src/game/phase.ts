@@ -1,6 +1,6 @@
 import * as lo from "lodash";
 import { GameState } from "./state";
-import { GamePhase, Transforming, Applying, Charging, Finalizing } from "./definitions/phase";
+import { GamePhase, Transforming, Applying, Charging, Finalizing, ActionInQueue } from "./definitions/phase";
 import { EndTurn } from "./definitions/action";
 import { EnemyTarget, PlayerTarget } from "./definitions/target";
 
@@ -9,8 +9,11 @@ export function nextPhase(
 ): GamePhase {
   switch (state.phase.tag) {
     case "Charging": {
-      const actionQueue = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].actions);
-      actionQueue.push(new EndTurn(new PlayerTarget()));
+      const actions = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].actions);
+      const actionQueue: ActionInQueue[] = actions.map(x => { return {
+        action: x, indexSource: state.player.layout.currentIndex,
+      }});
+      actionQueue.push({ action: new EndTurn(new PlayerTarget()), indexSource: undefined });
       return new Transforming(actionQueue, "player");
     }
     case "Transforming": {
@@ -19,8 +22,11 @@ export function nextPhase(
         if (state.phase.source === "enemy") {
           return new Finalizing();
         } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
-          const actionQueue = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
-          actionQueue.push(new EndTurn(new EnemyTarget()));
+          const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
+          const actionQueue: ActionInQueue[] = actions.map(x => { return {
+            action: x, indexSource: state.player.layout.currentIndex,
+          }});
+          actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
           return new Transforming(actionQueue, "enemy");
         } else {
           return new Finalizing();
@@ -36,8 +42,11 @@ export function nextPhase(
         if (state.phase.source === "enemy") {
           return new Finalizing();
         } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
-          const actionQueue = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
-          actionQueue.push(new EndTurn(new EnemyTarget()));
+          const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
+          const actionQueue: ActionInQueue[] = actions.map(x => { return {
+            action: x, indexSource: state.player.layout.currentIndex,
+          }});
+          actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
           return new Transforming(actionQueue, "enemy");
         } else {
           return new Finalizing();
