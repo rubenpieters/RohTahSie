@@ -208,6 +208,43 @@ const enemy5: Entity = {
   statuses: [],
 };
 
+const layout6: Layout = {
+  nodes: [
+    new Ab.Demon,
+    new Ab.Demon,
+    new Ab.Demon,
+    new Ab.Rest,
+
+    new Ab.Requiem,
+    new Ab.Heresy,
+    new Ab.Meditation,
+    new Ab.Reflex,
+
+    new Ab.Demon,
+    new Ab.Demon,
+    new Ab.Demon,
+    new Ab.Reflex,
+
+    new Ab.Requiem,
+    new Ab.Heresy,
+    new Ab.Meditation,
+    new Ab.Isolation,
+  ],
+  currentIndex: 0,
+}
+
+const enemy6: Entity = {
+  roh: 100,
+  maxRoh: 100,
+  tah: 100,
+  maxTah: 100,
+  sie: 100,
+  maxSie: 100,
+  shield: "roh",
+  dirty: false,
+  statuses: [],
+};
+
 type Enemies = typeof allEnemies;
 export type EnemyKey = keyof Enemies;
 export const allEnemies = {
@@ -234,6 +271,11 @@ export const allEnemies = {
   "en5": {
     entity: enemy5,
     layout: layout5,
+    reward: 10,
+  },
+  "en6": {
+    entity: enemy6,
+    layout: layout6,
     reward: 10,
   },
 }

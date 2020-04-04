@@ -44,7 +44,7 @@ export function nextPhase(
         } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
           const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
           const actionQueue: ActionInQueue[] = actions.map(x => { return {
-            action: x, indexSource: state.player.layout.currentIndex,
+            action: x, indexSource: state.enemy!.layout.currentIndex,
           }});
           actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
           return new Transforming(actionQueue, "enemy");
