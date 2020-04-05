@@ -21,16 +21,28 @@ export function nextPhase(
         // if after transform is empty, skip
         if (state.phase.source === "enemy") {
           return new Finalizing();
-        } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
-          const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
-          const actionQueue: ActionInQueue[] = actions.map(x => { return {
-            action: x, indexSource: state.player.layout.currentIndex,
-          }});
-          actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
-          return new Transforming(actionQueue, "enemy");
-        } else {
-          return new Finalizing();
+        } else if (state.phase.source === "player") {
+          // if an enemy is defined, fill the action queue with enemy ability
+          if (state.enemy !== undefined && ! state.enemy.entity.dirty) {
+            const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
+            const actionQueue: ActionInQueue[] = actions.map(x => { return {
+              action: x, indexSource: state.player.layout.currentIndex,
+            }});
+            actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
+            return new Transforming(actionQueue, "enemy");
+          // otherwise if an initiation is defined, fill the action queue with initiate ability
+          } else if (state.initiate !== undefined) {
+            const actions = lo.cloneDeep(state.initiate.actions);
+            const actionQueue: ActionInQueue[] = actions.map(x => { return {
+              action: x, indexSource: undefined,
+            }});
+            actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
+            state.initiate = undefined;
+            return new Transforming(actionQueue, "enemy");
+          }
         }
+        // otherwise, go to finalizing phase
+        return new Finalizing();
       } else {
         // else go to applying phase
         return { ...state.phase, tag: "Applying", nextAction: state.phase.afterTransform };
@@ -41,16 +53,28 @@ export function nextPhase(
       if (state.phase.actionQueue.length === 0) {
         if (state.phase.source === "enemy") {
           return new Finalizing();
-        } else if (state.phase.source === "player" && state.enemy !== undefined && ! state.enemy.entity.dirty) {
-          const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
-          const actionQueue: ActionInQueue[] = actions.map(x => { return {
-            action: x, indexSource: state.enemy!.layout.currentIndex,
-          }});
-          actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
-          return new Transforming(actionQueue, "enemy");
-        } else {
-          return new Finalizing();
+        } else if (state.phase.source === "player") {
+          // if an enemy is defined, fill the action queue with enemy ability
+          if (state.enemy !== undefined && ! state.enemy.entity.dirty) {
+            const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
+            const actionQueue: ActionInQueue[] = actions.map(x => { return {
+              action: x, indexSource: state.player.layout.currentIndex,
+            }});
+            actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
+            return new Transforming(actionQueue, "enemy");
+          // otherwise if an initiation is defined, fill the action queue with initiate ability
+          } else if (state.initiate !== undefined) {
+            const actions = lo.cloneDeep(state.initiate.actions);
+            const actionQueue: ActionInQueue[] = actions.map(x => { return {
+              action: x, indexSource: undefined,
+            }});
+            actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
+            state.initiate = undefined;
+            return new Transforming(actionQueue, "enemy");
+          }
         }
+        // otherwise, go to finalizing phase
+        return new Finalizing();
       }
       // otherwise, go to transforming phase
       return { ...state.phase, tag: "Transforming" };

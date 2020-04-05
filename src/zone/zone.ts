@@ -1,6 +1,10 @@
 import { Display } from "../game/display";
 import { Cache } from "../app/main";
 import { Zones } from "./all";
+import { GameState } from "../game/state";
+import { changePlayerLayoutNode } from "../game/layout"
+import { Initiate } from "../game/definitions/ability";
+import { transitionScreen } from "../menu/menu";
 
 const maxZoneX = 5;
 
@@ -12,11 +16,12 @@ export type ZoneDisplay = {
 export type ZoneOverviewDisplay = {
   container: PIXI.Container,
   zones: ZoneDisplay[],
+  initiateBtn: PIXI.Sprite,
 }
 
 export function initializeZones(
   parentContainer: PIXI.Container,
-  allZones: Zones,
+  state: GameState,
   display: Display,
   cache: Cache,
 ): ZoneOverviewDisplay {
@@ -25,13 +30,13 @@ export function initializeZones(
 
   // initialize icons
   let zones: ZoneDisplay[] = [];
-  for (let i = 0; i < allZones.length; i++) {
+  for (let i = 0; i < state.zones.length; i++) {
     const row = Math.floor(i % maxZoneX);
     const col = Math.floor(i / maxZoneX);
-    const zone = allZones[i];
+    const zone = state.zones[i];
     const zoneContainer = new PIXI.Container();
     zoneContainer.interactive = true;
-    zoneContainer.on("pointerdown", changeZoneSelected(i, allZones, display));
+    zoneContainer.on("pointerdown", changeZoneSelected(i, state.zones, display));
     zoneContainer.width = 60;
     zoneContainer.height = 75;
 
@@ -47,11 +52,19 @@ export function initializeZones(
     zones.push({ zoneContainer, bg });
   }
 
-  updateZoneSelected(allZones, zones);
+  updateZoneSelected(state.zones, zones);
+
+  const initiateBtn = new PIXI.Sprite(cache["refresh"]);
+  initiateBtn.x = 400;
+  initiateBtn.y = 42.5;
+  container.addChild(initiateBtn);
+
+  initiateBtn.interactive = true;
+  initiateBtn.on("pointerdown", () => initiateBattle(state, display, cache));
 
   parentContainer.addChild(container);
 
-  return { container, zones };
+  return { container, zones, initiateBtn };
 }
 
 function updateZoneSelected(
@@ -81,4 +94,16 @@ function changeZoneSelected(
     zones[i].selected = true;
     updateZoneSelected(zones, display.zone.zones);
   }
+}
+
+function initiateBattle(
+  state: GameState,
+  display: Display,
+  cache: Cache,
+) {
+  const selectedZone = state.zones.find(x => x.selected === true);
+  // TODO: fixme
+  const ability = new Initiate(selectedZone!.enemyIds[0]);
+  state.initiate = ability;
+  transitionScreen("combat", display, state)();
 }

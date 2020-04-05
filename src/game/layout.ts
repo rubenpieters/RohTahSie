@@ -139,20 +139,7 @@ function layoutPointerUpCb(
     if (! display.player.nodeExpl.container.visible && type === "player") {
       const selectedNode = hotbarSelectedNode(state.player.hotbar);
       if (selectedNode !== undefined) {
-        state.player.layout.nodes[index] = selectedNode;
-        display.player.layout.nodes[index].texture = cache[nodeSprite(selectedNode)];
-        attachAnimation(
-          new Seq([
-            new Par([
-              new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x")),
-              new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y")),
-            ]),
-            new Par([
-              new TweenTo(0.1, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "x")),
-              new TweenTo(0.1, 1, "absolute", mkAccessTarget(display[type].layout.nodes[index].scale, "y")),
-            ]),
-          ]),
-        );
+        changePlayerLayoutNode(state, display, index, selectedNode, cache);
       }
     }
     // if loading sprite is visible: cancel loading
@@ -160,6 +147,29 @@ function layoutPointerUpCb(
       display.player.nodeExpl.container.visible = false;
     }
   };
+}
+
+export function changePlayerLayoutNode(
+  state: GameState,
+  display: Display,
+  index: number,
+  node: Ability,
+  cache: Cache,
+) {
+  state.player.layout.nodes[index] = node;
+  display.player.layout.nodes[index].texture = cache[nodeSprite(node)];
+  attachAnimation(
+    new Seq([
+      new Par([
+        new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display.player.layout.nodes[index].scale, "x")),
+        new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display.player.layout.nodes[index].scale, "y")),
+      ]),
+      new Par([
+        new TweenTo(0.1, 1, "absolute", mkAccessTarget(display.player.layout.nodes[index].scale, "x")),
+        new TweenTo(0.1, 1, "absolute", mkAccessTarget(display.player.layout.nodes[index].scale, "y")),
+      ]),
+    ]),
+  );
 }
 
 export function barLocation(

@@ -1,6 +1,6 @@
-import { Cache } from "src/app/main";
-import { MenuState, GameState } from "src/game/state";
-import { Display } from "src/game/display";
+import { Cache } from "../app/main";
+import { MenuState, GameState } from "../game/state";
+import { Display } from "../game/display";
 
 export type MenuType = "combat" | "map" | "craft" | "settings";
 
@@ -63,7 +63,7 @@ function updateMenuSelected(
   }
 }
 
-function transitionScreen(
+export function transitionScreen(
   to: MenuType,
   display: Display,
   state: GameState,

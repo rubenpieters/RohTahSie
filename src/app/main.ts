@@ -150,7 +150,7 @@ function main(): void {
   display.craftContainer = craftContainer;
   display.zoneContainer = zoneContainer;
   display.cardCraft = initializeCraftCards(craftContainer, state.cardCrafts, state, display, cache);
-  display.zone = initializeZones(zoneContainer, state.zones, display, cache);
+  display.zone = initializeZones(zoneContainer, state, display, cache);
 
   // attach fps counter
   const fpsCounter = new PixiFps();

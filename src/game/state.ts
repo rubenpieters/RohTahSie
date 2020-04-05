@@ -23,6 +23,7 @@ export type GameStateBase = {
     layout: Layout,
     reward: number,
   } | undefined,
+  initiate: Ability | undefined,
   idCounter: number,
   menuState: MenuState,
   cardCrafts: CardCrafts,
