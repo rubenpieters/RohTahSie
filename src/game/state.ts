@@ -24,6 +24,7 @@ export type GameStateBase = {
     reward: number,
   } | undefined,
   initiate: Ability | undefined,
+  continuous: boolean,
   idCounter: number,
   menuState: MenuState,
   cardCrafts: CardCrafts,
@@ -50,6 +51,7 @@ export function initializeState(state: GameState): void {
   state.menuState = { menuSelected: "combat" };
   state.gems = 0;
   state.variables = {};
+  state.continuous = false;
 }
 
 export function findStatus(

@@ -17,6 +17,7 @@ export type ZoneOverviewDisplay = {
   container: PIXI.Container,
   zones: ZoneDisplay[],
   initiateBtn: PIXI.Sprite,
+  continuousBtn: PIXI.Sprite,
 }
 
 export function initializeZones(
@@ -62,9 +63,20 @@ export function initializeZones(
   initiateBtn.interactive = true;
   initiateBtn.on("pointerdown", () => initiateBattle(state, display, cache));
 
+  const continuousBtn = new PIXI.Sprite(PIXI.Texture.WHITE);
+  continuousBtn.width = 50;
+  continuousBtn.height = 50;
+  continuousBtn.tint = 0x00AAAA;
+  continuousBtn.x = 400;
+  continuousBtn.y = 100;
+  container.addChild(continuousBtn);
+
+  continuousBtn.interactive = true;
+  continuousBtn.on("pointerdown", () => changeContinuous(state, display));
+
   parentContainer.addChild(container);
 
-  return { container, zones, initiateBtn };
+  return { container, zones, initiateBtn, continuousBtn };
 }
 
 function updateZoneSelected(
@@ -106,4 +118,22 @@ function initiateBattle(
   const ability = new Initiate(selectedZone!.enemyIds[0]);
   state.initiate = ability;
   transitionScreen("combat", display, state)();
+}
+
+function changeContinuous(
+  state: GameState,
+  display: Display,
+) {
+  switch (state.continuous) {
+    case false: {
+      display.zone.continuousBtn.tint = 0x00CC11;
+      state.initiate = undefined;
+      break;
+    }
+    case true: {
+      display.zone.continuousBtn.tint = 0x00AAAA;
+      break;
+    }
+  }
+  state.continuous = ! state.continuous;
 }

@@ -37,7 +37,10 @@ export function nextPhase(
               action: x, indexSource: undefined,
             }});
             actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
-            state.initiate = undefined;
+            // reset initiate field if not in continuous mode
+            if (! state.continuous) {
+              state.initiate = undefined;
+            }
             return new Transforming(actionQueue, "enemy");
           }
         }
@@ -69,7 +72,10 @@ export function nextPhase(
               action: x, indexSource: undefined,
             }});
             actionQueue.push({ action: new EndTurn(new EnemyTarget()), indexSource: undefined });
-            state.initiate = undefined;
+            // reset initiate field if not in continuous mode
+            if (! state.continuous) {
+              state.initiate = undefined;
+            }
             return new Transforming(actionQueue, "enemy");
           }
         }
