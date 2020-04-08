@@ -7,6 +7,7 @@ import { GamePhase, Charging } from "./definitions/phase";
 import { MenuType } from "../menu/menu";
 import { CardCrafts, allCardCrafts } from "../craft/all";
 import { Zones, allZones } from "../zone/all";
+import { EnemyKey } from "./enemy";
 
 export type MenuState = {
   menuSelected: MenuType,
@@ -23,8 +24,9 @@ export type GameStateBase = {
     layout: Layout,
     reward: number,
   } | undefined,
-  initiate: Ability | undefined,
+  initiate: EnemyKey[] | undefined,
   continuous: boolean,
+  random: boolean,
   idCounter: number,
   menuState: MenuState,
   cardCrafts: CardCrafts,

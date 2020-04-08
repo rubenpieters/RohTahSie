@@ -18,6 +18,7 @@ export type ZoneOverviewDisplay = {
   zones: ZoneDisplay[],
   initiateBtn: PIXI.Sprite,
   continuousBtn: PIXI.Sprite,
+  randomBtn: PIXI.Sprite,
 }
 
 export function initializeZones(
@@ -74,9 +75,20 @@ export function initializeZones(
   continuousBtn.interactive = true;
   continuousBtn.on("pointerdown", () => changeContinuous(state, display));
 
+  const randomBtn = new PIXI.Sprite(PIXI.Texture.WHITE);
+  randomBtn.width = 50;
+  randomBtn.height = 50;
+  randomBtn.tint = 0x00AAAA;
+  randomBtn.x = 400;
+  randomBtn.y = 150;
+  container.addChild(randomBtn);
+
+  randomBtn.interactive = true;
+  randomBtn.on("pointerdown", () => changeRandom(state, display));
+
   parentContainer.addChild(container);
 
-  return { container, zones, initiateBtn, continuousBtn };
+  return { container, zones, initiateBtn, continuousBtn, randomBtn };
 }
 
 function updateZoneSelected(
@@ -114,9 +126,7 @@ function initiateBattle(
   cache: Cache,
 ) {
   const selectedZone = state.zones.find(x => x.selected === true);
-  // TODO: fixme
-  const ability = new Initiate(selectedZone!.enemyIds[0]);
-  state.initiate = ability;
+  state.initiate = selectedZone!.enemyIds;
   transitionScreen("combat", display, state)();
 }
 
@@ -136,4 +146,22 @@ function changeContinuous(
     }
   }
   state.continuous = ! state.continuous;
+}
+
+function changeRandom(
+  state: GameState,
+  display: Display,
+) {
+  switch (state.random) {
+    case false: {
+      display.zone.randomBtn.tint = 0x00CC11;
+      state.initiate = undefined;
+      break;
+    }
+    case true: {
+      display.zone.randomBtn.tint = 0x00AAAA;
+      break;
+    }
+  }
+  state.random = ! state.random;
 }

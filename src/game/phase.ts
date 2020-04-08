@@ -3,6 +3,7 @@ import { GameState } from "./state";
 import { GamePhase, Transforming, Applying, Charging, Finalizing, ActionInQueue } from "./definitions/phase";
 import { EndTurn } from "./definitions/action";
 import { EnemyTarget, PlayerTarget } from "./definitions/target";
+import { Initiate } from "./definitions/ability";
 
 export function nextPhase(
   state: GameState,
@@ -32,7 +33,12 @@ export function nextPhase(
             return new Transforming(actionQueue, "enemy");
           // otherwise if an initiation is defined, fill the action queue with initiate ability
           } else if (state.initiate !== undefined) {
-            const actions = lo.cloneDeep(state.initiate.actions);
+            const enIds = state.initiate;
+            let enId = enIds[0];
+            if (state.random) {
+              enId = enIds[getRandomInt(0, enIds.length - 1)];
+            }
+            const actions = lo.cloneDeep(new Initiate(enId).actions);
             const actionQueue: ActionInQueue[] = actions.map(x => { return {
               action: x, indexSource: undefined,
             }});
@@ -67,7 +73,12 @@ export function nextPhase(
             return new Transforming(actionQueue, "enemy");
           // otherwise if an initiation is defined, fill the action queue with initiate ability
           } else if (state.initiate !== undefined) {
-            const actions = lo.cloneDeep(state.initiate.actions);
+            const enIds = state.initiate;
+            let enId = enIds[0];
+            if (state.random) {
+              enId = enIds[getRandomInt(0, enIds.length - 1)];
+            }
+            const actions = lo.cloneDeep(new Initiate(enId).actions);
             const actionQueue: ActionInQueue[] = actions.map(x => { return {
               action: x, indexSource: undefined,
             }});
@@ -89,4 +100,10 @@ export function nextPhase(
       return new Charging();
     }
   }
+}
+
+function getRandomInt(min: number, max: number) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
