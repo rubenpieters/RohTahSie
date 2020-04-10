@@ -33,5 +33,6 @@ export function nodeSprite(
     case "GuardianAngel": return "ability1";
     case "Homeostasis": return "ability1";
     case "Reflex": return "ability1";
+    case "Hypertrophy": return "ability1";
   }
 }

@@ -189,6 +189,14 @@ export class Reflex {
   ]
 }
 
+export class Hypertrophy {
+  public readonly name: "Hypertrophy" = "Hypertrophy"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(3, "roh", new Self()),
+    new A.AddStatus(new S.HypertrophyStatus(), new Self()),
+  ]
+}
+
 export type Ability
   = FocusRoh
   | FocusTah
@@ -211,4 +219,5 @@ export type Ability
   | GuardianAngel
   | Homeostasis
   | Reflex
+  | Hypertrophy
   ;

@@ -85,9 +85,26 @@ export class GuardianAngelStatus {
   });
 }
 
+export class HypertrophyStatus {
+  public readonly type: "Status" = "Status";
+  public readonly name: "HypertrophyStatus" = "HypertrophyStatus";
+  public readonly sType: StatusType = "condition";
+  public readonly maxHp = 8;
+  public readonly size = 1;
+
+  public readonly ca = mkStatusCA({
+    condition: new C.And(C.mkIsTag("Damage"), new C.HasTarget(new T.Other())),
+    actions: [
+      new Increase("value", 1),
+      new Damage(new V.Constant(1), "essence", new T.ThisStatus()),
+    ],
+  });
+}
+
 export type Status
   = DemonStatus
   | InfectionStatus
   | VoodooDollStatus
   | GuardianAngelStatus
+  | HypertrophyStatus
   ;
