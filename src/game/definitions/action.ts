@@ -3,6 +3,7 @@ import { ResourceType, AbstractResourceType } from "../types";
 import { Var } from "./var";
 import { Status, StatusType } from "./status";
 import { Trigger } from "./trigger";
+import { Ability } from "./ability";
 
 export class Regen<T> {
   public readonly tag: "Regen" = "Regen";
@@ -130,6 +131,15 @@ export class ActionFrom<T> {
   ) {}
 }
 
+export class ChangeTo<T> {
+  public readonly tag: "ChangeTo" = "ChangeTo";
+
+  constructor(
+    public readonly name: Ability["name"],
+    public readonly target: T,
+  ) {}
+}
+
 export type Action<T>
   = Regen<T>
   | Summon
@@ -145,4 +155,5 @@ export type Action<T>
   | ClearVar
   | RemoveStatus<T>
   | ActionFrom<T>
+  | ChangeTo<T>
   ;

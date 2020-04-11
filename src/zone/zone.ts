@@ -2,8 +2,6 @@ import { Display } from "../game/display";
 import { Cache } from "../app/main";
 import { Zones } from "./all";
 import { GameState } from "../game/state";
-import { changePlayerLayoutNode } from "../game/layout"
-import { Initiate } from "../game/definitions/ability";
 import { transitionScreen } from "../menu/menu";
 
 const maxZoneX = 5;

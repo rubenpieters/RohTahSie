@@ -3,7 +3,7 @@ import { GameState, findStatus } from "./state";
 import { Anim, Noop, mkEff, Par, Seq, TweenTo, mkAccessTarget, mkParticle } from "../app/animation";
 import { Display } from "./display";
 import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim, damageStatusAnim, sizeUsed } from "./entity";
-import { barLocation, newLayoutAnim } from "./layout";
+import { barLocation, newLayoutAnim, changeLayoutNode } from "./layout";
 import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
 import { allEnemies } from "./enemy";
@@ -18,6 +18,7 @@ import { evalTriggerCondition } from "./trigger";
 import { ResourceType } from "./types";
 import { indexInDir } from "./dir";
 import { ActionInQueue } from "./definitions/phase";
+import { mkAbility } from "./definitions/ability";
 
 export function applyAction(
   action: Action<ConcreteTarget>,
@@ -311,6 +312,22 @@ export function applyAction(
       }
       return { animation: new Noop(), newActions: [] };
     }
+    case "ChangeTo": {
+      if (
+        action.target.tag === "PlayerTarget" ||
+        action.target.tag === "EnemyTarget"
+      ) {
+        const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
+        const targetObj = state[target];
+        if (targetObj !== undefined) {
+          const currIndex = targetObj.layout.currentIndex;
+          // TODO: return animation instead of attaching immediately?
+          changeLayoutNode(target, state, display, currIndex, mkAbility(action.name), cache);
+          return { animation: new Noop(), newActions: [] };
+        }
+      }
+      return { animation: new Noop(), newActions: [] };
+    }
     case "Death": {
       if (action.target.tag === "EnemyTarget") {
         if (state.enemy !== undefined) {
@@ -477,6 +494,11 @@ export function actionExpl<T extends AbstractTarget>(
       sideExpl: [],
       variables,
     };
+    case "ChangeTo": return {
+      mainExpl: `Change to ${action.name}`,
+      sideExpl: [],
+      variables,
+    }
   }
 }
 
@@ -491,6 +513,7 @@ export function concretizeAction(
     case "AddStatus": // fallthrough
     case "EndTurn": // fallthrough
     case "ActionFrom": // fallthrough
+    case "ChangeTo": // fallthrough
     case "ChangeShield":
       return { ...action, target: concretizeTarget(action.target, source, thisStatus) };
     case "Regen": // fallthrough

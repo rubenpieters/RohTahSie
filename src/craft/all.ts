@@ -124,5 +124,11 @@ export function allCardCrafts(): CardCrafts {
       available: 1,
       cost: 0,
     },
+    {
+      node: new Ab.Paralysis(),
+      included: 0,
+      available: 1,
+      cost: 0,
+    },
   ];
 }

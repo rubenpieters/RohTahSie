@@ -28,11 +28,13 @@ export function nodeSprite(
     case "Infection": return "infection";
     case "VoodooDoll": return "voodoodoll";
     case "Network": return "ability1";
+    case "Prayer": return "ability1";
     case "Heresy": return "heresy";
     case "Miracle": return "ability1";
     case "GuardianAngel": return "ability1";
     case "Homeostasis": return "ability1";
     case "Reflex": return "ability1";
     case "Hypertrophy": return "ability1";
+    case "Paralysis": return "ability1";
   }
 }

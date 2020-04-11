@@ -130,7 +130,7 @@ export class Network {
 }
 
 export class Prayer {
-  public readonly name: "Network" = "Network"
+  public readonly name: "Prayer" = "Prayer"
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Cost(5, "sie", new Self()),
     new A.AddStatus(new Tr.PrayerTrigger(), new Self()),
@@ -197,6 +197,14 @@ export class Hypertrophy {
   ]
 }
 
+export class Paralysis {
+  public readonly name: "Paralysis" = "Paralysis"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(4, "roh", new Self()),
+    new A.ChangeTo("Dormant", mkOther),
+  ]
+}
+
 export type Ability
   = FocusRoh
   | FocusTah
@@ -220,4 +228,36 @@ export type Ability
   | Homeostasis
   | Reflex
   | Hypertrophy
+  | Paralysis
   ;
+
+
+  export function mkAbility(
+    name: Ability["name"],
+  ): Ability {
+    switch (name) {
+      case "FocusRoh": return new FocusRoh();
+      case "FocusTah": return new FocusTah();
+      case "FocusSie": return new FocusSie();
+      case "Rest": return new Rest();
+      case "Meditation": return new Meditation();
+      case "Requiem": return new Requiem();
+      case "Discussion": return new Discussion();
+      case "Dormant": return new Dormant();
+      case "Demon": return new Demon();
+      case "Initiate": throw "mkAbility: error";
+      case "Community": return new Community();
+      case "Isolation": return new Isolation();
+      case "Infection": return new Infection();
+      case "VoodooDoll": return new VoodooDoll();
+      case "Network": return new Network();
+      case "Prayer": return new Prayer();
+      case "Heresy": return new Heresy();
+      case "Miracle": return new Miracle();
+      case "GuardianAngel": return new GuardianAngel();
+      case "Homeostasis": return new Homeostasis();
+      case "Reflex": return new Reflex();
+      case "Hypertrophy": return new Hypertrophy();
+      case "Paralysis": return new Paralysis();
+    }
+  }
