@@ -36,7 +36,22 @@ export class PrayerTrigger {
   ];
 }
 
+export class ParalysisTrigger {
+  public readonly type: "Trigger" = "Trigger";
+  public readonly name: "ParalysisTrigger" = "ParalysisTrigger";
+  public readonly sType: StatusType = "condition";
+  public readonly maxHp = 8;
+  public readonly size = 1;
+
+  public readonly condition: Var<boolean, AbstractTarget> = V.mkAbove(V.mkResource(new T.ThisStatus(), "essence"), 4);
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.ChangeTo("Dormant", T.mkOther),
+    new A.Death(new T.ThisStatus()),
+  ];
+}
+
 export type Trigger
   = NetworkTrigger
   | PrayerTrigger
+  | ParalysisTrigger
   ;

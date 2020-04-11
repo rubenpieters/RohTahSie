@@ -36,16 +36,17 @@ export function checkTrigger(
   display: Display,
   cache: Cache,
 ): { animation: Anim, newActions: ActionInQueue[] } {
+  const thisStatus = new StatusTarget(trigger.id);
   // previous value of the condition
   const prev = trigger.cond;
   // calculate next value of the condition
-  const next = evalTriggerCondition(trigger, state, trigger.owner);
+  const next = evalTriggerCondition(trigger, state, trigger.owner, thisStatus);
   
   trigger.cond = next;
   // if condition has changed, return trigger actions to add to queue
   if (prev !== next && next) {
     const newActions = trigger.actions.map(x => { return {
-      action: concretizeAction(x, trigger.owner, new StatusTarget(trigger.id)),
+      action: concretizeAction(x, trigger.owner, thisStatus),
       indexSource: undefined,
     }});
     return { animation: new Noop(), newActions };
@@ -55,10 +56,11 @@ export function checkTrigger(
 }
 
 export function evalTriggerCondition(
-  trigger: Trigger,
+  trigger: StateTrigger,
   state: GameState,
   owner: "player" | "enemy",
+  thisStatus: StatusTarget,
 ) {
-  const concreteCondition = concretizeVar(trigger.condition, owner);
-  return evalVar(state, concreteCondition, owner);
+  const concreteCondition = concretizeVar(trigger.condition, owner, thisStatus);
+  return evalVar(state, concreteCondition, owner, thisStatus);
 }

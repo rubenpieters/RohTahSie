@@ -200,8 +200,8 @@ export class Hypertrophy {
 export class Paralysis {
   public readonly name: "Paralysis" = "Paralysis"
   public readonly actions: Action<AbstractTarget>[] = [
-    new A.Cost(4, "roh", new Self()),
-    new A.ChangeTo("Dormant", mkOther),
+    new A.Cost(5, "roh", new Self()),
+    new A.AddStatus(new Tr.ParalysisTrigger(), new Self()),
   ]
 }
 

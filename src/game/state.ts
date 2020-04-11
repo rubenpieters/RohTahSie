@@ -1,7 +1,7 @@
 import { CacheValues } from "../app/main";
 import { Ability } from "./definitions/ability";
 import { Layout, playerInitialLayout } from "./layout";
-import { Entity, playerInitialEntity, entityFindStatus } from "./entity";
+import { Entity, playerInitialEntity, entityFindStatus, StateStatus, StateTrigger } from "./entity";
 import { Hotbar, calcHotbar } from "./hotbar";
 import { GamePhase, Charging } from "./definitions/phase";
 import { MenuType } from "../menu/menu";
@@ -74,4 +74,19 @@ export function findStatus(
     // status is not found
     return undefined;
   }
+}
+
+export function getStatus(
+  state: GameState,
+  statusId: number,
+): StateStatus | StateTrigger | undefined {
+  const result = findStatus(state, statusId);
+  if (result !== undefined) {
+    const { statusIndex, owner } = result;
+    const ownerObj = state[owner];
+    if (ownerObj !== undefined) {
+      return ownerObj.entity.statuses[statusIndex];
+    }
+  }
+  return undefined;
 }

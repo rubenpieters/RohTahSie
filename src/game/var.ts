@@ -1,6 +1,6 @@
-import { GameState } from "./state"
+import { GameState, findStatus, getStatus } from "./state"
 import { Var, mkEquals } from "./definitions/var";
-import { ConcreteTarget, AbstractTarget } from "./definitions/target";
+import { ConcreteTarget, AbstractTarget, StatusTarget } from "./definitions/target";
 import { concretizeTarget, targetExpl } from "./target";
 import deepEqual from "deep-equal";
 import lo from "lodash";
@@ -10,6 +10,7 @@ export function evalVar<A>(
   state: GameState,
   varDef: Var<A, ConcreteTarget>,
   source: "player" | "enemy",
+  thisStatus?: StatusTarget,
 ): A {
   switch (varDef.tag) {
     case "Constant": return varDef.a;
@@ -34,42 +35,54 @@ export function evalVar<A>(
       return target.entity.statuses.filter(x => x.sType === varDef.sType).length as any;
     }
     case "Div": {
-      const beforeRound = evalVar(state, varDef.x1, source) / evalVar(state, varDef.x2, source);
+      const beforeRound = evalVar(state, varDef.x1, source, thisStatus) / evalVar(state, varDef.x2, source, thisStatus);
       switch (varDef.rounding) {
         case "ceil": return Math.ceil(beforeRound) as any;
         case "floor": return Math.floor(beforeRound) as any;
       }
     }
     case "Add": {
-      return evalVar(state, varDef.x1, source) + evalVar(state, varDef.x2, source) as any;
+      return evalVar(state, varDef.x1, source, thisStatus) + evalVar(state, varDef.x2, source, thisStatus) as any;
     }
     case "Minus": {
-      return evalVar(state, varDef.x1, source) - evalVar(state, varDef.x2, source) as any;
+      return evalVar(state, varDef.x1, source, thisStatus) - evalVar(state, varDef.x2, source, thisStatus) as any;
     }
     case "Mult": {
-      return evalVar(state, varDef.x1, source) * evalVar(state, varDef.x2, source) as any;
+      return evalVar(state, varDef.x1, source, thisStatus) * evalVar(state, varDef.x2, source, thisStatus) as any;
     }
     case "Equals": {
       const isEqual = varDef.f(({ x1, x2 }) => {
-        const evaled1 = evalVar(state, x1, source);
-        const evaled2 = evalVar(state, x2, source);
+        const evaled1 = evalVar(state, x1, source, thisStatus);
+        const evaled2 = evalVar(state, x2, source, thisStatus);
         return deepEqual(evaled1, evaled2);
       });
       return isEqual as any;
     }
     case "LT": {
-      return evalVar(state, varDef.x1, source) < evalVar(state, varDef.x2, source) as any;
+      return evalVar(state, varDef.x1, source, thisStatus) < evalVar(state, varDef.x2, source, thisStatus) as any;
     }
     case "Below": {
-      return evalVar(state, varDef.x1, source) < varDef.v as any;
+      return evalVar(state, varDef.x1, source, thisStatus) < varDef.v as any;
+    }
+    case "Above": {
+      return evalVar(state, varDef.x1, source, thisStatus) > varDef.v as any;
     }
     case "Min": {
-      return Math.min(evalVar(state, varDef.x1, source), varDef.v) as any;
+      return Math.min(evalVar(state, varDef.x1, source, thisStatus), varDef.v) as any;
     }
     case "Resource": {
       const concTarget = concretizeTarget(varDef.target, source);
       if (concTarget.tag === "StatusTarget") {
-        throw "Resource Var: invalid target";
+        if (varDef.res === "essence") {
+          const status = getStatus(state, concTarget.id);
+          if (status !== undefined) {
+            return status.hp as any;
+          } else {
+            throw "Resource Var: this status not found";
+          }
+        } else {
+          throw "Resource Var: invalid target";
+        }
       } else {
         const target = concTarget.tag === "PlayerTarget" ? "player" : "enemy";
         const targetEntity = state[target];
@@ -104,22 +117,24 @@ export function evalVar<A>(
 export function concretizeVar<A>(
   varDef: Var<A, AbstractTarget>,
   source: "player" | "enemy",
+  thisStatus?: StatusTarget,
 ): Var<A, ConcreteTarget> {
   switch (varDef.tag) {
     case "LT": // fallthrough
     case "Div": // fallthrough
     case "Minus": // fallthrough
     case "Mult": // fallthrough
-    case "Add": return { ...varDef, x1: concretizeVar(varDef.x1, source), x2: concretizeVar(varDef.x2, source) };
+    case "Add": return { ...varDef, x1: concretizeVar(varDef.x1, source, thisStatus), x2: concretizeVar(varDef.x2, source, thisStatus) };
     case "Min": // fallthrough
-    case "Below": return { ...varDef, x1: concretizeVar(varDef.x1, source) };
+    case "Above": // fallthrough
+    case "Below": return { ...varDef, x1: concretizeVar(varDef.x1, source, thisStatus) };
     case "Resource": // fallthrough
     case "CountStatusType": // fallthrough
-    case "CountAbility": return { ...varDef, target: concretizeTarget(varDef.target, source) };
+    case "CountAbility": return { ...varDef, target: concretizeTarget(varDef.target, source, thisStatus) };
     case "Equals": {
       const { concretized1, concretized2 } = varDef.f(({ x1, x2 }) => {
-        const concretized1 = concretizeVar(x1, source);
-        const concretized2 = concretizeVar(x2, source);
+        const concretized1 = concretizeVar(x1, source, thisStatus);
+        const concretized2 = concretizeVar(x2, source, thisStatus);
         return { concretized1, concretized2 };
       });
       return mkEquals(concretized1, concretized2) as Var<A, ConcreteTarget>;
@@ -202,6 +217,13 @@ function _varExpl<A>(
       };
     }
     case "Below": {
+      const result1 = _varExpl(varExpl, varDef.x1, variables);
+      return {
+        mainExpl: `${result1.mainExpl} < ${varDef.v}`,
+        sideExpl: result1.sideExpl
+      }
+    }
+    case "Above": {
       const result1 = _varExpl(varExpl, varDef.x1, variables);
       return {
         mainExpl: `${result1.mainExpl} < ${varDef.v}`,

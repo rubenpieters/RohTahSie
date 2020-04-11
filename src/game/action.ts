@@ -2,7 +2,7 @@ import * as lo from "lodash";
 import { GameState, findStatus } from "./state";
 import { Anim, Noop, mkEff, Par, Seq, TweenTo, mkAccessTarget, mkParticle } from "../app/animation";
 import { Display } from "./display";
-import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim, damageStatusAnim, sizeUsed } from "./entity";
+import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim, damageStatusAnim, sizeUsed, resourceMaxField, StateStatus, StateTrigger } from "./entity";
 import { barLocation, newLayoutAnim, changeLayoutNode } from "./layout";
 import { Cache } from "../app/main";
 import { Action, Death } from "./definitions/action";
@@ -11,7 +11,6 @@ import { applyStatuses, statusExpl } from "./status";
 import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget } from "./definitions/target";
 import { targetToEntity, targetToEntityDisplay, targetExpl, concretizeTarget } from "./target";
 import { updateGemText } from "../craft/card";
-import { resourceMaxField } from "./entity";
 import { evalVar, concretizeVar, varExpl } from "./var";
 import { SideExpl, StatusExpl, varIdToVarName, nextVarId, VarExpl } from "./nodeExpl"
 import { evalTriggerCondition } from "./trigger";
@@ -231,10 +230,15 @@ export function applyAction(
         ) {
           const id = state.idCounter;
           const targetOwner: "player" | "enemy" = action.target.tag === "PlayerTarget" ? "player" : "enemy";
-          let cond = action.status.type === "Status" ? false : evalTriggerCondition(action.status, state, targetOwner);
-          const stateStatus = { ...action.status, id, hp: action.status.maxHp, cond, owner: targetOwner };
+          // @ts-ignore
+          const stateStatus: StateStatus | StateTrigger = { ...action.status, id, hp: action.status.maxHp, owner: targetOwner };
           state.idCounter++;
           targetEntity.statuses.push(stateStatus);
+          if (stateStatus.type === "Trigger") {
+            const cond = action.status.type === "Status" ? false : evalTriggerCondition(stateStatus, state, targetOwner, new StatusTarget(id));
+            // initialize condition field
+            stateStatus.cond = cond;
+          }
           const animation = mkEff({
             eff: () => {
               updateEntityStatusDisplay(targetEntity, targetEntityDisplay.statusSprites, targetEntityDisplay.statusHpSprites, cache);

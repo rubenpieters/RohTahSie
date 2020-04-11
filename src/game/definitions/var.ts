@@ -119,6 +119,19 @@ export function mkBelow<T>(x1: Var<number, T>, v: number): Var<boolean, T> {
   return new Below(x1, v);
 }
 
+export class Above<T> {
+  public readonly tag: "Above" = "Above";
+
+  constructor(
+    public readonly x1: Var<number, T>,
+    public readonly v: number,
+  ) {}
+}
+
+export function mkAbove<T>(x1: Var<number, T>, v: number): Var<boolean, T> {
+  return new Above(x1, v);
+}
+
 export class Min<T> {
   public readonly tag: "Min" = "Min";
 
@@ -177,6 +190,7 @@ export type Var<A, T>
   | Mult<T>
   | LT<T>
   | Below<T>
+  | Above<T>
   | Min<T>
   | Resource<T>
   | GetVar
