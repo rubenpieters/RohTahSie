@@ -84,6 +84,14 @@ const cache = {
   "initiate": PIXI.Texture.from("assets/sprites/initiate.png"),
   "demon": PIXI.Texture.from("assets/sprites/demon.png"),
   "heresy": PIXI.Texture.from("assets/sprites/heresy.png"),
+  "guardianangel": PIXI.Texture.from("assets/sprites/guardianangel.png"),
+  "homeostasis": PIXI.Texture.from("assets/sprites/homeostasis.png"),
+  "hypertrophy": PIXI.Texture.from("assets/sprites/hypertrophy.png"),
+  "miracle": PIXI.Texture.from("assets/sprites/miracle.png"),
+  "network": PIXI.Texture.from("assets/sprites/network.png"),
+  "paralysis": PIXI.Texture.from("assets/sprites/paralysis.png"),
+  "prayer": PIXI.Texture.from("assets/sprites/prayer.png"),
+  "reflex": PIXI.Texture.from("assets/sprites/reflex.png"),
 };
 
 let animations: Anim[] = [];
