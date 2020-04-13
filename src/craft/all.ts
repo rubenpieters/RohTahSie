@@ -130,5 +130,11 @@ export function allCardCrafts(): CardCrafts {
       available: 1,
       cost: 0,
     },
+    {
+      node: new Ab.Memetics(),
+      included: 0,
+      available: 1,
+      cost: 0,
+    },
   ];
 }

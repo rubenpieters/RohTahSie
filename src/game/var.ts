@@ -76,6 +76,7 @@ export function evalVar<A>(
         if (varDef.res === "essence") {
           const status = getStatus(state, concTarget.id);
           if (status !== undefined) {
+            console.log(`STATUS HP: ${status.hp}`);
             return status.hp as any;
           } else {
             throw "Resource Var: this status not found";

@@ -36,5 +36,6 @@ export function nodeSprite(
     case "Reflex": return "reflex";
     case "Hypertrophy": return "hypertrophy";
     case "Paralysis": return "paralysis";
+    case "Memetics": return "sword";
   }
 }

@@ -205,6 +205,14 @@ export class Paralysis {
   ]
 }
 
+export class Memetics {
+  public readonly name: "Memetics" = "Memetics"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(6, "tah", new Self()),
+    new A.RegenAllStatuses(new V.Constant(1)),
+  ]
+}
+
 export type Ability
   = FocusRoh
   | FocusTah
@@ -229,6 +237,7 @@ export type Ability
   | Reflex
   | Hypertrophy
   | Paralysis
+  | Memetics
   ;
 
 
@@ -259,5 +268,6 @@ export type Ability
       case "Reflex": return new Reflex();
       case "Hypertrophy": return new Hypertrophy();
       case "Paralysis": return new Paralysis();
+      case "Memetics": return new Memetics();
     }
   }

@@ -140,6 +140,14 @@ export class ChangeTo<T> {
   ) {}
 }
 
+export class RegenAllStatuses<T> {
+  public readonly tag: "RegenAllStatuses" = "RegenAllStatuses";
+
+  constructor(
+    public readonly value: Var<number, T>,
+  ) {}
+}
+
 export type Action<T>
   = Regen<T>
   | Summon
@@ -156,4 +164,5 @@ export type Action<T>
   | RemoveStatus<T>
   | ActionFrom<T>
   | ChangeTo<T>
+  | RegenAllStatuses<T>
   ;

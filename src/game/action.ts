@@ -5,7 +5,7 @@ import { Display } from "./display";
 import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim, damageStatusAnim, sizeUsed, resourceMaxField, StateStatus, StateTrigger } from "./entity";
 import { barLocation, newLayoutAnim, changeLayoutNode } from "./layout";
 import { Cache } from "../app/main";
-import { Action, Death } from "./definitions/action";
+import { Action, Death, Regen } from "./definitions/action";
 import { allEnemies } from "./enemy";
 import { applyStatuses, statusExpl } from "./status";
 import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget } from "./definitions/target";
@@ -68,6 +68,23 @@ export function applyAction(
             })
           );
           return { animation, newActions: [] };
+        }
+      } else if (action.target.tag === "StatusTarget") {
+        const status = findStatus(state, action.target.id);
+        if (status !== undefined) {
+          // if a status is found on enemy, then it is not undefined
+          const targetEntity = state[status.owner]!.entity;
+          const varValue = evalVar(state, action.value, source);
+          const newHp = targetEntity.statuses[status.statusIndex].hp + varValue;
+          targetEntity.statuses[status.statusIndex].hp = newHp;
+          const animation = damageStatusAnim(status, targetEntity, display, cache);
+          let newActions: ActionInQueue[] = [];
+          if (newHp <= 0) {
+            newActions = [{ action: new Death(new StatusTarget(action.target.id)), indexSource }];
+          }
+          return { animation, newActions };
+        } else {
+          return { animation: new Noop(), newActions: [] };
         }
       }
       return { animation: new Noop(), newActions: [] };
@@ -332,6 +349,24 @@ export function applyAction(
       }
       return { animation: new Noop(), newActions: [] };
     }
+    case "RegenAllStatuses": {
+      let newActions: ActionInQueue[] = [];
+      newActions = newActions.concat(state.player.entity.statuses.map(x => {
+        return {
+          indexSource,
+          action: new Regen(action.value, "essence", new StatusTarget(x.id))
+        };
+      }));
+      if (state.enemy !== undefined) {
+        newActions = newActions.concat(state.enemy.entity.statuses.map(x => {
+          return {
+            indexSource,
+            action: new Regen(action.value, "essence", new StatusTarget(x.id))
+          };
+        }));
+      }
+      return { animation: new Noop(), newActions };
+    }
     case "Death": {
       if (action.target.tag === "EnemyTarget") {
         if (state.enemy !== undefined) {
@@ -498,6 +533,14 @@ export function actionExpl<T extends AbstractTarget>(
       sideExpl: [],
       variables,
     };
+    case "RegenAllStatuses": {
+      const valueExpl = varExpl(action.value, variables);
+      return {
+        mainExpl: `Regen ${valueExpl.mainExpl} to all statuses`,
+        sideExpl: valueExpl.sideExpl,
+        variables,
+      }
+    }
     case "ChangeTo": return {
       mainExpl: `Change to ${action.name}`,
       sideExpl: [],
@@ -536,6 +579,11 @@ export function concretizeAction(
       return {
         ...action,
         v: concretizeVar(action.v, source),
+      };
+    case "RegenAllStatuses":
+      return {
+        ...action,
+        value: concretizeVar(action.value, source),
       };
     default: return action;
   }
