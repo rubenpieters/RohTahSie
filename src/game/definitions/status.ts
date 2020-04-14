@@ -25,6 +25,7 @@ export class DemonStatus {
   public readonly type: "Status" = "Status";
   public readonly name: "DemonStatus" = "DemonStatus";
   public readonly sType: StatusType = "spirit";
+  public readonly startHp = 6;
   public readonly maxHp = 6;
   public readonly size = 1;
 
@@ -41,6 +42,7 @@ export class InfectionStatus {
   public readonly type: "Status" = "Status";
   public readonly name: "InfectionStatus" = "InfectionStatus";
   public readonly sType: StatusType = "condition";
+  public readonly startHp = 6;
   public readonly maxHp = 6;
   public readonly size = 1;
 
@@ -57,6 +59,7 @@ export class VoodooDollStatus {
   public readonly type: "Status" = "Status";
   public readonly name: "VoodooDollStatus" = "VoodooDollStatus";
   public readonly sType: StatusType = "spirit";
+  public readonly startHp = 1;
   public readonly maxHp = 1;
   public readonly size = 5;
 
@@ -73,6 +76,7 @@ export class GuardianAngelStatus {
   public readonly type: "Status" = "Status";
   public readonly name: "GuardianAngelStatus" = "GuardianAngelStatus";
   public readonly sType: StatusType = "spirit";
+  public readonly startHp = 10;
   public readonly maxHp = 10;
   public readonly size = 1;
 
@@ -89,6 +93,7 @@ export class HypertrophyStatus {
   public readonly type: "Status" = "Status";
   public readonly name: "HypertrophyStatus" = "HypertrophyStatus";
   public readonly sType: StatusType = "condition";
+  public readonly startHp = 8;
   public readonly maxHp = 8;
   public readonly size = 1;
 

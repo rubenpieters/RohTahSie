@@ -12,6 +12,7 @@ export class NetworkTrigger {
   public readonly type: "Trigger" = "Trigger";
   public readonly name: "NetworkTrigger" = "NetworkTrigger";
   public readonly sType: StatusType = "relation";
+  public readonly startHp = 5;
   public readonly maxHp = 5;
   public readonly size = 1;
 
@@ -26,6 +27,7 @@ export class PrayerTrigger {
   public readonly type: "Trigger" = "Trigger";
   public readonly name: "PrayerTrigger" = "PrayerTrigger";
   public readonly sType: StatusType = "spirit";
+  public readonly startHp = 1;
   public readonly maxHp = 1;
   public readonly size = 1;
 
@@ -40,7 +42,8 @@ export class ParalysisTrigger {
   public readonly type: "Trigger" = "Trigger";
   public readonly name: "ParalysisTrigger" = "ParalysisTrigger";
   public readonly sType: StatusType = "condition";
-  public readonly maxHp = 1;
+  public readonly startHp = 1;
+  public readonly maxHp = 5;
   public readonly size = 1;
 
   public readonly condition: Var<boolean, AbstractTarget> = V.mkAbove(V.mkResource(new T.ThisStatus(), "essence"), 4);

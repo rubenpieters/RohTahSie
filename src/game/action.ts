@@ -75,7 +75,7 @@ export function applyAction(
           // if a status is found on enemy, then it is not undefined
           const targetEntity = state[status.owner]!.entity;
           const varValue = evalVar(state, action.value, source);
-          const newHp = targetEntity.statuses[status.statusIndex].hp + varValue;
+          const newHp = Math.min(targetEntity.statuses[status.statusIndex].maxHp, targetEntity.statuses[status.statusIndex].hp + varValue);
           targetEntity.statuses[status.statusIndex].hp = newHp;
           const animation = damageStatusAnim(status, targetEntity, display, cache);
           let newActions: ActionInQueue[] = [];
@@ -248,7 +248,7 @@ export function applyAction(
           const id = state.idCounter;
           const targetOwner: "player" | "enemy" = action.target.tag === "PlayerTarget" ? "player" : "enemy";
           // @ts-ignore
-          const stateStatus: StateStatus | StateTrigger = { ...action.status, id, hp: action.status.maxHp, owner: targetOwner };
+          const stateStatus: StateStatus | StateTrigger = { ...action.status, id, hp: action.status.startHp, owner: targetOwner };
           state.idCounter++;
           targetEntity.statuses.push(stateStatus);
           if (stateStatus.type === "Trigger") {
