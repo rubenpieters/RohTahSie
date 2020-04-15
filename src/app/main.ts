@@ -72,6 +72,7 @@ const cache = {
   "status1": PIXI.Texture.from("assets/sprites/status1.png"),
   "ability1": PIXI.Texture.from("assets/sprites/ability1.png"),
   "ability_slot": PIXI.Texture.from("assets/sprites/ability_slot.png"),
+  "ability_slot_r": PIXI.Texture.from("assets/sprites/ability_slot_r.png"),
   "card_bg": PIXI.Texture.from("assets/sprites/card_bg.png"),
   "card_name_bg": PIXI.Texture.from("assets/sprites/card_name_bg.png"),
   "meditation": PIXI.Texture.from("assets/sprites/meditation.png"),

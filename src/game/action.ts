@@ -322,7 +322,7 @@ export function applyAction(
           const targetIndex = indexInDir(curr, action.from);
           if (targetIndex !== undefined) {
             const ability = layout.nodes[targetIndex];
-            const actions = lo.cloneDeep(ability.actions);
+            const actions = lo.cloneDeep(ability.ability.actions);
             const concrActions = actions.map(a => {
               // update index source to index target by actionFrom
               return { action: concretizeAction(a, source), indexSource: targetIndex };

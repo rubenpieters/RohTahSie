@@ -2,28 +2,29 @@ import { Layout } from "./layout";
 import * as Ab from "./definitions/ability";
 import { Entity } from "./entity";
 import { EnemyTarget, PlayerTarget } from "./definitions/target";
+import { Dir } from "./dir";
 
 const layout1: Layout = {
   nodes: [
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
 
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
 
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
 
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
   ],
   currentIndex: 0,
 }
@@ -42,25 +43,25 @@ const enemy1: Entity = {
 
 const layout2: Layout = {
   nodes: [
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Discussion,
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Discussion, direction: "right"},
 
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Discussion,
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Discussion, direction: "right"},
 
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Discussion,
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Discussion, direction: "right"},
 
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Discussion,
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Discussion, direction: "right"},
   ],
   currentIndex: 0,
 }
@@ -79,45 +80,25 @@ const enemy2: Entity = {
 
 const layout3: Layout = {
   nodes: [
-    new Ab.Infection,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
+    { ability: new Ab.Infection, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
 
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
 
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
 
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-    new Ab.Dormant,
-
-    /*new Ab.Dormant(),
-    new AttackNode(5, new PlayerTarget()),
-    new AttackNode(5, new PlayerTarget()),
-    new GenerateNode(10, "roh", new EnemyTarget()),
-
-    new Ab.Dormant(),
-    new AttackNode(5, new PlayerTarget()),
-    new AttackNode(5, new PlayerTarget()),
-    new GenerateNode(10, "roh", new EnemyTarget()),
-
-    new GenerateNode(10, "roh", new EnemyTarget()),
-    new GenerateNode(10, "roh", new EnemyTarget()),
-    new GenerateNode(10, "tah", new EnemyTarget()),
-    new GenerateNode(10, "tah", new EnemyTarget()),
-
-    new Ab.Dormant(),
-    new AttackNode(5, new PlayerTarget()),
-    new AttackNode(5, new PlayerTarget()),
-    new GenerateNode(10, "roh", new EnemyTarget()),*/
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: "right"},
   ],
   currentIndex: 0,
 }
@@ -136,25 +117,25 @@ const enemy3: Entity = {
 
 const layout4: Layout = {
   nodes: [
-    new Ab.VoodooDoll,
-    new Ab.VoodooDoll,
-    new Ab.VoodooDoll,
-    new Ab.Discussion,
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.Discussion, direction: "right" },
 
-    new Ab.Rest,
-    new Ab.Requiem,
-    new Ab.Requiem,
-    new Ab.Requiem,
+    { ability: new Ab.Rest, direction: "right" },
+    { ability: new Ab.Requiem, direction: "right" },
+    { ability: new Ab.Requiem, direction: "right" },
+    { ability: new Ab.Requiem, direction: "right" },
 
-    new Ab.VoodooDoll,
-    new Ab.VoodooDoll,
-    new Ab.VoodooDoll,
-    new Ab.Discussion,
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.Discussion, direction: "right" },
 
-    new Ab.Rest,
-    new Ab.Requiem,
-    new Ab.Meditation,
-    new Ab.Requiem,
+    { ability: new Ab.Rest, direction: "right" },
+    { ability: new Ab.Requiem, direction: "right" },
+    { ability: new Ab.Meditation, direction: "right" },
+    { ability: new Ab.Requiem, direction: "right" },
   ],
   currentIndex: 0,
 }
@@ -173,26 +154,26 @@ const enemy4: Entity = {
 
 const layout5: Layout = {
   nodes: [
-    new Ab.Demon,
-    new Ab.VoodooDoll,
-    new Ab.VoodooDoll,
-    new Ab.VoodooDoll,
+    { ability: new Ab.Demon, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },,
 
-    new Ab.VoodooDoll,
-    new Ab.VoodooDoll,
-    new Ab.Requiem,
-    new Ab.Requiem,
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.Requiem, direction: "right" },
+    { ability: new Ab.Requiem, direction: "right" },
 
-    new Ab.Demon,
-    new Ab.VoodooDoll,
-    new Ab.VoodooDoll,
-    new Ab.VoodooDoll,
+    { ability: new Ab.Demon, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
 
-    new Ab.VoodooDoll,
-    new Ab.VoodooDoll,
-    new Ab.Requiem,
-    new Ab.Requiem,
-  ],
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.Requiem, direction: "right" },
+    { ability: new Ab.Requiem, direction: "right" },
+  ] as { ability: Ab.Ability, direction: Dir }[],
   currentIndex: 0,
 }
 
@@ -210,26 +191,26 @@ const enemy5: Entity = {
 
 const layout6: Layout = {
   nodes: [
-    new Ab.Demon,
-    new Ab.Demon,
-    new Ab.Demon,
-    new Ab.Rest,
+    { ability: new Ab.Demon, direction: "right" },
+    { ability: new Ab.Demon, direction: "right" },
+    { ability: new Ab.Demon, direction: "right" },
+    { ability: new Ab.Rest, direction: "right" },
 
-    new Ab.Requiem,
-    new Ab.Heresy,
-    new Ab.Meditation,
-    new Ab.Reflex,
+    { ability: new Ab.Requiem, direction: "right" },
+    { ability: new Ab.Heresy, direction: "right" },
+    { ability: new Ab.Meditation, direction: "right" },
+    { ability: new Ab.Reflex, direction: "right" },
 
-    new Ab.Demon,
-    new Ab.Demon,
-    new Ab.Demon,
-    new Ab.Reflex,
+    { ability: new Ab.Demon, direction: "right" },,
+    { ability: new Ab.Demon, direction: "right" },
+    { ability: new Ab.Demon, direction: "right" },
+    { ability: new Ab.Reflex, direction: "right" },
 
-    new Ab.Requiem,
-    new Ab.Heresy,
-    new Ab.Meditation,
-    new Ab.Isolation,
-  ],
+    { ability: new Ab.Requiem, direction: "right" },
+    { ability: new Ab.Heresy, direction: "right" },
+    { ability: new Ab.Meditation, direction: "right" },
+    { ability: new Ab.Isolation, direction: "right" },
+  ] as { ability: Ab.Ability, direction: Dir }[],
   currentIndex: 0,
 }
 

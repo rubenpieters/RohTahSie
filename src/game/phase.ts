@@ -10,7 +10,7 @@ export function nextPhase(
 ): GamePhase {
   switch (state.phase.tag) {
     case "Charging": {
-      const actions = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].actions);
+      const actions = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].ability.actions);
       const actionQueue: ActionInQueue[] = actions.map(x => { return {
         action: x, indexSource: state.player.layout.currentIndex,
       }});
@@ -25,7 +25,7 @@ export function nextPhase(
         } else if (state.phase.source === "player") {
           // if an enemy is defined, fill the action queue with enemy ability
           if (state.enemy !== undefined && ! state.enemy.entity.dirty) {
-            const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
+            const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].ability.actions);
             const actionQueue: ActionInQueue[] = actions.map(x => { return {
               action: x, indexSource: state.player.layout.currentIndex,
             }});
@@ -65,7 +65,7 @@ export function nextPhase(
         } else if (state.phase.source === "player") {
           // if an enemy is defined, fill the action queue with enemy ability
           if (state.enemy !== undefined && ! state.enemy.entity.dirty) {
-            const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].actions);
+            const actions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].ability.actions);
             const actionQueue: ActionInQueue[] = actions.map(x => { return {
               action: x, indexSource: state.player.layout.currentIndex,
             }});

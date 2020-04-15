@@ -22,7 +22,7 @@ export function evalVar<A>(
       if (target === undefined) {
         return 0 as any;
       }
-      return target.layout.nodes.filter(x => x.name === varDef.ability).length as any;
+      return target.layout.nodes.filter(x => x.ability.name === varDef.ability).length as any;
     }
     case "CountStatusType": {
       if (varDef.target.tag === "StatusTarget") {
@@ -76,7 +76,6 @@ export function evalVar<A>(
         if (varDef.res === "essence") {
           const status = getStatus(state, concTarget.id);
           if (status !== undefined) {
-            console.log(`STATUS HP: ${status.hp}`);
             return status.hp as any;
           } else {
             throw "Resource Var: this status not found";

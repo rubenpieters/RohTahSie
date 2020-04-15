@@ -8,6 +8,7 @@ import { Display } from "./display";
 import { EnemyTarget, PlayerTarget } from "./definitions/target";
 import { loadNodeExpl } from "./nodeExpl";
 import { nodeSprite } from "./ability";
+import { Dir, dirToDeg } from "./dir";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
@@ -17,7 +18,10 @@ const yAmount = 4;
 const nodeAmount = xAmount * yAmount;
 
 export type Layout = {
-  nodes: Ability[],
+  nodes: {
+    ability: Ability,
+    direction: Dir | undefined,
+  }[],
   currentIndex: number,
 };
 
@@ -49,7 +53,12 @@ export function initializeLayout(
   let nodes: PIXI.Sprite[] = [];
   let abilitySlots: PIXI.Sprite[] = [];
   for (let i = 0; i < nodeAmount; i++) {
-    const abilitySlot = new PIXI.Sprite(cache["ability_slot"]);
+    const abilitySlot = layout !== undefined && layout.nodes[i].direction === undefined ?
+      new PIXI.Sprite(cache["ability_slot"]) :
+      new PIXI.Sprite(cache["ability_slot_r"]);
+    if (layout !== undefined && layout.nodes[i].direction !== undefined) {
+      abilitySlot.angle = dirToDeg(layout.nodes[i].direction!);
+    }
     abilitySlot.x = (i % xAmount) * 55 + 40;
     abilitySlot.y = Math.floor(i / xAmount) * 55 + 40;
     abilitySlot.pivot.set(26, 26);
@@ -59,7 +68,7 @@ export function initializeLayout(
 
     const box =
       layout !== undefined && layout.nodes[i] !== undefined ?
-      new PIXI.Sprite(cache[nodeSprite(layout.nodes[i])]) :
+      new PIXI.Sprite(cache[nodeSprite(layout.nodes[i].ability)]) :
       new PIXI.Sprite();
     box.x = (i % xAmount) * 55 + 40;
     box.y = Math.floor(i / xAmount) * 55 + 40;
@@ -98,7 +107,14 @@ export function newLayoutAnim(
       if (layout !== undefined) {
         layoutDisplay.container.visible = true;
         for (let i = 0; i < nodeAmount; i++) {
-          layoutDisplay.nodes[i].texture = cache[nodeSprite(layout.nodes[i])];
+          if (layout.nodes[i].direction === undefined) {
+            layoutDisplay.abilitySlots[i].texture = cache["ability_slot"];
+            layoutDisplay.abilitySlots[i].angle = 0;
+          } else {
+            layoutDisplay.abilitySlots[i].texture = cache["ability_slot_r"];
+            layoutDisplay.abilitySlots[i].angle = dirToDeg(layout.nodes[i].direction!);
+          }
+          layoutDisplay.nodes[i].texture = cache[nodeSprite(layout.nodes[i].ability)];
         }
       } else {
         layoutDisplay.container.visible = false;
@@ -120,7 +136,7 @@ function layoutPointerDownCb(
     display.player.nodeExpl.loading.visible = false;
     const layout = state[type]?.layout;
     if (layout !== undefined) {
-      const anim = loadNodeExpl(layout.nodes[index], display.player.nodeExpl);
+      const anim = loadNodeExpl(layout.nodes[index].ability, display.player.nodeExpl);
       attachExplWindowAnimation(anim);
     }
   };
@@ -159,7 +175,7 @@ export function changeLayoutNode(
 ) {
   const targetObj = state[target];
   if (targetObj !== undefined) {
-    targetObj.layout.nodes[index] = node;
+    targetObj.layout.nodes[index].ability = node;
     display[target].layout.nodes[index].texture = cache[nodeSprite(node)];
     attachAnimation(
       new Seq([
@@ -188,25 +204,25 @@ export function barLocation(
 export function playerInitialLayout(): Layout {
   return {
     nodes: [
-      new Ab.Dormant(),
-      new Ab.Dormant(),
-      new Ab.Dormant(),
-      new Ab.Dormant(),
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
 
-      new Ab.Dormant(),
-      new Ab.Dormant(),
-      new Ab.Dormant(),
-      new Ab.Dormant(),
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
 
-      new Ab.Dormant(),
-      new Ab.Dormant(),
-      new Ab.Dormant(),
-      new Ab.Dormant(),
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
 
-      new Ab.Dormant(),
-      new Ab.Dormant(),
-      new Ab.Dormant(),
-      new Ab.Dormant(),
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: "right" },
     ],
     currentIndex: 0,
   }

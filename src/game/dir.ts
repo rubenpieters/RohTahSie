@@ -1,6 +1,19 @@
+export type Dir = "up" | "down" | "left" | "right"
+
+export function dirToDeg(
+  dir: Dir,
+): number {
+  switch (dir) {
+    case "up": return -90;
+    case "down": return 90;
+    case "left": return 180;
+    case "right": return 0;
+  }
+}
+
 export function indexInDir(
   index: number,
-  dir: "up" | "down" | "left" | "right",
+  dir: Dir,
 ): number | undefined {
   switch (dir) {
     case "up": {

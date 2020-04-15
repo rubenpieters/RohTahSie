@@ -16,6 +16,7 @@ import { MenuDisplay } from "../menu/menu";
 import { CardCraftDisplay } from "../craft/card";
 import { ZoneOverviewDisplay } from "../zone/zone";
 import { checkTriggers } from "./trigger";
+import { indexInDir } from "./dir";
 
 export type Display = {
   player: {
@@ -143,13 +144,29 @@ export function finalizingAnimation(
   return mkEff({
     eff: () => {
       // advance current node for player
-      state.player.layout.currentIndex += 1;
+      const dir = state.player.layout.nodes[state.player.layout.currentIndex].direction;
+      let newIndex = state.player.layout.currentIndex + 1;
+      if (dir !== undefined) {
+        const v = indexInDir(state.player.layout.currentIndex, dir);
+        if (v !== undefined) {
+          newIndex = v;
+        }
+      }
+      state.player.layout.currentIndex = newIndex;
       if (state.player.layout.currentIndex >= state.player.layout.nodes.length) {
         state.player.layout.currentIndex = 0;
       }
       // advance current node for enemy
       if (state.enemy !== undefined && ! state.enemy.entity.dirty) {
-        state.enemy.layout.currentIndex += 1;
+        const eDir = state.enemy.layout.nodes[state.player.layout.currentIndex].direction;
+        let eNewIndex = state.enemy.layout.currentIndex + 1;
+        if (eDir !== undefined) {
+          const v = indexInDir(state.enemy.layout.currentIndex, eDir);
+          if (v !== undefined) {
+            eNewIndex = v;
+          }
+        }
+        state.enemy.layout.currentIndex = eNewIndex;
         if (state.enemy.layout.currentIndex >= state.enemy.layout.nodes.length) {
           state.enemy.layout.currentIndex = 0;
         }
