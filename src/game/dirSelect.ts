@@ -100,9 +100,9 @@ export function showDirSelect(
     }),
     new Par(display.dirBtns.map((x, i) => {
       return new Par([
-        new TweenFromTo(0, 0.2, 0, 1, "setOnFrom", mkAccessTarget(display.dirBtns[i], "alpha"), linear),
-        new TweenFromTo(0, 0.2, 1.3, 1, "setOnFrom", mkAccessTarget(display.dirBtns[i].scale, "x"), linear),
-        new TweenFromTo(0, 0.2, 1.3, 1, "setOnFrom", mkAccessTarget(display.dirBtns[i].scale, "y"), linear),
+        new TweenFromTo(0, 0.15, 0, 1, "setOnFrom", mkAccessTarget(display.dirBtns[i], "alpha"), linear),
+        new TweenFromTo(0, 0.15, 1.3, 1, "setOnFrom", mkAccessTarget(display.dirBtns[i].scale, "x"), linear),
+        new TweenFromTo(0, 0.15, 1.3, 1, "setOnFrom", mkAccessTarget(display.dirBtns[i].scale, "y"), linear),
       ]);
     })),
   ]);
@@ -118,16 +118,17 @@ export function changeDir(
   if (index === undefined) {
     throw "node index not set on dir select menu";
   }
-  attachAnimation(new Par([
-    changeDirNode(state, display, index, dir, cache),
-    // TODO: this anim not displayed correctly
-    new Par(display.player.dirSelect.dirBtns.map((x, i) => {
-      return new Par([
-        new TweenFromTo(0, 0.2, 1, 0, "setOnFrom", mkAccessTarget(display.player.dirSelect.dirBtns[i], "alpha"), linear),
-        new TweenFromTo(0, 0.2, 1, 1.3, "setOnFrom", mkAccessTarget(display.player.dirSelect.dirBtns[i].scale, "x"), linear),
-        new TweenFromTo(0, 0.2, 1, 1.3, "setOnFrom", mkAccessTarget(display.player.dirSelect.dirBtns[i].scale, "y"), linear),
-      ]);
-    })),
+  attachAnimation(new Seq([
+    new Par([
+      changeDirNode(state, display, index, dir, cache),
+      new Par(display.player.dirSelect.dirBtns.map((x, i) => {
+        return new Par([
+          new TweenFromTo(0, 0.15, 1, 0, "setOnFrom", mkAccessTarget(display.player.dirSelect.dirBtns[i], "alpha"), linear),
+          new TweenFromTo(0, 0.15, 1, 1.3, "setOnFrom", mkAccessTarget(display.player.dirSelect.dirBtns[i].scale, "x"), linear),
+          new TweenFromTo(0, 0.15, 1, 1.3, "setOnFrom", mkAccessTarget(display.player.dirSelect.dirBtns[i].scale, "y"), linear),
+        ]);
+      })),
+    ]),
     embedEff(() => {
       display.player.dirSelect.container.visible = false;
       display.player.dirSelect.nodeIndex = undefined;
