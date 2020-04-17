@@ -1,5 +1,7 @@
 export type Dir = "up" | "down" | "left" | "right"
 
+export const allDirs: ["up", "down", "left", "right"] = ["up", "down", "left", "right"];
+
 export function dirToDeg(
   dir: Dir,
 ): number {

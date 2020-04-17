@@ -12,6 +12,7 @@ import { nextPhase } from "../game/phase";
 import { initializeMenu } from "../menu/menu";
 import { initializeCraftCards } from "../craft/card";
 import { initializeZones } from "../zone/zone";
+import { initializeDirSelect } from "../game/dirSelect";
 
 const WIDTH = 540;
 const HEIGHT = 540;
@@ -147,6 +148,7 @@ function main(): void {
     entity: initializeEntity(state.player.entity, 40, 40, combatContainer, display, cache),
     hotbar: initializeHotbar(state.player.hotbar, 40, 425, combatContainer, state, display, cache),
     nodeExpl: undefined as any, // initialized later for z-index
+    dirSelect: undefined as any,
   };
   display.enemy = {
     layout: initializeLayout(undefined, 277.5, 190, combatContainer, state, display, cache, "enemy"),
@@ -154,6 +156,7 @@ function main(): void {
   };
   display.pools = initializePools(combatContainer);
   display.player.nodeExpl = initializeNodeExpl(appContainer, display, cache);
+  display.player.dirSelect = initializeDirSelect(appContainer, state, display, cache);
   display.menu = initializeMenu(appContainer, cache, display, state);
   display.combatContainer = combatContainer;
   display.craftContainer = craftContainer;

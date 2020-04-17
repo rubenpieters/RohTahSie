@@ -2,13 +2,14 @@ import { Ability } from "./definitions/ability";
 import * as Ab from "./definitions/ability";
 import { Cache, attachAnimation, clearExplWindowAnimation, attachExplWindowAnimation } from "../app/main";
 import { GameState } from "./state";
-import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq } from "../app/animation";
+import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq, embedEff } from "../app/animation";
 import { hotbarSelectedNode } from "./hotbar";
 import { Display } from "./display";
 import { EnemyTarget, PlayerTarget } from "./definitions/target";
 import { loadNodeExpl } from "./nodeExpl";
 import { nodeSprite } from "./ability";
 import { Dir, dirToDeg } from "./dir";
+import { showDirSelect } from "./dirSelect";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
@@ -156,6 +157,8 @@ function layoutPointerUpCb(
       const selectedNode = hotbarSelectedNode(state.player.hotbar);
       if (selectedNode !== undefined) {
         changeLayoutNode("player", state, display, index, selectedNode, cache);
+      } else {
+        attachAnimation(showDirSelect(display.player.dirSelect, index));
       }
     }
     // if loading sprite is visible: cancel loading
@@ -190,6 +193,38 @@ export function changeLayoutNode(
       ]),
     );
   }
+}
+
+export function changeDirNode(
+  state: GameState,
+  display: Display,
+  index: number,
+  dir: Dir | undefined,
+  cache: Cache,
+): Anim {
+  return new Seq([
+    embedEff(() => {
+      state.player.layout.nodes[index].direction = dir;
+      state.player.layout.nodes[index].direction = dir;
+      if (dir === undefined) {
+        display.player.layout.abilitySlots[index].texture = cache["ability_slot"];
+        display.player.layout.abilitySlots[index].angle = 0;
+      } else {
+        display.player.layout.abilitySlots[index].texture = cache["ability_slot_r"];
+        display.player.layout.abilitySlots[index].angle = dirToDeg(dir);
+      }
+    }),
+    new Seq([
+      new Par([
+        new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display.player.layout.abilitySlots[index].scale, "x")),
+        new TweenTo(0.05, 1.2, "absolute", mkAccessTarget(display.player.layout.abilitySlots[index].scale, "y")),
+      ]),
+      new Par([
+        new TweenTo(0.1, 1, "absolute", mkAccessTarget(display.player.layout.abilitySlots[index].scale, "x")),
+        new TweenTo(0.1, 1, "absolute", mkAccessTarget(display.player.layout.abilitySlots[index].scale, "y")),
+      ]),
+    ]),
+  ]);
 }
 
 export function barLocation(
