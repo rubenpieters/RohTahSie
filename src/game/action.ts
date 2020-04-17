@@ -367,6 +367,28 @@ export function applyAction(
       }
       return { animation: new Noop(), newActions };
     }
+    case "MoveDir": {
+      if (
+        action.target.tag === "PlayerTarget" ||
+        action.target.tag === "EnemyTarget"
+      ) {
+        const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
+        const targetObj = state[target];
+        if (targetObj !== undefined) {
+          const dir = action.dir;
+          let newIndex = targetObj.layout.currentIndex + 1;
+          const v = indexInDir(targetObj.layout.currentIndex, dir);
+          if (v !== undefined) {
+            newIndex = v;
+          }
+          targetObj.layout.currentIndex = newIndex;
+          if (targetObj.layout.currentIndex >= targetObj.layout.nodes.length) {
+            targetObj.layout.currentIndex = 0;
+          }
+        }
+      }
+      return { animation: new Noop(), newActions: [] };
+    }
     case "Death": {
       if (action.target.tag === "EnemyTarget") {
         if (state.enemy !== undefined) {
@@ -541,6 +563,13 @@ export function actionExpl<T extends AbstractTarget>(
         variables,
       }
     }
+    case "MoveDir": {
+      return {
+        mainExpl: `${targetExpl(action.target)} move ${action.dir}`,
+        sideExpl: [],
+        variables,
+      };
+    }
     case "ChangeTo": return {
       mainExpl: `Change to ${action.name}`,
       sideExpl: [],
@@ -561,6 +590,7 @@ export function concretizeAction(
     case "EndTurn": // fallthrough
     case "ActionFrom": // fallthrough
     case "ChangeTo": // fallthrough
+    case "MoveDir": // fallthrough
     case "ChangeShield":
       return { ...action, target: concretizeTarget(action.target, source, thisStatus) };
     case "Regen": // fallthrough

@@ -4,6 +4,7 @@ import { Var } from "./var";
 import { Status, StatusType } from "./status";
 import { Trigger } from "./trigger";
 import { Ability } from "./ability";
+import { Dir } from "../dir";
 
 export class Regen<T> {
   public readonly tag: "Regen" = "Regen";
@@ -148,6 +149,15 @@ export class RegenAllStatuses<T> {
   ) {}
 }
 
+export class MoveDir<T> {
+  public readonly tag: "MoveDir" = "MoveDir";
+
+  constructor(
+    public readonly dir: Dir,
+    public readonly target: T,
+  ) {}
+}
+
 export type Action<T>
   = Regen<T>
   | Summon
@@ -165,4 +175,5 @@ export type Action<T>
   | ActionFrom<T>
   | ChangeTo<T>
   | RegenAllStatuses<T>
+  | MoveDir<T>
   ;
