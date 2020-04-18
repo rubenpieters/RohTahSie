@@ -5,6 +5,7 @@ import { Cache, attachAnimation } from "../app/main";
 import { linear } from "../app/interpolation"
 import { GameState } from "./state";
 import { changeDirNode } from "./layout";
+import { dirToAbility } from "./dirAbility";
 
 export type DirSelectDisplay = {
   bg: PIXI.Sprite,
@@ -120,7 +121,7 @@ export function changeDir(
   }
   attachAnimation(new Seq([
     new Par([
-      changeDirNode(state, display, index, dir, cache),
+      changeDirNode(state, display, index, dirToAbility(dir), cache),
       new Par(display.player.dirSelect.dirBtns.map((x, i) => {
         return new Par([
           new TweenFromTo(0, 0.15, 1, 0, "setOnFrom", mkAccessTarget(display.player.dirSelect.dirBtns[i], "alpha"), linear),

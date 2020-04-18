@@ -145,6 +145,7 @@ export function finalizingAnimation(
 ): Anim {
   return mkEff({
     eff: () => {
+      /*
       // advance current node for player
       const dir = state.player.layout.nodes[state.player.layout.currentIndex].direction;
       let newIndex = state.player.layout.currentIndex + 1;
@@ -173,6 +174,7 @@ export function finalizingAnimation(
           state.enemy.layout.currentIndex = 0;
         }
       }
+      */
     },
     k: () => new Noop(),
   });

@@ -1,5 +1,6 @@
 import { Ability } from "./definitions/ability";
 import * as Ab from "./definitions/ability";
+import * as DAb from "./definitions/dirAbility";
 import { Cache, attachAnimation, clearExplWindowAnimation, attachExplWindowAnimation } from "../app/main";
 import { GameState } from "./state";
 import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq, embedEff } from "../app/animation";
@@ -10,6 +11,8 @@ import { loadNodeExpl } from "./nodeExpl";
 import { nodeSprite } from "./ability";
 import { Dir, dirToDeg } from "./dir";
 import { showDirSelect } from "./dirSelect";
+import { DirAbility } from "./definitions/dirAbility";
+import { dirAbilitySprite } from "./dirAbility";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
@@ -21,7 +24,7 @@ const nodeAmount = xAmount * yAmount;
 export type Layout = {
   nodes: {
     ability: Ability,
-    direction: Dir | undefined,
+    direction: DirAbility,
   }[],
   currentIndex: number,
 };
@@ -54,11 +57,13 @@ export function initializeLayout(
   let nodes: PIXI.Sprite[] = [];
   let abilitySlots: PIXI.Sprite[] = [];
   for (let i = 0; i < nodeAmount; i++) {
-    const abilitySlot = layout !== undefined && layout.nodes[i].direction === undefined ?
-      new PIXI.Sprite(cache["ability_slot"]) :
-      new PIXI.Sprite(cache["ability_slot_r"]);
-    if (layout !== undefined && layout.nodes[i].direction !== undefined) {
-      abilitySlot.angle = dirToDeg(layout.nodes[i].direction!);
+    let abilitySlot: PIXI.Sprite = undefined as any;
+    if (layout !== undefined) {
+      const dirValues = dirAbilitySprite(layout.nodes[i].direction);
+      abilitySlot = new PIXI.Sprite(cache[dirValues.sprite]);
+      abilitySlot.angle = dirValues.angle;
+    } else {
+      abilitySlot = new PIXI.Sprite();
     }
     abilitySlot.x = (i % xAmount) * 55 + 40;
     abilitySlot.y = Math.floor(i / xAmount) * 55 + 40;
@@ -68,7 +73,7 @@ export function initializeLayout(
     abilitySlots.push(abilitySlot);
 
     const box =
-      layout !== undefined && layout.nodes[i] !== undefined ?
+      layout !== undefined ?
       new PIXI.Sprite(cache[nodeSprite(layout.nodes[i].ability)]) :
       new PIXI.Sprite();
     box.x = (i % xAmount) * 55 + 40;
@@ -108,13 +113,9 @@ export function newLayoutAnim(
       if (layout !== undefined) {
         layoutDisplay.container.visible = true;
         for (let i = 0; i < nodeAmount; i++) {
-          if (layout.nodes[i].direction === undefined) {
-            layoutDisplay.abilitySlots[i].texture = cache["ability_slot"];
-            layoutDisplay.abilitySlots[i].angle = 0;
-          } else {
-            layoutDisplay.abilitySlots[i].texture = cache["ability_slot_r"];
-            layoutDisplay.abilitySlots[i].angle = dirToDeg(layout.nodes[i].direction!);
-          }
+          const dirValues = dirAbilitySprite(layout.nodes[i].direction)
+          layoutDisplay.abilitySlots[i].texture = cache[dirValues.sprite];
+          layoutDisplay.abilitySlots[i].angle = dirValues.angle;
           layoutDisplay.nodes[i].texture = cache[nodeSprite(layout.nodes[i].ability)];
         }
       } else {
@@ -199,20 +200,15 @@ export function changeDirNode(
   state: GameState,
   display: Display,
   index: number,
-  dir: Dir | undefined,
+  dir: DirAbility,
   cache: Cache,
 ): Anim {
   return new Seq([
     embedEff(() => {
       state.player.layout.nodes[index].direction = dir;
-      state.player.layout.nodes[index].direction = dir;
-      if (dir === undefined) {
-        display.player.layout.abilitySlots[index].texture = cache["ability_slot"];
-        display.player.layout.abilitySlots[index].angle = 0;
-      } else {
-        display.player.layout.abilitySlots[index].texture = cache["ability_slot_r"];
-        display.player.layout.abilitySlots[index].angle = dirToDeg(dir);
-      }
+      const dirValues = dirAbilitySprite(state.player.layout.nodes[index].direction)
+      display.player.layout.abilitySlots[index].texture = cache[dirValues.sprite];
+      display.player.layout.abilitySlots[index].angle = dirValues.angle;
     }),
     new Seq([
       new Par([
@@ -239,25 +235,25 @@ export function barLocation(
 export function playerInitialLayout(): Layout {
   return {
     nodes: [
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
 
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
 
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
 
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
-      { ability: new Ab.Dormant(), direction: "right" },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
     ],
     currentIndex: 0,
   }

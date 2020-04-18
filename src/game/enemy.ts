@@ -1,30 +1,31 @@
 import { Layout } from "./layout";
 import * as Ab from "./definitions/ability";
+import * as DAb from "./definitions/dirAbility";
 import { Entity } from "./entity";
 import { EnemyTarget, PlayerTarget } from "./definitions/target";
 import { Dir } from "./dir";
 
 const layout1: Layout = {
   nodes: [
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
   ],
   currentIndex: 0,
 }
@@ -43,25 +44,25 @@ const enemy1: Entity = {
 
 const layout2: Layout = {
   nodes: [
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Discussion, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Discussion, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Discussion, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Discussion, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Discussion, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Discussion, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Discussion, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Discussion, direction: new DAb.MoveRight() },
   ],
   currentIndex: 0,
 }
@@ -80,25 +81,25 @@ const enemy2: Entity = {
 
 const layout3: Layout = {
   nodes: [
-    { ability: new Ab.Infection, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Infection, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
-    { ability: new Ab.Dormant, direction: "right"},
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
   ],
   currentIndex: 0,
 }
@@ -117,25 +118,25 @@ const enemy3: Entity = {
 
 const layout4: Layout = {
   nodes: [
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.Discussion, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight()  },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight()  },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight()  },
+    { ability: new Ab.Discussion, direction: new DAb.MoveRight()  },
 
-    { ability: new Ab.Rest, direction: "right" },
-    { ability: new Ab.Requiem, direction: "right" },
-    { ability: new Ab.Requiem, direction: "right" },
-    { ability: new Ab.Requiem, direction: "right" },
+    { ability: new Ab.Rest, direction: new DAb.MoveRight()  },
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight()  },
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight()  },
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight()  },
 
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.Discussion, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight()  },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight()  },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight()  },
+    { ability: new Ab.Discussion, direction: new DAb.MoveRight()  },
 
-    { ability: new Ab.Rest, direction: "right" },
-    { ability: new Ab.Requiem, direction: "right" },
-    { ability: new Ab.Meditation, direction: "right" },
-    { ability: new Ab.Requiem, direction: "right" },
+    { ability: new Ab.Rest, direction: new DAb.MoveRight()  },
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight()  },
+    { ability: new Ab.Meditation, direction: new DAb.MoveRight()  },
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight()  },
   ],
   currentIndex: 0,
 }
@@ -154,26 +155,26 @@ const enemy4: Entity = {
 
 const layout5: Layout = {
   nodes: [
-    { ability: new Ab.Demon, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },,
+    { ability: new Ab.Demon, direction: new DAb.MoveRight() },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },,
 
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.Requiem, direction: "right" },
-    { ability: new Ab.Requiem, direction: "right" },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight() },
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Demon, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
+    { ability: new Ab.Demon, direction: new DAb.MoveRight() },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.VoodooDoll, direction: "right" },
-    { ability: new Ab.Requiem, direction: "right" },
-    { ability: new Ab.Requiem, direction: "right" },
-  ] as { ability: Ab.Ability, direction: Dir }[],
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight() },
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight() },
+  ] as { ability: Ab.Ability, direction: DAb.DirAbility }[],
   currentIndex: 0,
 }
 
@@ -191,26 +192,26 @@ const enemy5: Entity = {
 
 const layout6: Layout = {
   nodes: [
-    { ability: new Ab.Demon, direction: "right" },
-    { ability: new Ab.Demon, direction: "right" },
-    { ability: new Ab.Demon, direction: "right" },
-    { ability: new Ab.Rest, direction: "right" },
+    { ability: new Ab.Demon, direction: new DAb.MoveRight() },
+    { ability: new Ab.Demon, direction: new DAb.MoveRight() },
+    { ability: new Ab.Demon, direction: new DAb.MoveRight() },
+    { ability: new Ab.Rest, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Requiem, direction: "right" },
-    { ability: new Ab.Heresy, direction: "right" },
-    { ability: new Ab.Meditation, direction: "right" },
-    { ability: new Ab.Reflex, direction: "right" },
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight() },
+    { ability: new Ab.Heresy, direction: new DAb.MoveRight() },
+    { ability: new Ab.Meditation, direction: new DAb.MoveRight() },
+    { ability: new Ab.Reflex, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Demon, direction: "right" },,
-    { ability: new Ab.Demon, direction: "right" },
-    { ability: new Ab.Demon, direction: "right" },
-    { ability: new Ab.Reflex, direction: "right" },
+    { ability: new Ab.Demon, direction: new DAb.MoveRight() },,
+    { ability: new Ab.Demon, direction: new DAb.MoveRight() },
+    { ability: new Ab.Demon, direction: new DAb.MoveRight() },
+    { ability: new Ab.Reflex, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Requiem, direction: "right" },
-    { ability: new Ab.Heresy, direction: "right" },
-    { ability: new Ab.Meditation, direction: "right" },
-    { ability: new Ab.Isolation, direction: "right" },
-  ] as { ability: Ab.Ability, direction: Dir }[],
+    { ability: new Ab.Requiem, direction: new DAb.MoveRight() },
+    { ability: new Ab.Heresy, direction: new DAb.MoveRight() },
+    { ability: new Ab.Meditation, direction: new DAb.MoveRight() },
+    { ability: new Ab.Isolation, direction: new DAb.MoveRight() },
+  ] as { ability: Ab.Ability, direction: DAb.DirAbility }[],
   currentIndex: 0,
 }
 
