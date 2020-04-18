@@ -20,5 +20,9 @@ export function allZones(): Zones {
       enemyIds: ["dmg1"],
       selected: false,
     },
+    {
+      enemyIds: ["dmgH1"],
+      selected: false,
+    },
   ];
 }

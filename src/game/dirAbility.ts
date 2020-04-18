@@ -14,6 +14,8 @@ export function dirAbilitySprite(
     case "MoveUp": return { sprite: "ability_slot_r", angle: -90 };
     case "MoveDown": return { sprite: "ability_slot_r", angle: 90 };
     case "GoToX": return { sprite: "dir_goto", angle: 0 };
+    case "MoveDownEssenceLow": return { sprite: "ability_slot_r", angle: 0 };
+    case "MoveUpEssenceHigh": return { sprite: "ability_slot_r", angle: 0 };
   }
 }
 

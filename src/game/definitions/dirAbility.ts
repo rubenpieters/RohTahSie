@@ -46,10 +46,34 @@ export class GoToX {
   }
 }
 
+export class MoveDownEssenceLow {
+  public readonly name: "MoveDownEssenceLow" = "MoveDownEssenceLow"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Conditional(
+      V.mkBelow(new V.Resource(mkSelf, "essence"), 30),
+      new A.MoveDir("down", mkSelf),
+      new A.MoveDir("right", mkSelf),
+    ),
+  ]
+}
+
+export class MoveUpEssenceHigh {
+  public readonly name: "MoveUpEssenceHigh" = "MoveUpEssenceHigh"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Conditional(
+      V.mkAbove(new V.Resource(mkSelf, "essence"), 80),
+      new A.MoveDir("up", mkSelf),
+      new A.MoveDir("right", mkSelf),
+    ),
+  ]
+}
+
 export type DirAbility
   = MoveRight
   | MoveLeft
   | MoveUp
   | MoveDown
   | GoToX
+  | MoveDownEssenceLow
+  | MoveUpEssenceHigh
   ;

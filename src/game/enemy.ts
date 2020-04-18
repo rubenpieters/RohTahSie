@@ -264,6 +264,43 @@ const dmgEn1: Entity = {
   statuses: [],
 };
 
+const dmgHeal1Layout: Layout = {
+  nodes: [
+    { ability: new Ab.Dormant, direction: new DAb.MoveDownEssenceLow() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Discussion, direction: new DAb.MoveRight() },
+    { ability: new Ab.Meditation, direction: new DAb.GoToX(0) },
+
+    { ability: new Ab.Rest, direction: new DAb.MoveUpEssenceHigh() },
+    { ability: new Ab.Rest, direction: new DAb.MoveLeft() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+  ],
+  currentIndex: 0,
+}
+
+const dmgHealEn1: Entity = {
+  roh: 100,
+  maxRoh: 100,
+  tah: 100,
+  maxTah: 100,
+  sie: 100,
+  maxSie: 100,
+  shield: "roh",
+  dirty: false,
+  statuses: [],
+};
+
 type Enemies = typeof allEnemies;
 export type EnemyKey = keyof Enemies;
 export const allEnemies = {
@@ -300,6 +337,11 @@ export const allEnemies = {
   "dmg1": {
     entity: dmgEn1,
     layout: dmg1Layout,
+    reward: 1,
+  },
+  "dmgH1": {
+    entity: dmgHealEn1,
+    layout: dmgHeal1Layout,
     reward: 1,
   },
 }
