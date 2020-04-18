@@ -75,7 +75,7 @@ export class Initiate {
   public readonly actions: Action<AbstractTarget>[]
 
   constructor(
-    enemyId: EnemyKey,
+    public readonly enemyId: EnemyKey,
   ) {
     // TODO: set name based on enemyId? split into tag and name?
     // this.name = `Initiate ${enemyId}`;

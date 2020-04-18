@@ -113,7 +113,7 @@ export function newLayoutAnim(
       if (layout !== undefined) {
         layoutDisplay.container.visible = true;
         for (let i = 0; i < nodeAmount; i++) {
-          const dirValues = dirAbilitySprite(layout.nodes[i].direction)
+          const dirValues = dirAbilitySprite(layout.nodes[i].direction);
           layoutDisplay.abilitySlots[i].texture = cache[dirValues.sprite];
           layoutDisplay.abilitySlots[i].angle = dirValues.angle;
           layoutDisplay.nodes[i].texture = cache[nodeSprite(layout.nodes[i].ability)];

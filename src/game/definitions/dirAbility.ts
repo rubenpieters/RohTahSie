@@ -33,9 +33,23 @@ export class MoveDown {
   ]
 }
 
+export class GoToX {
+  public readonly name: "GoToX" = "GoToX"
+  public readonly actions: Action<AbstractTarget>[]
+
+  constructor(
+    public readonly i: number,
+  ) {
+    this.actions = [
+      new A.GoTo(i, mkSelf),
+    ];
+  }
+}
+
 export type DirAbility
   = MoveRight
   | MoveLeft
   | MoveUp
   | MoveDown
+  | GoToX
   ;

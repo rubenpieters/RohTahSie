@@ -158,7 +158,7 @@ const layout5: Layout = {
     { ability: new Ab.Demon, direction: new DAb.MoveRight() },
     { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
     { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
-    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },,
+    { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
 
     { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
     { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
@@ -174,7 +174,7 @@ const layout5: Layout = {
     { ability: new Ab.VoodooDoll, direction: new DAb.MoveRight() },
     { ability: new Ab.Requiem, direction: new DAb.MoveRight() },
     { ability: new Ab.Requiem, direction: new DAb.MoveRight() },
-  ] as { ability: Ab.Ability, direction: DAb.DirAbility }[],
+  ],
   currentIndex: 0,
 }
 
@@ -202,7 +202,7 @@ const layout6: Layout = {
     { ability: new Ab.Meditation, direction: new DAb.MoveRight() },
     { ability: new Ab.Reflex, direction: new DAb.MoveRight() },
 
-    { ability: new Ab.Demon, direction: new DAb.MoveRight() },,
+    { ability: new Ab.Demon, direction: new DAb.MoveRight() },
     { ability: new Ab.Demon, direction: new DAb.MoveRight() },
     { ability: new Ab.Demon, direction: new DAb.MoveRight() },
     { ability: new Ab.Reflex, direction: new DAb.MoveRight() },
@@ -211,7 +211,7 @@ const layout6: Layout = {
     { ability: new Ab.Heresy, direction: new DAb.MoveRight() },
     { ability: new Ab.Meditation, direction: new DAb.MoveRight() },
     { ability: new Ab.Isolation, direction: new DAb.MoveRight() },
-  ] as { ability: Ab.Ability, direction: DAb.DirAbility }[],
+  ],
   currentIndex: 0,
 }
 
@@ -222,6 +222,43 @@ const enemy6: Entity = {
   maxTah: 100,
   sie: 100,
   maxSie: 100,
+  shield: "roh",
+  dirty: false,
+  statuses: [],
+};
+
+const dmg1Layout: Layout = {
+  nodes: [
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Discussion, direction: new DAb.GoToX(0) },
+
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+    { ability: new Ab.Dormant, direction: new DAb.MoveRight() },
+  ],
+  currentIndex: 0,
+}
+
+const dmgEn1: Entity = {
+  roh: 25,
+  maxRoh: 25,
+  tah: 25,
+  maxTah: 25,
+  sie: 25,
+  maxSie: 25,
   shield: "roh",
   dirty: false,
   statuses: [],
@@ -259,5 +296,10 @@ export const allEnemies = {
     entity: enemy6,
     layout: layout6,
     reward: 10,
+  },
+  "dmg1": {
+    entity: dmgEn1,
+    layout: dmg1Layout,
+    reward: 1,
   },
 }

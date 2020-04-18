@@ -389,6 +389,19 @@ export function applyAction(
       }
       return { animation: new Noop(), newActions: [] };
     }
+    case "GoTo": {
+      if (
+        action.target.tag === "PlayerTarget" ||
+        action.target.tag === "EnemyTarget"
+      ) {
+        const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
+        const targetObj = state[target];
+        if (targetObj !== undefined) {
+          targetObj.layout.currentIndex = action.i;
+        }
+      }
+      return { animation: new Noop(), newActions: [] };
+    }
     case "Death": {
       if (action.target.tag === "EnemyTarget") {
         if (state.enemy !== undefined) {
@@ -570,6 +583,13 @@ export function actionExpl<T extends AbstractTarget>(
         variables,
       };
     }
+    case "GoTo": {
+      return {
+        mainExpl: `${targetExpl(action.target)} goto ${action.i}`,
+        sideExpl: [],
+        variables,
+      };
+    }
     case "ChangeTo": return {
       mainExpl: `Change to ${action.name}`,
       sideExpl: [],
@@ -591,6 +611,7 @@ export function concretizeAction(
     case "ActionFrom": // fallthrough
     case "ChangeTo": // fallthrough
     case "MoveDir": // fallthrough
+    case "GoTo": // fallthrough
     case "ChangeShield":
       return { ...action, target: concretizeTarget(action.target, source, thisStatus) };
     case "Regen": // fallthrough

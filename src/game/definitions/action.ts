@@ -158,6 +158,15 @@ export class MoveDir<T> {
   ) {}
 }
 
+export class GoTo<T> {
+  public readonly tag: "GoTo" = "GoTo";
+
+  constructor(
+    public readonly i: number,
+    public readonly target: T,
+  ) {}
+}
+
 export type Action<T>
   = Regen<T>
   | Summon
@@ -176,4 +185,5 @@ export type Action<T>
   | ChangeTo<T>
   | RegenAllStatuses<T>
   | MoveDir<T>
+  | GoTo<T>
   ;

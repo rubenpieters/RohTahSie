@@ -94,6 +94,7 @@ const cache = {
   "paralysis": PIXI.Texture.from("assets/sprites/paralysis.png"),
   "prayer": PIXI.Texture.from("assets/sprites/prayer.png"),
   "reflex": PIXI.Texture.from("assets/sprites/reflex.png"),
+  "dir_goto": PIXI.Texture.from("assets/sprites/dir_goto.png"),
 };
 
 let animations: Anim[] = [];
