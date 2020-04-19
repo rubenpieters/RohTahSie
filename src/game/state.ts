@@ -5,7 +5,7 @@ import { Entity, playerInitialEntity, entityFindStatus, StateStatus, StateTrigge
 import { Hotbar, calcHotbar } from "./hotbar";
 import { GamePhase, Charging } from "./definitions/phase";
 import { MenuType } from "../menu/menu";
-import { CardCrafts, allCardCrafts } from "../craft/all";
+import { CardCrafts, allCardCrafts, DirCrafts, allDirCrafts } from "../craft/all";
 import { Zones, allZones } from "../zone/all";
 import { EnemyKey } from "./enemy";
 
@@ -30,6 +30,7 @@ export type GameStateBase = {
   idCounter: number,
   menuState: MenuState,
   cardCrafts: CardCrafts,
+  dirCrafts: DirCrafts,
   gems: number,
   zones: Zones,
   variables: { [K in string]: { v: number, count: number } },
@@ -41,6 +42,7 @@ export type GameState = GameStateBase & {
 
 export function initializeState(state: GameState): void {
   state.cardCrafts = allCardCrafts();
+  state.dirCrafts = allDirCrafts();
   state.zones = allZones();
   state.player = {
     entity: playerInitialEntity(),

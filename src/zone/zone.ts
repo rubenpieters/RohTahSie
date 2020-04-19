@@ -31,8 +31,8 @@ export function initializeZones(
   // initialize icons
   let zones: ZoneDisplay[] = [];
   for (let i = 0; i < state.zones.length; i++) {
-    const row = Math.floor(i % maxZoneX);
-    const col = Math.floor(i / maxZoneX);
+    const row = Math.floor(i / maxZoneX);
+    const col = Math.floor(i % maxZoneX);
     const zone = state.zones[i];
     const zoneContainer = new PIXI.Container();
     zoneContainer.interactive = true;

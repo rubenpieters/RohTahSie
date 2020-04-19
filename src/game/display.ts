@@ -18,6 +18,7 @@ import { ZoneOverviewDisplay } from "../zone/zone";
 import { checkTriggers } from "./trigger";
 import { indexInDir } from "./dir";
 import { DirSelectDisplay } from "./dirSelect";
+import { CardSelectDisplay } from "./cardSelect";
 
 export type Display = {
   player: {
@@ -26,6 +27,7 @@ export type Display = {
     hotbar: HotbarDisplay,
     nodeExpl: NodeExplDisplay,
     dirSelect: DirSelectDisplay,
+    cardSelect: CardSelectDisplay,
   },
   enemy: {
     entity: EntityDisplay,

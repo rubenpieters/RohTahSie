@@ -11,6 +11,7 @@ import { loadNodeExpl } from "./nodeExpl";
 import { nodeSprite } from "./ability";
 import { Dir, dirToDeg } from "./dir";
 import { showDirSelect } from "./dirSelect";
+import { showCardSelect } from "./cardSelect";
 import { DirAbility } from "./definitions/dirAbility";
 import { dirAbilitySprite } from "./dirAbility";
 
@@ -159,7 +160,7 @@ function layoutPointerUpCb(
       if (selectedNode !== undefined) {
         changeLayoutNode("player", state, display, index, selectedNode, cache);
       } else {
-        attachAnimation(showDirSelect(display.player.dirSelect, index));
+        attachAnimation(showCardSelect(state, display, cache, index));
       }
     }
     // if loading sprite is visible: cancel loading

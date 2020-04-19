@@ -1,5 +1,7 @@
 import { Ability } from "../game/definitions/ability";
-import * as  Ab from "../game/definitions/ability";
+import * as Ab from "../game/definitions/ability";
+import { DirAbility } from "src/game/definitions/dirAbility";
+import * as DAb from "../game/definitions/dirAbility";
 
 export type CardCrafts = {
   node: Ability,
@@ -133,6 +135,54 @@ export function allCardCrafts(): CardCrafts {
     {
       node: new Ab.Memetics(),
       included: 0,
+      available: 1,
+      cost: 0,
+    },
+  ];
+}
+
+export type DirCrafts = {
+  node: DirAbility,
+  included: number,
+  available: number,
+  cost: number,
+}[];
+
+export function allDirCrafts(): DirCrafts {
+  return [
+    {
+      node: new DAb.MoveDown(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new DAb.MoveUp(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new DAb.MoveRight(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new DAb.MoveLeft(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new DAb.MoveDownEssenceLow(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new DAb.MoveUpEssenceHigh(),
+      included: 1,
       available: 1,
       cost: 0,
     },
