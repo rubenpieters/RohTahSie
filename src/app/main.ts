@@ -210,8 +210,10 @@ function update(state: GameState, display: Display, cache: Cache): () => void {
       }
     });
     if (newAnims.length === 0) {
-      state.phase = nextPhase(state);
-      animatePhase(state, display, cache);
+      if (state.phase.tag !== "Waiting" || state.enemy !== undefined) {
+        state.phase = nextPhase(state);
+        animatePhase(state, display, cache);
+      }
     } else {
       gameAnimations = newAnims;
     }
@@ -226,6 +228,10 @@ export function animatePhase(
   cache: Cache,
 ): void {
   switch (state.phase.tag) {
+    case "Waiting": {
+      gameAnimations = [];
+      break;
+    }
     case "Charging": {
       gameAnimations = [chargingAnimation(state, display, cache)];
       break;

@@ -6,6 +6,32 @@ import * as V from "./var";
 import * as S from "./status";
 import * as Tr from "./trigger";
 
+
+export class Dmg1 {
+  public readonly name: "Dmg1" = "Dmg1"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(15, "roh", new Self()),
+    new A.Damage(new V.Constant(15), "essence", new Other()),
+  ]
+}
+
+export class Dmg2 {
+  public readonly name: "Dmg2" = "Dmg2"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(30, "tah", new Self()),
+    new A.Damage(new V.Constant(30), "essence", new Other()),
+  ]
+}
+
+export class Dmg3 {
+  public readonly name: "Dmg3" = "Dmg3"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(20, "sie", new Self()),
+    new A.Damage(new V.Constant(10), "essence", new Other()),
+    new A.Damage(new V.Constant(10), "essence", new Other()),
+  ]
+}
+
 export class FocusRoh {
   public readonly name: "FocusRoh" = "FocusRoh"
   public readonly actions: Action<AbstractTarget>[] = [
@@ -214,7 +240,10 @@ export class Memetics {
 }
 
 export type Ability
-  = FocusRoh
+  = Dmg1
+  | Dmg2
+  | Dmg3
+  | FocusRoh
   | FocusTah
   | FocusSie
   | Rest
@@ -245,6 +274,9 @@ export type Ability
     name: Ability["name"],
   ): Ability {
     switch (name) {
+      case "Dmg1": return new Dmg1();
+      case "Dmg2": return new Dmg2();
+      case "Dmg3": return new Dmg3();
       case "FocusRoh": return new FocusRoh();
       case "FocusTah": return new FocusTah();
       case "FocusSie": return new FocusSie();

@@ -44,9 +44,16 @@ export class Finalizing {
   constructor() {}
 }
 
+export class Waiting {
+  public readonly tag: "Waiting" = "Waiting";
+
+  constructor() {}
+}
+
 export type GamePhase
   = Charging
   | Transforming
   | Applying
   | Finalizing
+  | Waiting
   ;

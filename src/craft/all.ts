@@ -13,6 +13,24 @@ export type CardCrafts = {
 export function allCardCrafts(): CardCrafts {
   return [
     {
+      node: new Ab.Dmg1(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new Ab.Dmg2(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new Ab.Dmg3(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
       node: new Ab.FocusRoh(),
       included: 1,
       available: 1,

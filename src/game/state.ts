@@ -3,7 +3,7 @@ import { Ability } from "./definitions/ability";
 import { Layout, playerInitialLayout } from "./layout";
 import { Entity, playerInitialEntity, entityFindStatus, StateStatus, StateTrigger } from "./entity";
 import { Hotbar, calcHotbar } from "./hotbar";
-import { GamePhase, Charging } from "./definitions/phase";
+import { GamePhase, Charging, Waiting } from "./definitions/phase";
 import { MenuType } from "../menu/menu";
 import { CardCrafts, allCardCrafts, DirCrafts, allDirCrafts } from "../craft/all";
 import { Zones, allZones } from "../zone/all";
@@ -51,7 +51,7 @@ export function initializeState(state: GameState): void {
   };
   state.enemy = undefined;
   state.idCounter = 0;
-  state.phase = new Charging();
+  state.phase = new Waiting();
   state.menuState = { menuSelected: "combat" };
   state.gems = 0;
   state.variables = {};

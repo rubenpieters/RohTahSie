@@ -1,6 +1,6 @@
 import * as lo from "lodash";
 import { GameState } from "./state";
-import { GamePhase, Transforming, Applying, Charging, Finalizing, ActionInQueue } from "./definitions/phase";
+import { GamePhase, Transforming, Applying, Charging, Finalizing, ActionInQueue, Waiting } from "./definitions/phase";
 import { EndTurn } from "./definitions/action";
 import { EnemyTarget, PlayerTarget } from "./definitions/target";
 import { Initiate } from "./definitions/ability";
@@ -9,6 +9,9 @@ export function nextPhase(
   state: GameState,
 ): GamePhase {
   switch (state.phase.tag) {
+    case "Waiting": {
+      return new Charging();
+    }
     case "Charging": {
       const abilityActions = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].ability.actions);
       const moveActions = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].direction.actions);
@@ -103,7 +106,7 @@ export function nextPhase(
       return { ...state.phase, tag: "Transforming" };
     }
     case "Finalizing": {
-      return new Charging();
+      return new Waiting();
     }
   }
 }

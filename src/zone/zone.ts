@@ -1,8 +1,11 @@
 import { Display } from "../game/display";
-import { Cache } from "../app/main";
+import { Cache, attachAnimation } from "../app/main";
 import { Zones } from "./all";
 import { GameState } from "../game/state";
 import { transitionScreen } from "../menu/menu";
+import { allEnemies } from "../game/enemy";
+import { applyAction } from "../game/action";
+import { Summon } from "../game/definitions/action";
 
 const maxZoneX = 5;
 
@@ -123,8 +126,12 @@ function initiateBattle(
   display: Display,
   cache: Cache,
 ) {
+  state.player.layout.currentIndex = 0;
   const selectedZone = state.zones.find(x => x.selected === true);
-  state.initiate = selectedZone!.enemyIds;
+  const { animation, newActions } = applyAction(new Summon(selectedZone!.enemyIds[0]), state, display, cache, "player", undefined);
+  attachAnimation(animation);
+  //const selectedZone = state.zones.find(x => x.selected === true);
+  //state.initiate = selectedZone!.enemyIds;
   transitionScreen("combat", display, state)();
 }
 
