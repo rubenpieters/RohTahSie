@@ -23,7 +23,9 @@ export function applyStatuses(
 ): { transformed: Action<ConcreteTarget>, newActions: ActionInQueue[] } {
   const pStatuses = state.player.entity.statuses.map(x => Object.assign(x, { owner: "player" as ("player" | "enemy") }));
   const eStatuses = state.enemy === undefined ? [] : state.enemy.entity.statuses.map(x => Object.assign(x, { owner: "enemy" as ("player" | "enemy") }));
-  const statuses = pStatuses.concat(eStatuses);
+  console.log(`effects: ${state.player.effects.length}`);
+  const pEffects = state.player.effects.map(x => { return { ca: x, owner: "player", id: -1, type: "Status" }});
+  const statuses = pStatuses.concat(eStatuses).concat(pEffects as any);
   let transformed = action;
   let newActions: ActionInQueue[] = [];
   for (const status of statuses) {

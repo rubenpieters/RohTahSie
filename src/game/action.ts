@@ -8,7 +8,7 @@ import { Cache } from "../app/main";
 import { Action, Death, Regen } from "./definitions/action";
 import { allEnemies } from "./enemy";
 import { applyStatuses, statusExpl } from "./status";
-import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget } from "./definitions/target";
+import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget, PlayerTarget } from "./definitions/target";
 import { targetToEntity, targetToEntityDisplay, targetExpl, concretizeTarget } from "./target";
 import { updateGemText } from "../craft/card";
 import { evalVar, concretizeVar, varExpl } from "./var";
@@ -18,6 +18,7 @@ import { ResourceType } from "./types";
 import { indexInDir } from "./dir";
 import { ActionInQueue } from "./definitions/phase";
 import { mkAbility } from "./definitions/ability";
+import * as V from "./definitions/var";
 
 export function applyAction(
   action: Action<ConcreteTarget>,
@@ -443,7 +444,15 @@ export function applyAction(
               k: () => new Noop(),
             }),
           ]);
-          return { animation, newActions: [] };
+          let newActions: ActionInQueue[] = [];
+          if (state.heal) {
+            newActions = [
+              { action: new Regen(new V.Constant(100), "roh", new PlayerTarget()), indexSource: undefined },
+              { action: new Regen(new V.Constant(100), "tah", new PlayerTarget()), indexSource: undefined },
+              { action: new Regen(new V.Constant(100), "sie", new PlayerTarget()), indexSource: undefined },
+            ]
+          }
+          return { animation, newActions };
         }
       } else if (action.target.tag === "StatusTarget") {
         const status = findStatus(state, action.target.id);

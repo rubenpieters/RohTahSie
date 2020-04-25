@@ -8,6 +8,8 @@ import { MenuType } from "../menu/menu";
 import { CardCrafts, allCardCrafts, DirCrafts, allDirCrafts } from "../craft/all";
 import { Zones, allZones } from "../zone/all";
 import { EnemyKey } from "./enemy";
+import { StatusCA } from "./definitions/status";
+import { effect1 } from "./definitions/effect";
 
 export type MenuState = {
   menuSelected: MenuType,
@@ -18,6 +20,7 @@ export type GameStateBase = {
     entity: Entity,
     layout: Layout,
     hotbar: Hotbar,
+    effects: StatusCA[],
   },
   enemy: {
     entity: Entity,
@@ -26,6 +29,7 @@ export type GameStateBase = {
   } | undefined,
   initiate: EnemyKey[] | undefined,
   continuous: boolean,
+  heal: boolean,
   random: boolean,
   idCounter: number,
   menuState: MenuState,
@@ -48,6 +52,9 @@ export function initializeState(state: GameState): void {
     entity: playerInitialEntity(),
     layout: playerInitialLayout(),
     hotbar: calcHotbar(state.cardCrafts, state.zones),
+    effects: [
+      effect1,
+    ],
   };
   state.enemy = undefined;
   state.idCounter = 0;
@@ -56,6 +63,7 @@ export function initializeState(state: GameState): void {
   state.gems = 0;
   state.variables = {};
   state.continuous = false;
+  state.heal = true;
 }
 
 export function findStatus(
