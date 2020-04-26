@@ -4,6 +4,7 @@ import { Cache, attachExplWindowAnimation, clearExplWindowAnimation } from "../a
 import { Display } from "../game/display";
 import { loadNodeExpl } from "../game/nodeExpl";
 import { nodeSprite } from "../game/ability";
+import { wrappedLayout } from "../layout/layout";
 
 const maxCardX = 8;
 
@@ -31,46 +32,47 @@ export function initializeCraftCards(
   Object.assign(container, { x: 0, y: 80 });
 
   // initialize icons
-  let cards: CardDisplay[] = [];
-  for (let i = 0; i < cardCrafts.length; i++) {
-    const row = Math.floor(i / maxCardX);
-    const col = Math.floor(i % maxCardX);
-    const card = cardCrafts[i];
-    const cardContainer = new PIXI.Container();
-    cardContainer.width = 60;
-    cardContainer.height = 75;
-
-    const sprite = new PIXI.Sprite(cache[nodeSprite(card.node)]);
-    sprite.x = col * 60 + 50;
-    sprite.y = row * 100 + 50;
-
-    const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
-    bg.tint = 0x00AAAA;
-    bg.x = col * 60 + 45;
-    bg.y = row * 100 + 50;
-    bg.width = 50;
-    bg.height = 75;
-
-    const addBtn = new PIXI.Sprite(PIXI.Texture.WHITE);
-    addBtn.tint = 0x00000000;
-    addBtn.x = col * 60 + 45;
-    addBtn.y = row * 100 + 130;
-    addBtn.width = 50;
-    addBtn.height = 10;
-
-    sprite.interactive = true;
-    sprite.on("pointerup", craftPointerUpCb(i, cardCrafts, display));
-    sprite.on("pointerdown", craftPointerDownCb(i, cardCrafts, display));
-
-    addBtn.interactive = true;
-    addBtn.on("pointerdown", addCard(i, state, display));
-
-    cardContainer.addChild(bg);
-    cardContainer.addChild(sprite);
-    cardContainer.addChild(addBtn);
-    container.addChild(cardContainer);
-    cards.push({ cardContainer, bg, sprite, addBtn });
-  }
+  const cards: CardDisplay[] = wrappedLayout(
+    container,
+    i => {
+      const cardContainer = new PIXI.Container();
+      cardContainer.width = 60;
+      cardContainer.height = 75;
+      
+      return cardContainer;
+    },
+    (cardContainer, i) => {
+      const card = cardCrafts[i];
+      const sprite = new PIXI.Sprite(cache[nodeSprite(card.node)]);
+      sprite.x = 5;
+      sprite.y = 5;
+  
+      const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
+      bg.tint = 0x00AAAA;
+      bg.width = 50;
+      bg.height = 75;
+  
+      const addBtn = new PIXI.Sprite(PIXI.Texture.WHITE);
+      addBtn.tint = 0x00000000;
+      addBtn.y = 80;
+      addBtn.width = 50;
+      addBtn.height = 10;
+  
+      sprite.interactive = true;
+      sprite.on("pointerup", craftPointerUpCb(i, cardCrafts, display));
+      sprite.on("pointerdown", craftPointerDownCb(i, cardCrafts, display));
+  
+      addBtn.interactive = true;
+      addBtn.on("pointerdown", addCard(i, state, display));
+  
+      cardContainer.addChild(bg);
+      cardContainer.addChild(sprite);
+      cardContainer.addChild(addBtn);
+      return { cardContainer, bg, sprite, addBtn };
+    },
+    cardCrafts.length,
+    { orientation: "horizontal", spacing: { x: 60, y: 100 }, start: { x: 45, y: 50 }, wrappingLimit: maxCardX, },
+  );
 
   // initialize gem counter
   const gemSprite = new PIXI.Sprite(cache["gem"]);

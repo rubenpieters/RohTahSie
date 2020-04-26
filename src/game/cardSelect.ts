@@ -8,6 +8,7 @@ import { nodeSprite } from "./ability";
 import { changeLayoutNode, changeDirNode } from "./layout";
 import { DirAbility } from "./definitions/dirAbility";
 import { dirAbilitySprite } from "./dirAbility";
+import { wrappedLayout } from "../layout/layout";
 
 const maxCardsX = 4;
 const maxCardsY = 4;
@@ -56,64 +57,68 @@ export function initializeCardSelect(
   bg.on("pointerdown", () => container.visible = false);
 
   // create card display
-  const cards: CardDisplay[] = [];
-  for (let i = 0; i < maxCardsX * maxCardsY; i++) {
-    const row = Math.floor(i / maxCardsX);
-    const col = Math.floor(i % maxCardsX);
-    const cardContainer = new PIXI.Container();
-    cardContainer.interactive = true;
-    cardContainer.on("pointerdown", () => newAbilitySelect(state, display, cache, i));
-    cardContainer.width = 42;
-    cardContainer.height = 42;
+  const cards: CardDisplay[] = wrappedLayout(
+    container,
+    i => {
+      const cardContainer = new PIXI.Container();
+      cardContainer.interactive = true;
+      cardContainer.on("pointerdown", () => newAbilitySelect(state, display, cache, i));
+      cardContainer.width = 42;
+      cardContainer.height = 42;
 
-    const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
-    bg.tint = 0x00AAAA;
-    bg.x = col * 45 + 10;
-    bg.y = row * 45 + 10;
-    bg.width = 42;
-    bg.height = 42;
+      return cardContainer;
+    },
+    cardContainer => {
+      const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
+      bg.tint = 0x00AAAA;
+      bg.width = 42;
+      bg.height = 42;
+  
+      const sprite = new PIXI.Sprite();
+      sprite.x = 23;
+      sprite.y = 23;
+      sprite.pivot.set(21, 21);
+  
+      cardContainer.addChild(bg);
+      cardContainer.addChild(sprite);
 
-    const sprite = new PIXI.Sprite();
-    sprite.x = col * 45 + 12 + 21;
-    sprite.y = row * 45 + 12 + 21;
-    sprite.pivot.set(21, 21);
-
-    cardContainer.addChild(bg);
-    cardContainer.addChild(sprite);
-    container.addChild(cardContainer);
-
-    cards.push({ cardContainer, bg, sprite, ability: undefined });
-  }
+      return { cardContainer, bg, sprite, ability: undefined };
+    },
+    maxCardsX * maxCardsY,
+    { orientation: "horizontal", spacing: { x: 45, y: 45 }, start: { x: 10, y: 10 }, wrappingLimit: 4, },
+  );
 
   // create dir card display
-  const dirCards: DirCardDisplay[] = [];
-  for (let i = 0; i < maxCardsX * maxCardsY; i++) {
-    const row = Math.floor(i / maxCardsX);
-    const col = Math.floor(i % maxCardsX);
-    const cardContainer = new PIXI.Container();
-    cardContainer.interactive = true;
-    cardContainer.on("pointerdown", () => newDirAbilitySelect(state, display, cache, i));
-    cardContainer.width = 42;
-    cardContainer.height = 42;
+  const dirCards: DirCardDisplay[] = wrappedLayout(
+    container,
+    i => {
+      const cardContainer = new PIXI.Container();
+      cardContainer.interactive = true;
+      cardContainer.on("pointerdown", () => newDirAbilitySelect(state, display, cache, i));
+      cardContainer.width = 42;
+      cardContainer.height = 42;
 
-    const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
-    bg.tint = 0x00AAAA;
-    bg.x = col * 45 + 10;
-    bg.y = row * 45 + 210;
-    bg.width = 42;
-    bg.height = 42;
+      return cardContainer;
+    },
+    cardContainer => {
+      const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
+      bg.tint = 0x00AAAA;
+      bg.width = 42;
+      bg.height = 42;
+  
+      const sprite = new PIXI.Sprite();
+      sprite.x = 23;
+      sprite.y = 23;
+      sprite.pivot.set(21, 21);
+  
+      cardContainer.addChild(bg);
+      cardContainer.addChild(sprite);
 
-    const sprite = new PIXI.Sprite();
-    sprite.x = col * 45 + 12 + 21;
-    sprite.y = row * 45 + 212 + 21;
-    sprite.pivot.set(21, 21);
-
-    cardContainer.addChild(bg);
-    cardContainer.addChild(sprite);
-    container.addChild(cardContainer);
-
-    dirCards.push({ cardContainer, bg, sprite, ability: undefined });
-  }
+      return { cardContainer, bg, sprite, ability: undefined };
+    },
+    maxCardsX * maxCardsY,
+    { orientation: "horizontal", spacing: { x: 45, y: 45 }, start: { x: 10, y: 210 }, wrappingLimit: 4, },
+  );
 
   container.visible = false;
   

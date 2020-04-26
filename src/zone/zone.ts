@@ -6,6 +6,7 @@ import { transitionScreen } from "../menu/menu";
 import { allEnemies } from "../game/enemy";
 import { applyAction } from "../game/action";
 import { Summon } from "../game/definitions/action";
+import { wrappedLayout } from "../layout/layout";
 
 const maxZoneX = 5;
 
@@ -32,28 +33,29 @@ export function initializeZones(
   Object.assign(container, { x: 0, y: 80 });
 
   // initialize icons
-  let zones: ZoneDisplay[] = [];
-  for (let i = 0; i < state.zones.length; i++) {
-    const row = Math.floor(i / maxZoneX);
-    const col = Math.floor(i % maxZoneX);
-    const zone = state.zones[i];
-    const zoneContainer = new PIXI.Container();
-    zoneContainer.interactive = true;
-    zoneContainer.on("pointerdown", changeZoneSelected(i, state.zones, display));
-    zoneContainer.width = 60;
-    zoneContainer.height = 75;
-
-    const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
-    bg.tint = 0x00AAAA;
-    bg.x = col * 60 + 45;
-    bg.y = row * 100 + 50;
-    bg.width = 50;
-    bg.height = 75;
-
-    zoneContainer.addChild(bg);
-    container.addChild(zoneContainer);
-    zones.push({ zoneContainer, bg });
-  }
+  const zones: ZoneDisplay[] = wrappedLayout(
+    container,
+    i => {
+      const zoneContainer = new PIXI.Container();
+      zoneContainer.interactive = true;
+      zoneContainer.on("pointerdown", changeZoneSelected(i, state.zones, display));
+      zoneContainer.width = 60;
+      zoneContainer.height = 75;
+      
+      return zoneContainer;
+    },
+    zoneContainer => {
+      const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
+      bg.tint = 0x00AAAA;
+      bg.width = 50;
+      bg.height = 75;
+  
+      zoneContainer.addChild(bg);
+      return { zoneContainer, bg };
+    },
+    state.zones.length,
+    { orientation: "horizontal", spacing: { x: 55, y: 50 }, start: { x: 60, y: 100 }, wrappingLimit: maxZoneX, },
+  );
 
   updateZoneSelected(state.zones, zones);
 

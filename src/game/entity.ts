@@ -6,6 +6,8 @@ import { Display } from "./display";
 import { Status } from "./definitions/status";
 import { statusSprite } from "./status";
 import { Trigger } from "./definitions/trigger";
+import { wrappedLayout } from "../layout/layout";
+import { Sprite } from "pixi.js";
 
 const statusAmountX = 3;
 const statusAmountY = 5;
@@ -76,6 +78,13 @@ export type Entity = {
   statuses: (StateStatus | StateTrigger)[],
 }
 
+export type StatusDisplay = {
+  container: PIXI.Container,
+  sprite: PIXI.Sprite,
+  hp: PIXI.Sprite,
+  slot: PIXI.Sprite,
+}
+
 export type EntityDisplay = {
   container: PIXI.Container,
   rohMask: PIXI.Sprite,
@@ -89,9 +98,7 @@ export type EntityDisplay = {
   sieText: PIXI.BitmapText,
   shield: PIXI.Sprite,
   statusBg: PIXI.Sprite,
-  statusSprites: PIXI.Sprite[],
-  statusHpSprites: PIXI.Sprite[],
-  statusSlotSprites: PIXI.Sprite[],
+  statuses: StatusDisplay[],
 }
 
 // initialize: a function which takes a display and initializes it on the PIXI app
@@ -165,33 +172,34 @@ export function initializeEntity(
   container.addChild(statusBg);
 
   // initialize status icons
-  let statusSprites: PIXI.Sprite[] = [];
-  let statusHpSprites: PIXI.Sprite[] = [];
-  let statusSlotSprites: PIXI.Sprite[] = [];
-  for (let i = 0; i < statusAmount; i++) {
-    const statusSlotSprite = new PIXI.Sprite(cache["status_slot"]);
-    statusSlotSprite.x = (i % statusAmountX) * 25 + 160 - 12.5;
-    statusSlotSprite.y = Math.floor(i / statusAmountX) * 25 + 15 - 12.5;
+  const statuses: StatusDisplay[] = wrappedLayout(
+    container,
+    i => {
+      const statusContainer = new PIXI.Container();
+      
+      return statusContainer;
+    },
+    statusContainer => {
+      const statusSlotSprite = new PIXI.Sprite(cache["status_slot"]);
+      statusContainer.addChild(statusSlotSprite);
 
-    container.addChild(statusSlotSprite);
-    statusSlotSprites.push(statusSlotSprite);
-    const statusSprite = new PIXI.Sprite();
-    statusSprite.x = (i % statusAmountX) * 25 + 160;
-    statusSprite.y = Math.floor(i / statusAmountX) * 25 + 15;
-    statusSprite.pivot.set(12.5, 12.5);
+      const statusSprite = new PIXI.Sprite();
+      statusSprite.x = 12.5;
+      statusSprite.y = 12.5;
+      statusSprite.pivot.set(12.5, 12.5);
+      statusContainer.addChild(statusSprite);
 
-    container.addChild(statusSprite);
-    statusSprites.push(statusSprite);
+      const statusHpSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+      statusHpSprite.tint = 0xFF0000;
+      statusHpSprite.height = 5;
+      statusHpSprite.tint = 0xFF0000;
+      statusContainer.addChild(statusHpSprite);
 
-    const statusHpSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
-    statusHpSprite.tint = 0xFF0000;
-    statusHpSprite.x = (i % statusAmountX) * 25 + 160 - 12.5;
-    statusHpSprite.y = Math.floor(i / statusAmountX) * 25 + 15 - 12.5;
-    statusHpSprite.height = 5;
-
-    container.addChild(statusHpSprite);
-    statusHpSprites.push(statusHpSprite);
-  }
+      return { container: statusContainer, slot: statusSlotSprite, sprite: statusSprite, hp: statusHpSprite };
+    },
+    statusAmount,
+    { orientation: "horizontal", spacing: { x: 25, y: 25 }, start: { x: 160 - 12.5, y: 15 - 12.5 }, wrappingLimit: 3, },
+  );
 
   // initialize resource text  
   const rohText = new PIXI.BitmapText("-", {
@@ -253,7 +261,7 @@ export function initializeEntity(
     tahText.text = `${entity.tah}\n(${entity.maxTah})`;
     sieText.text = `${entity.sie}\n(${entity.maxSie})`;
     updateEntityShieldDisplay(entity, shield, cache);
-    updateEntityStatusDisplay(entity, statusSprites, statusHpSprites, cache);
+    updateEntityStatusDisplay(entity, statuses, cache);
   }
 
   if (entity === undefined) {
@@ -266,7 +274,7 @@ export function initializeEntity(
     container, rohMask, tahMask, sieMask, rohBar, tahBar, sieBar,
     rohText, tahText, sieText,
     shield,
-    statusBg, statusSprites, statusHpSprites, statusSlotSprites,
+    statusBg, statuses,
   };
 }
 
@@ -289,21 +297,20 @@ function updateEntityShieldDisplay(
 
 export function updateEntityStatusDisplay(
   entity: Entity,
-  statusSprites: PIXI.Sprite[],
-  statusHpSprites: PIXI.Sprite[],
+  statusDisplay: StatusDisplay[],
   cache: Cache,
 ) {
   let sizeOffset = 0;
   for (let i = 0; i < statusAmount - sizeOffset; i++) {
     const status: StateStatus | StateTrigger | undefined = entity.statuses[i];
-    statusSprites[i + sizeOffset].alpha = 1;
+    statusDisplay[i + sizeOffset].sprite.alpha = 1;
     if (status === undefined) {
-      statusSprites[i + sizeOffset].texture = PIXI.Texture.EMPTY;
-      statusHpSprites[i + sizeOffset].visible = false;
+      statusDisplay[i + sizeOffset].sprite.texture = PIXI.Texture.EMPTY;
+      statusDisplay[i + sizeOffset].hp.visible = false;
     } else {
-      statusSprites[i + sizeOffset].texture = cache[statusSprite(status)];
-      statusHpSprites[i + sizeOffset].visible = true;
-      statusHpSprites[i + sizeOffset].width = status.hp * 25 / status.maxHp;
+      statusDisplay[i + sizeOffset].sprite.texture = cache[statusSprite(status)];
+      statusDisplay[i + sizeOffset].hp.visible = true;
+      statusDisplay[i + sizeOffset].hp.width = status.hp * 25 / status.maxHp;
       sizeOffset += status.size - 1;
     }
   }
@@ -327,7 +334,7 @@ export function newEntityAnim(
         entityDisplay.tahText.text = `${entity.tah}\n(${entity.maxTah})`;
         entityDisplay.sieText.text = `${entity.sie}\n(${entity.maxSie})`;
         updateEntityShieldDisplay(entity, entityDisplay.shield, cache);
-        updateEntityStatusDisplay(entity, entityDisplay.statusSprites, entityDisplay.statusHpSprites, cache);
+        updateEntityStatusDisplay(entity, entityDisplay.statuses, cache);
         entity.dirty = true;
       } else {
         entityDisplay.container.visible = false;
@@ -402,7 +409,7 @@ export function damageStatusAnim(
     // new TweenTo(0.25, 0, "absolute", mkAccessTarget(entityDisplay.statusSprites[status.statusIndex], "alpha")),
     mkEff({
       eff: () => {
-        updateEntityStatusDisplay(entity, entityDisplay.statusSprites, entityDisplay.statusHpSprites, cache);
+        updateEntityStatusDisplay(entity, entityDisplay.statuses, cache);
       },
       k: () => new Noop(),
     })
@@ -417,10 +424,10 @@ export function removeStatusAnim(
 ) {
   const entityDisplay = display[status.owner].entity;
   return new Seq([
-    new TweenTo(0.25, 0, "absolute", mkAccessTarget(entityDisplay.statusSprites[status.statusIndex], "alpha")),
+    new TweenTo(0.25, 0, "absolute", mkAccessTarget(entityDisplay.statuses[status.statusIndex].sprite, "alpha")),
     mkEff({
       eff: () => {
-        updateEntityStatusDisplay(entity, entityDisplay.statusSprites, entityDisplay.statusHpSprites, cache);
+        updateEntityStatusDisplay(entity, entityDisplay.statuses, cache);
       },
       k: () => new Noop(),
     })

@@ -259,7 +259,7 @@ export function applyAction(
           }
           const animation = mkEff({
             eff: () => {
-              updateEntityStatusDisplay(targetEntity, targetEntityDisplay.statusSprites, targetEntityDisplay.statusHpSprites, cache);
+              updateEntityStatusDisplay(targetEntity, targetEntityDisplay.statuses, cache);
             },
             k: () => new Noop(),
           });

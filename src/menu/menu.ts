@@ -1,6 +1,7 @@
 import { Cache } from "../app/main";
 import { MenuState, GameState } from "../game/state";
 import { Display } from "../game/display";
+import { wrappedLayout } from "../layout/layout";
 
 export type MenuType = "combat" | "map" | "craft" | "settings";
 
@@ -19,23 +20,23 @@ export function initializeMenu(
   Object.assign(container, { x: 0, y: 130 });
 
   // initialize icons
-  let iconSprites: PIXI.Sprite[] = [];
-  for (let i = 0; i < 4; i++) {
-    const iconName = i === 0 ?
-      "combat" : i === 1 ?
-      "map" : i === 2 ?
-      "craft" : "settings";
-    // @ts-ignore
-    const iconSprite = new PIXI.Sprite(cache["menu_" + iconName]);
-    iconSprite.y = i * 70;
-    iconSprite.alpha = 0.35;
-
-    iconSprite.interactive = true;
-    iconSprite.on("pointerdown", transitionScreen(iconName, display, state));
-
-    iconSprites.push(iconSprite);
-    container.addChild(iconSprite);
-  }
+  const iconSprites = wrappedLayout(
+    container,
+    i => {
+      const iconName = i === 0 ?
+        "combat" : i === 1 ?
+        "map" : i === 2 ?
+        "craft" : "settings";
+      // @ts-ignore
+      const iconSprite = new PIXI.Sprite(cache["menu_" + iconName]);
+      iconSprite.interactive = true;
+      iconSprite.on("pointerdown", transitionScreen(iconName, display, state));
+      return iconSprite;
+    },
+    x => x,
+    4,
+    { orientation: "vertical", spacing: { x: 0, y: 70 }, start: { x: 0, y: 0 } },
+  );
 
   updateMenuSelected(state.menuState, iconSprites);
 

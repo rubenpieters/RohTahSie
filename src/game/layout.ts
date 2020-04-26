@@ -14,6 +14,7 @@ import { showDirSelect } from "./dirSelect";
 import { showCardSelect } from "./cardSelect";
 import { DirAbility } from "./definitions/dirAbility";
 import { dirAbilitySprite } from "./dirAbility";
+import { wrappedLayout } from "../layout/layout";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
@@ -55,39 +56,41 @@ export function initializeLayout(
   bg.alpha = 0.5;
   container.addChild(bg);
 
-  let nodes: PIXI.Sprite[] = [];
-  let abilitySlots: PIXI.Sprite[] = [];
-  for (let i = 0; i < nodeAmount; i++) {
-    let abilitySlot: PIXI.Sprite = undefined as any;
-    if (layout !== undefined) {
-      const dirValues = dirAbilitySprite(layout.nodes[i].direction);
-      abilitySlot = new PIXI.Sprite(cache[dirValues.sprite]);
-      abilitySlot.angle = dirValues.angle;
-    } else {
-      abilitySlot = new PIXI.Sprite();
-    }
-    abilitySlot.x = (i % xAmount) * 55 + 40;
-    abilitySlot.y = Math.floor(i / xAmount) * 55 + 40;
-    abilitySlot.pivot.set(26, 26);
-
-    container.addChild(abilitySlot);
-    abilitySlots.push(abilitySlot);
-
-    const box =
-      layout !== undefined ?
-      new PIXI.Sprite(cache[nodeSprite(layout.nodes[i].ability)]) :
-      new PIXI.Sprite();
-    box.x = (i % xAmount) * 55 + 40;
-    box.y = Math.floor(i / xAmount) * 55 + 40;
-    box.pivot.set(25, 25);
-
-    box.interactive = true;
-    box.on("pointerup", layoutPointerUpCb(state, display, cache, i, type));
-    box.on("pointerdown", layoutPointerDownCb(state, display, cache, i, type));
-
-    container.addChild(box);
-    nodes.push(box);
-  }
+  const abilitySlots = wrappedLayout(
+    container,
+    i => {
+      let abilitySlot: PIXI.Sprite = undefined as any;
+      if (layout !== undefined) {
+        const dirValues = dirAbilitySprite(layout.nodes[i].direction);
+        abilitySlot = new PIXI.Sprite(cache[dirValues.sprite]);
+        abilitySlot.angle = dirValues.angle;
+      } else {
+        abilitySlot = new PIXI.Sprite();
+      }
+      abilitySlot.pivot.set(26, 26);
+      return abilitySlot;
+    },
+    x => x,
+    nodeAmount,
+    { orientation: "horizontal", spacing: { x: 55, y: 55 }, start: { x: 40, y: 40 }, wrappingLimit: 4, },
+  );
+  const nodes = wrappedLayout(
+    container,
+    i => {
+      const node =
+        layout !== undefined ?
+        new PIXI.Sprite(cache[nodeSprite(layout.nodes[i].ability)]) :
+        new PIXI.Sprite();
+        node.pivot.set(25, 25);
+        node.interactive = true;
+        node.on("pointerup", layoutPointerUpCb(state, display, cache, i, type));
+        node.on("pointerdown", layoutPointerDownCb(state, display, cache, i, type));
+      return node;
+    },
+    x => x,
+    nodeAmount,
+    { orientation: "horizontal", spacing: { x: 55, y: 55 }, start: { x: 40, y: 40 }, wrappingLimit: 4, },
+  );
 
   const bar: PIXI.Sprite = new PIXI.Sprite(cache.bar);
   const currIndex = layout !== undefined ? layout.currentIndex : 0;
