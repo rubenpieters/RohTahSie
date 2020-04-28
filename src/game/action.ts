@@ -78,7 +78,7 @@ export function applyAction(
           const varValue = evalVar(state, action.value, source);
           const newHp = Math.min(targetEntity.statuses[status.statusIndex].maxHp, targetEntity.statuses[status.statusIndex].hp + varValue);
           targetEntity.statuses[status.statusIndex].hp = newHp;
-          const animation = damageStatusAnim(status, targetEntity, display, cache);
+          const animation = damageStatusAnim(status, targetEntity, state, display, cache);
           let newActions: ActionInQueue[] = [];
           if (newHp <= 0) {
             newActions = [{ action: new Death(new StatusTarget(action.target.id)), indexSource }];
@@ -165,7 +165,7 @@ export function applyAction(
           const varValue = evalVar(state, action.value, source);
           const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - varValue);
           targetEntity.statuses[status.statusIndex].hp = newHp;
-          const animation = damageStatusAnim(status, targetEntity, display, cache);
+          const animation = damageStatusAnim(status, targetEntity, state, display, cache);
           let newActions: ActionInQueue[] = [];
           if (newHp <= 0) {
             newActions = [{ action: new Death(new StatusTarget(action.target.id)), indexSource }];
@@ -204,7 +204,7 @@ export function applyAction(
           const targetEntity = state[status.owner]!.entity;
           const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - action.value);
           targetEntity.statuses[status.statusIndex].hp = newHp;
-          const animation = damageStatusAnim(status, targetEntity, display, cache);
+          const animation = damageStatusAnim(status, targetEntity, state, display, cache);
           let newActions: ActionInQueue[] = [];
           if (newHp <= 0) {
             newActions = [{ action: new Death(new StatusTarget(action.target.id)), indexSource }];
@@ -460,7 +460,7 @@ export function applyAction(
           // if a status is found on enemy, then it is not undefined
           const targetEntity = state[status.owner]!.entity;
           targetEntity.statuses.splice(status.statusIndex, 1);
-          const animation = removeStatusAnim(status, targetEntity, display, cache);
+          const animation = removeStatusAnim(status, action.target.id, targetEntity, display, cache);
           return { animation, newActions: [] };
         } else {
           return { animation: new Noop(), newActions: [] };

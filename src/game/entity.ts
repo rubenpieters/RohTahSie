@@ -8,7 +8,7 @@ import { statusSprite } from "./status";
 import { Trigger } from "./definitions/trigger";
 import { wrappedLayout } from "../layout/layout";
 import { Sprite } from "pixi.js";
-import { loadStStatusExpl } from "./stStatusExpl";
+import { loadStStatusExpl, updateStStatusExpl, checkAndUpdateStStatusExpl, fadeStStatusExpl } from "./stStatusExpl";
 import { GameState } from "./state";
 
 const statusAmountX = 3;
@@ -411,6 +411,7 @@ export function changeShieldAnim(
 export function damageStatusAnim(
   status: { statusIndex: number, owner: "player" | "enemy" },
   entity: Entity,
+  state: GameState,
   display: Display,
   cache: Cache,
 ) {
@@ -420,6 +421,7 @@ export function damageStatusAnim(
     mkEff({
       eff: () => {
         updateEntityStatusDisplay(entity, entityDisplay.statuses, cache);
+        checkAndUpdateStStatusExpl(status.statusIndex, status.owner, state, display.player.stStatusExpl);
       },
       k: () => new Noop(),
     })
@@ -428,6 +430,7 @@ export function damageStatusAnim(
 
 export function removeStatusAnim(
   status: { statusIndex: number, owner: "player" | "enemy" },
+  statusId: number,
   entity: Entity,
   display: Display,
   cache: Cache,
@@ -438,6 +441,7 @@ export function removeStatusAnim(
     mkEff({
       eff: () => {
         updateEntityStatusDisplay(entity, entityDisplay.statuses, cache);
+        fadeStStatusExpl(statusId, display.player.stStatusExpl);
       },
       k: () => new Noop(),
     })

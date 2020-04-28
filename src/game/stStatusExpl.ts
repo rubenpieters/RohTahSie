@@ -1,7 +1,7 @@
 import { Display } from "./display";
 import { Cache } from "../app/main";
-import { StateStatus } from "./entity";
-import { embedEff, Seq, Anim, Noop } from "../app/animation";
+import { StateStatus, StateTrigger } from "./entity";
+import { embedEff, Seq, Anim, Noop, TweenTo, mkAccessTarget } from "../app/animation";
 import { GameState } from "./state";
 
 
@@ -9,7 +9,9 @@ export type StStatusExplDisplay = {
   container: PIXI.Container,
   bg: PIXI.Sprite,
   title: PIXI.BitmapText,
+  hpText: PIXI.BitmapText,
   effects: PIXI.BitmapText,
+  statusId: number | undefined,
 }
 
 
@@ -50,19 +52,30 @@ export function initializeStStatusExpl(
   Object.assign(effects, { x: 15, y: 60 });
   container.addChild(effects);
 
+  // intialize hp text
+  const hpText = new PIXI.BitmapText("", {
+    font: {
+      name: "Bahnschrift",
+      size: 32,
+    },
+    tint: 0xFF0000,
+  });
+  Object.assign(hpText, { x: 400, y: 5 });
+  container.addChild(hpText);
+
   container.visible = false;
 
   container.interactive = true;
   container.on("pointerdown", () => {
-    container.visible = false;
+    display.player.stStatusExpl.container.visible = false;
+    display.player.stStatusExpl.statusId = undefined;
   });
 
   parentContainer.addChild(container);
 
-  return { container, bg, title, effects };
+  return { container, bg, title, effects, statusId: undefined, hpText };
 }
 
-// TODO: base ststatusdisplay on status id? the display can then update when the status changes
 export function loadStStatusExpl(
   i: number,
   target: "player" | "enemy",
@@ -75,11 +88,46 @@ export function loadStStatusExpl(
     if (status !== undefined) {
       return new Seq([
         embedEff(() => {
+          display.statusId = status.id;
           display.container.visible = true;
-          display.title.text = status.name;
+          updateStStatusExpl(status, display);
         }),
       ]);
     }
   }
   return new Noop();
+}
+
+export function fadeStStatusExpl(
+  statusId: number,
+  display: StStatusExplDisplay,
+): Anim {
+  if (statusId === display.statusId) {
+    return new TweenTo(0.2, 0, "absolute", mkAccessTarget(display.container, "alpha"));
+  } else {
+    return new Noop();
+  }
+}
+
+export function updateStStatusExpl(
+  status: StateStatus | StateTrigger,
+  display: StStatusExplDisplay,
+) {
+  display.title.text = status.name;
+  display.hpText.text = `${status.hp} / ${status.maxHp}`;
+}
+
+export function checkAndUpdateStStatusExpl(
+  statusIndex: number,
+  owner: "player" | "enemy",
+  state: GameState,
+  display: StStatusExplDisplay,
+) {
+  const targetEntity = state[owner]?.entity;
+  if (targetEntity !== undefined) {
+    const status = targetEntity.statuses[statusIndex];
+    if (status.id === display.statusId) {
+      updateStStatusExpl(status, display);
+    }
+  }
 }
