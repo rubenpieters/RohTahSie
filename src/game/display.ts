@@ -19,6 +19,7 @@ import { checkTriggers } from "./trigger";
 import { indexInDir } from "./dir";
 import { DirSelectDisplay } from "./dirSelect";
 import { CardSelectDisplay } from "./cardSelect";
+import { StStatusExplDisplay } from "./stStatusExpl";
 
 export type Display = {
   player: {
@@ -26,6 +27,7 @@ export type Display = {
     layout: LayoutDisplay,
     hotbar: HotbarDisplay,
     nodeExpl: NodeExplDisplay,
+    stStatusExpl: StStatusExplDisplay,
     dirSelect: DirSelectDisplay,
     cardSelect: CardSelectDisplay,
   },

@@ -1,4 +1,4 @@
-import { Cache } from "../app/main";
+import { Cache, attachAnimation } from "../app/main";
 import { ResourceType } from "./types";
 import { ConcreteTarget } from "./definitions/target";
 import { mkEff, Anim, Noop, TweenTo, mkAccessTarget, Par, Seq, mkParticle } from "../app/animation";
@@ -8,6 +8,8 @@ import { statusSprite } from "./status";
 import { Trigger } from "./definitions/trigger";
 import { wrappedLayout } from "../layout/layout";
 import { Sprite } from "pixi.js";
+import { loadStStatusExpl } from "./stStatusExpl";
+import { GameState } from "./state";
 
 const statusAmountX = 3;
 const statusAmountY = 5;
@@ -107,8 +109,10 @@ export function initializeEntity(
   x: number,
   y: number,
   parentContainer: PIXI.Container,
+  state: GameState,
   display: Display,
   cache: Cache,
+  type: "player" | "enemy",
 ): EntityDisplay {
   const container = new PIXI.Container();
   Object.assign(container, { x, y });
@@ -176,6 +180,12 @@ export function initializeEntity(
     container,
     i => {
       const statusContainer = new PIXI.Container();
+      statusContainer.width = 30;
+      statusContainer.height = 30;
+      statusContainer.interactive = true;
+      statusContainer.on("pointerdown", () => {
+        attachAnimation(loadStStatusExpl(i, type, state, display.player.stStatusExpl));
+      });
       
       return statusContainer;
     },

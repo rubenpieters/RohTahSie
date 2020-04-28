@@ -14,6 +14,7 @@ import { initializeCraftCards } from "../craft/card";
 import { initializeZones } from "../zone/zone";
 import { initializeDirSelect } from "../game/dirSelect";
 import { initializeCardSelect } from "../game/cardSelect";
+import { initializeStStatusExpl } from "../game/stStatusExpl";
 
 const WIDTH = 540;
 const HEIGHT = 540;
@@ -144,21 +145,23 @@ function main(): void {
   const state: GameState = {} as GameState;
   initializeState(state);
 
-  let display: Display = {} as Display;
+  const display: Display = {} as Display;
   display.player = {
     layout: initializeLayout(state.player.layout, 37.5, 190, combatContainer, state, display, cache, "player"),
-    entity: initializeEntity(state.player.entity, 40, 40, combatContainer, display, cache),
+    entity: initializeEntity(state.player.entity, 40, 40, combatContainer, state, display, cache, "player"),
     hotbar: initializeHotbar(state.player.hotbar, 40, 425, combatContainer, state, display, cache),
     nodeExpl: undefined as any, // initialized later for z-index
+    stStatusExpl: undefined as any,
     dirSelect: undefined as any,
     cardSelect: undefined as any,
   };
   display.enemy = {
     layout: initializeLayout(undefined, 277.5, 190, combatContainer, state, display, cache, "enemy"),
-    entity: initializeEntity(undefined, 270, 40, combatContainer, display, cache),
+    entity: initializeEntity(undefined, 270, 40, combatContainer, state, display, cache, "enemy"),
   };
   display.pools = initializePools(combatContainer);
   display.player.nodeExpl = initializeNodeExpl(appContainer, display, cache);
+  display.player.stStatusExpl = initializeStStatusExpl(appContainer, display, cache);
   display.player.dirSelect = initializeDirSelect(appContainer, state, display, cache);
   display.player.cardSelect = initializeCardSelect(appContainer, state, display, cache);
   display.menu = initializeMenu(appContainer, cache, display, state);
