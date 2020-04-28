@@ -31,6 +31,18 @@ export function allCardCrafts(): CardCrafts {
       cost: 0,
     },
     {
+      node: new Ab.Buff1(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
+      node: new Ab.Buff2(),
+      included: 1,
+      available: 1,
+      cost: 0,
+    },
+    {
       node: new Ab.FocusRoh(),
       included: 1,
       available: 1,

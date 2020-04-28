@@ -32,6 +32,22 @@ export class Dmg3 {
   ]
 }
 
+export class Buff1 {
+  public readonly name: "Buff1" = "Buff1"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(20, "roh", new Self()),
+    new A.AddStatus(new S.Buff1Status, new Self()),
+  ]
+}
+
+export class Buff2 {
+  public readonly name: "Buff2" = "Buff2"
+  public readonly actions: Action<AbstractTarget>[] = [
+    new A.Cost(20, "tah", new Self()),
+    new A.AddStatus(new S.Buff2Status, new Self()),
+  ]
+}
+
 export class FocusRoh {
   public readonly name: "FocusRoh" = "FocusRoh"
   public readonly actions: Action<AbstractTarget>[] = [
@@ -243,6 +259,8 @@ export type Ability
   = Dmg1
   | Dmg2
   | Dmg3
+  | Buff1
+  | Buff2
   | FocusRoh
   | FocusTah
   | FocusSie
@@ -277,6 +295,8 @@ export type Ability
       case "Dmg1": return new Dmg1();
       case "Dmg2": return new Dmg2();
       case "Dmg3": return new Dmg3();
+      case "Buff1": return new Buff1();
+      case "Buff2": return new Buff2();
       case "FocusRoh": return new FocusRoh();
       case "FocusTah": return new FocusTah();
       case "FocusSie": return new FocusSie();

@@ -16,6 +16,8 @@ export function nodeSprite(
     case "Dmg1": return "sword";
     case "Dmg2": return "sword";
     case "Dmg3": return "sword";
+    case "Buff1": return "sword";
+    case "Buff2": return "sword";
     case "FocusRoh": return "sword";
     case "FocusTah": return "sword";
     case "FocusSie": return "sword";
