@@ -115,7 +115,7 @@ export class VoodooDollStatus {
   public readonly size = 5;
 
   public readonly ca = mkStatusCA({
-    condition: new C.And(C.mkIsTag("Damage"), new C.HasTarget(new T.Other())),
+    condition: new C.And(new C.And(C.mkIsTag("Damage"), new C.HasTarget(new T.Other())), new C.HasSource(new T.Self())),
     actions: [
       new Increase("value", 8),
       new Damage(new V.Constant(1), "essence", new T.ThisStatus()),

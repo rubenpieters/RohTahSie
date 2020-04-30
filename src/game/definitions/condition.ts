@@ -40,9 +40,18 @@ export class HasTarget {
   ) {}
 }
 
+export class HasSource {
+  public readonly tag: "HasSource" = "HasSource";
+
+  constructor(
+    public readonly source: AbstractTarget,
+  ) {}
+}
+
 export type Condition<Before extends Action<ConcreteTarget>, After extends Action<ConcreteTarget>>
   = IsTag<Before, After>
   | OnSelf
   | And<Before, After>
   | HasTarget
+  | HasSource
   ;
