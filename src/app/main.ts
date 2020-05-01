@@ -161,9 +161,9 @@ function main(): void {
   };
   display.pools = initializePools(combatContainer);
   display.player.nodeExpl = initializeNodeExpl(appContainer, display, cache);
-  display.player.stStatusExpl = initializeStStatusExpl(appContainer, display, cache);
-  display.player.dirSelect = initializeDirSelect(appContainer, state, display, cache);
-  display.player.cardSelect = initializeCardSelect(appContainer, state, display, cache);
+  display.player.stStatusExpl = initializeStStatusExpl(combatContainer, display, cache);
+  display.player.dirSelect = initializeDirSelect(combatContainer, state, display, cache);
+  display.player.cardSelect = initializeCardSelect(combatContainer, state, display, cache);
   display.menu = initializeMenu(appContainer, cache, display, state);
   display.combatContainer = combatContainer;
   display.craftContainer = craftContainer;
