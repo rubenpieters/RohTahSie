@@ -480,7 +480,7 @@ export function actionExpl<T extends AbstractTarget>(
     case "Cost": {
       const varExpls = varExpl(action.value, variables);
       return {
-        mainExpl: `cost ${varExpls.mainExpl} ${action.resource} to ${targetExpl(action.target)}}`,
+        mainExpl: `cost ${varExpls.mainExpl} ${action.resource} to ${targetExpl(action.target)}`,
         sideExpl: [],
         variables,
       }

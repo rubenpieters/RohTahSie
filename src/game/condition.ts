@@ -69,8 +69,8 @@ export function conditionExpl<Before extends Action<ConcreteTarget>, After exten
   switch (condition.tag) {
     case "IsTag": return `when ${condition.actionTag}`;
     case "OnSelf": return "on self";
-    case "HasTarget": return `(${targetExpl(condition.target)})`;
-    case "HasSource": return `(${targetExpl(condition.source)})`;
+    case "HasTarget": return `target: ${targetExpl(condition.target)}`;
+    case "HasSource": return `source: ${targetExpl(condition.source)}`;
     case "And": return `${conditionExpl(condition.cond1)} and ${conditionExpl(condition.cond2)}`;
   }
 }
