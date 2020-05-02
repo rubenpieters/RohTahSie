@@ -35,6 +35,26 @@ export class Damage<T> {
   ) {}
 }
 
+export class Cost<T> {
+  public readonly tag: "Cost" = "Cost";
+
+  constructor(
+    public readonly value: Var<number, T>,
+    public readonly resource: ResourceType,
+    public readonly target: T,
+  ) {}
+}
+
+export class Lower<T> {
+  public readonly tag: "Lower" = "Lower";
+
+  constructor(
+    public readonly value: Var<number, T>,
+    public readonly resource: AbstractResourceType,
+    public readonly target: T,
+  ) {}
+}
+
 export class ChangeShield<T> {
   public readonly tag: "ChangeShield" = "ChangeShield";
 
@@ -57,16 +77,6 @@ export class Death<T> {
   public readonly tag: "Death" = "Death";
 
   constructor(
-    public readonly target: T,
-  ) {}
-}
-
-export class Cost<T> {
-  public readonly tag: "Cost" = "Cost";
-
-  constructor(
-    public readonly value: number,
-    public readonly resource: ResourceType,
     public readonly target: T,
   ) {}
 }
@@ -172,6 +182,7 @@ export type Action<T>
   | Summon
   | Damage<T>
   | Cost<T>
+  | Lower<T>
   | ChangeShield<T>
   | AddStatus<T>
   | Death<T>

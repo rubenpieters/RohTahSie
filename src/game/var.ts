@@ -45,7 +45,7 @@ export function evalVar<A>(
       return evalVar(state, varDef.x1, source, thisStatus) + evalVar(state, varDef.x2, source, thisStatus) as any;
     }
     case "Minus": {
-      return evalVar(state, varDef.x1, source, thisStatus) - evalVar(state, varDef.x2, source, thisStatus) as any;
+      return Math.max(0, evalVar(state, varDef.x1, source, thisStatus) - evalVar(state, varDef.x2, source, thisStatus)) as any;
     }
     case "Mult": {
       return evalVar(state, varDef.x1, source, thisStatus) * evalVar(state, varDef.x2, source, thisStatus) as any;

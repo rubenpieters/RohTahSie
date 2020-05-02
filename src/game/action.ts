@@ -5,7 +5,7 @@ import { Display } from "./display";
 import { updateResourceAnim, newEntityAnim, changeShieldAnim, statusAmount, updateEntityStatusDisplay, removeStatusAnim, damageStatusAnim, sizeUsed, resourceMaxField, StateStatus, StateTrigger } from "./entity";
 import { barLocation, newLayoutAnim, changeLayoutNode } from "./layout";
 import { Cache } from "../app/main";
-import { Action, Death, Regen } from "./definitions/action";
+import { Action, Death, Regen, Lower } from "./definitions/action";
 import { allEnemies } from "./enemy";
 import { applyStatuses, statusExpl } from "./status";
 import { ConcreteTarget, EnemyTarget, StatusTarget, AbstractTarget, PlayerTarget } from "./definitions/target";
@@ -111,6 +111,24 @@ export function applyAction(
       return { animation, newActions: [] };
     }
     case "Damage": {
+      return {
+        animation: new Noop(),
+        newActions: [{
+          action: new Lower(action.value, action.resource, action.target),
+          indexSource,
+        }],
+      };
+    }
+    case "Cost": {
+      return {
+        animation: new Noop(),
+        newActions: [{
+          action: new Lower(action.value, action.resource, action.target),
+          indexSource,
+        }],
+      };
+    }
+    case "Lower": {
       if (
         action.target.tag === "PlayerTarget" ||
         action.target.tag === "EnemyTarget"
@@ -164,45 +182,6 @@ export function applyAction(
           const targetEntity = state[status.owner]!.entity;
           const varValue = evalVar(state, action.value, source);
           const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - varValue);
-          targetEntity.statuses[status.statusIndex].hp = newHp;
-          const animation = damageStatusAnim(status, targetEntity, state, display, cache);
-          let newActions: ActionInQueue[] = [];
-          if (newHp <= 0) {
-            newActions = [{ action: new Death(new StatusTarget(action.target.id)), indexSource }];
-          }
-          return { animation, newActions };
-        } else {
-          return { animation: new Noop(), newActions: [] };
-        }
-      }
-      return { animation: new Noop(), newActions: [] };
-    }
-    case "Cost": {
-      if (
-        action.target.tag === "PlayerTarget" ||
-        action.target.tag === "EnemyTarget"
-      ) {
-        const targetEntity = targetToEntity(action.target, state);
-        if (targetEntity !== undefined) {
-          const shieldType = action.resource;
-          const prevValue = targetEntity[shieldType];
-          targetEntity[shieldType] = Math.max(0, targetEntity[shieldType] - action.value);
-          const valueChange = prevValue - targetEntity[shieldType];
-          // decrease resource animation
-          const target = action.target.tag === "PlayerTarget" ? "player" : "enemy";
-          const animation = updateResourceAnim(targetEntity, display, shieldType, target, `-${valueChange}`);
-          let newActions: ActionInQueue[] = [];
-          if (action.target.tag === "EnemyTarget" && targetEntity[shieldType] <= 0) {
-            newActions = [{ action: new Death(new EnemyTarget()), indexSource }];
-          }
-          return { animation, newActions };
-        }
-      } else if (action.target.tag === "StatusTarget") {
-        const status = findStatus(state, action.target.id);
-        if (status !== undefined) {
-          // if a status is found on enemy, then it is not undefined
-          const targetEntity = state[status.owner]!.entity;
-          const newHp = Math.max(0, targetEntity.statuses[status.statusIndex].hp - action.value);
           targetEntity.statuses[status.statusIndex].hp = newHp;
           const animation = damageStatusAnim(status, targetEntity, state, display, cache);
           let newActions: ActionInQueue[] = [];
@@ -490,8 +469,24 @@ export function actionExpl<T extends AbstractTarget>(
         variables,
       };
     }
-    case "Cost": return {
-      mainExpl: `-${action.value} ${action.resource} to ${targetExpl(action.target)}`,
+    case "Damage": {
+      const varExpls = varExpl(action.value, variables);
+      return {
+        mainExpl: `damage ${varExpls.mainExpl} ${action.resource} to ${targetExpl(action.target)}`,
+        sideExpl: varExpls.sideExpl,
+        variables,
+      };
+    }
+    case "Cost": {
+      const varExpls = varExpl(action.value, variables);
+      return {
+        mainExpl: `cost ${varExpls.mainExpl} ${action.resource} to ${targetExpl(action.target)}}`,
+        sideExpl: [],
+        variables,
+      }
+    };
+    case "Lower": return {
+      mainExpl: `-${action.value} ${action.resource} to ${targetExpl(action.target)}}`,
       sideExpl: [],
       variables,
     };
@@ -516,14 +511,6 @@ export function actionExpl<T extends AbstractTarget>(
       sideExpl: [],
       variables,
     };
-    case "Damage": {
-      const varExpls = varExpl(action.value, variables);
-      return {
-        mainExpl: `-${varExpls.mainExpl} Essence to ${targetExpl(action.target)}`,
-        sideExpl: varExpls.sideExpl,
-        variables,
-      };
-    }
     case "Death": return {
       mainExpl: `Death`,
       sideExpl: [],
@@ -613,7 +600,6 @@ export function concretizeAction(
   thisStatus?: StatusTarget,
 ): Action<ConcreteTarget> {
   switch (action.tag) {
-    case "Cost": // fallthrough
     case "Death": // fallthrough
     case "AddStatus": // fallthrough
     case "EndTurn": // fallthrough
@@ -624,6 +610,8 @@ export function concretizeAction(
     case "ChangeShield":
       return { ...action, target: concretizeTarget(action.target, source, thisStatus) };
     case "Regen": // fallthrough
+    case "Cost": // fallthrough
+    case "Lower": // fallthrough
     case "Damage":
       return { ...action, target: concretizeTarget(action.target, source, thisStatus), value: concretizeVar(action.value, source) };
     case "RemoveStatus":
