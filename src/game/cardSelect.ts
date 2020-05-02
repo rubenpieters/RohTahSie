@@ -33,6 +33,9 @@ export type CardSelectDisplay = {
   cards: CardDisplay[],
   dirCards: DirCardDisplay[],
   nodeIndex: number | undefined,
+  cardSelectIndex: number,
+  cardSelectUpBtn: PIXI.Sprite,
+  cardSelectDownBtn: PIXI.Sprite,
 }
 
 export function initializeCardSelect(
@@ -88,6 +91,38 @@ export function initializeCardSelect(
     { orientation: "horizontal", spacing: { x: 45, y: 45 }, start: { x: 10, y: 10 }, wrappingLimit: 4, },
   );
 
+  // up/down btns
+  const cardSelectUpBtn = new PIXI.Sprite(PIXI.Texture.WHITE);
+  cardSelectUpBtn.x = 100;
+  cardSelectUpBtn.y = 190;
+  cardSelectUpBtn.tint = 0x000000;
+  cardSelectUpBtn.width = 30;
+  cardSelectUpBtn.height = 10;
+  container.addChild(cardSelectUpBtn);
+
+  cardSelectUpBtn.interactive = true;
+  cardSelectUpBtn.on("pointerdown", () => {
+    display.player.cardSelect.cardSelectIndex += 4;
+    updateCardSelectCards(state, display, cache);
+  });
+
+  const cardSelectDownBtn = new PIXI.Sprite(PIXI.Texture.WHITE);
+  cardSelectDownBtn.x = 140;
+  cardSelectDownBtn.y = 190;
+  cardSelectDownBtn.tint = 0x000000;
+  cardSelectDownBtn.width = 30;
+  cardSelectDownBtn.height = 10;
+  container.addChild(cardSelectDownBtn);
+
+  cardSelectDownBtn.interactive = true;
+  cardSelectDownBtn.on("pointerdown", () => {
+    display.player.cardSelect.cardSelectIndex -= 4;
+    if (display.player.cardSelect.cardSelectIndex < 0) {
+      display.player.cardSelect.cardSelectIndex = 0;
+    }
+    updateCardSelectCards(state, display, cache);
+  });
+
   // create dir card display
   const dirCards: DirCardDisplay[] = wrappedLayout(
     container,
@@ -124,7 +159,7 @@ export function initializeCardSelect(
   
   parentContainer.addChild(container);
 
-  return { bg, container, cards, dirCards, nodeIndex: undefined };
+  return { bg, container, cards, dirCards, cardSelectUpBtn, cardSelectDownBtn, nodeIndex: undefined, cardSelectIndex: 0 };
 }
 
 export function updateCardSelectCards(
@@ -139,7 +174,8 @@ export function updateCardSelectCards(
       return undefined;
     }
   });
-  const availableCards = filterUndefined(elementsUnfiltered).slice(0, maxCardsX * maxCardsY);
+  const min = display.player.cardSelect.cardSelectIndex;
+  const availableCards = filterUndefined(elementsUnfiltered).slice(min, min + maxCardsX * maxCardsY);
   for (let i = 0; i < maxCardsX * maxCardsY; i++) {
     const card: Ability | undefined = availableCards[i];
     if (card === undefined) {
