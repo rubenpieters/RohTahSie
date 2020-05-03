@@ -269,9 +269,11 @@ export function applyAction(
     case "Conditional": {
       const evalCond = evalVar(state, action.cond, source);
       if (evalCond) {
-        return { animation: new Noop(), newActions: [{ action: action.actionThen, indexSource }] };
+        const newActions = action.actionThen.map(x => { return { action: x, indexSource }});
+        return { animation: new Noop(), newActions };
       } else {
-        return { animation: new Noop(), newActions: [{ action: action.actionElse, indexSource }] };
+        const newActions = action.actionElse.map(x => { return { action: x, indexSource }});
+        return { animation: new Noop(), newActions };
       }
     }
     case "StoreVar": {
@@ -550,13 +552,34 @@ export function actionExpl<T extends AbstractTarget>(
       };
     }
     case "Conditional": {
+      let allVariables = variables;
+      let allSideExpl: SideExpl[] = [];
       const condExpl = varExpl(action.cond, variables);
-      const thenExpl = actionExpl(action.actionThen, variables);
-      const elseExpl = actionExpl(action.actionElse, thenExpl.variables);
+      allSideExpl = allSideExpl.concat(condExpl.sideExpl);
+      const thenMainExpls: string[] = [];
+      action.actionThen.forEach(x => {
+        const result = actionExpl(x, allVariables);
+        if (result.mainExpl !== undefined) {
+          thenMainExpls.push(result.mainExpl);
+        }
+        allVariables = result.variables;
+        allSideExpl = allSideExpl.concat(result.sideExpl);
+      });
+      const elseMainExpls: string[] = [];
+      action.actionElse.forEach(x => {
+        const result = actionExpl(x, allVariables);
+        if (result.mainExpl !== undefined) {
+          elseMainExpls.push(result.mainExpl);
+        }
+        allVariables = result.variables;
+        allSideExpl = allSideExpl.concat(result.sideExpl);
+      });
+      const thenMainExpl = thenMainExpls.join("|");
+      const elseMainExpl = elseMainExpls.join("|");
       return {
-        mainExpl: `if ${condExpl.mainExpl}\n   * then: ${thenExpl.mainExpl}\n   * else: ${elseExpl.mainExpl}`,
-        sideExpl: condExpl.sideExpl.concat(thenExpl.sideExpl).concat(elseExpl.sideExpl),
-        variables: elseExpl.variables,
+        mainExpl: `if ${condExpl.mainExpl}\n   * then: ${thenMainExpl}\n   * else: ${elseMainExpl}`,
+        sideExpl: allSideExpl,
+        variables: allVariables,
       };
     }
     case "ActionFrom": return {
@@ -620,8 +643,8 @@ export function concretizeAction(
       return {
         ...action,
         cond: concretizeVar(action.cond, source),
-        actionThen: concretizeAction(action.actionThen, source, thisStatus),
-        actionElse: concretizeAction(action.actionElse, source, thisStatus),
+        actionThen: action.actionThen.map(x => concretizeAction(x, source, thisStatus)),
+        actionElse: action.actionElse.map(x => concretizeAction(x, source, thisStatus)),
       };
     case "StoreVar":
       return {

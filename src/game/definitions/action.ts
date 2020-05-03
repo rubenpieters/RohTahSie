@@ -100,8 +100,8 @@ export class Conditional<T> {
 
   constructor(
     public readonly cond: Var<boolean, T>,
-    public readonly actionThen: Action<T>,
-    public readonly actionElse: Action<T>,
+    public readonly actionThen: Action<T>[],
+    public readonly actionElse: Action<T>[],
   ) {}
 }
 

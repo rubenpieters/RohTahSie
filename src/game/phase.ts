@@ -1,9 +1,10 @@
 import * as lo from "lodash";
 import { GameState } from "./state";
 import { GamePhase, Transforming, Applying, Charging, Finalizing, ActionInQueue, Waiting } from "./definitions/phase";
-import { EndTurn } from "./definitions/action";
-import { EnemyTarget, PlayerTarget } from "./definitions/target";
+import { EndTurn, Conditional, Action, NoAction } from "./definitions/action";
+import { EnemyTarget, PlayerTarget, AbstractTarget } from "./definitions/target";
 import { Initiate } from "./definitions/ability";
+import { Noop } from "src/app/animation";
 
 export function nextPhase(
   state: GameState,
@@ -15,7 +16,11 @@ export function nextPhase(
     case "Charging": {
       const abilityActions = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].ability.actions);
       const moveActions = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].direction.actions);
-      const actions = abilityActions.concat(moveActions);
+      const condMove = state.player.layout.nodes[state.player.layout.currentIndex].condMove;
+      const condMoveAction: Action<AbstractTarget>[] = condMove !== undefined ? [new Conditional(
+        lo.cloneDeep(condMove.cond), [lo.cloneDeep(condMove.move)], moveActions
+      )] : moveActions;
+      const actions = abilityActions.concat(condMoveAction);
       const actionQueue: ActionInQueue[] = actions.map(x => { return {
         action: x, indexSource: state.player.layout.currentIndex,
       }});
@@ -32,7 +37,11 @@ export function nextPhase(
           if (state.enemy !== undefined && ! state.enemy.entity.dirty) {
             const abilityActions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].ability.actions);
             const moveActions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].direction.actions);
-            const actions = abilityActions.concat(moveActions);
+            const condMove = state.player.layout.nodes[state.player.layout.currentIndex].condMove;
+            const condMoveAction: Action<AbstractTarget>[] = condMove !== undefined ? [new Conditional(
+              lo.cloneDeep(condMove.cond), [lo.cloneDeep(condMove.move)], moveActions
+            )] : moveActions;
+            const actions = abilityActions.concat(condMoveAction);
             const actionQueue: ActionInQueue[] = actions.map(x => { return {
               action: x, indexSource: state.player.layout.currentIndex,
             }});
@@ -74,7 +83,11 @@ export function nextPhase(
           if (state.enemy !== undefined && ! state.enemy.entity.dirty) {
             const abilityActions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].ability.actions);
             const moveActions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].direction.actions);
-            const actions = abilityActions.concat(moveActions);
+            const condMove = state.player.layout.nodes[state.player.layout.currentIndex].condMove;
+            const condMoveAction: Action<AbstractTarget>[] = condMove !== undefined ? [new Conditional(
+              lo.cloneDeep(condMove.cond), [lo.cloneDeep(condMove.move)], moveActions
+            )] : moveActions;
+            const actions = abilityActions.concat(condMoveAction);
             const actionQueue: ActionInQueue[] = actions.map(x => { return {
               action: x, indexSource: state.player.layout.currentIndex,
             }});

@@ -141,8 +141,8 @@ export class Isolation {
     new A.Cost(new V.Constant(4), "tah", new Self()),
     new A.Conditional(
       V.mkEquals(V.mkCountAbility("Isolation", mkSelf), new V.Constant(1)),
-      new A.Damage(new V.Constant(10), "essence", new Other()),
-      new A.NoAction()
+      [new A.Damage(new V.Constant(10), "essence", new Other())],
+      [new A.NoAction()]
     ),
   ];
 }
@@ -196,8 +196,8 @@ export class Miracle {
     new A.Cost(new V.Constant(3), "sie", new Self()),
     new A.Conditional(
       V.mkEquals(new V.Resource(mkSelf, "sie"), new V.Constant(1)),
-      new A.Damage(new V.Constant(13), "essence", mkOther),
-      new A.NoAction(),
+      [new A.Damage(new V.Constant(13), "essence", mkOther)],
+      [new A.NoAction()],
     ),
   ]
 }
@@ -225,8 +225,8 @@ export class Reflex {
     new A.Cost(new V.Constant(1), "roh", new Self()),
     new A.Conditional(
       V.mkBelow(new V.Resource(mkSelf, "essence"), 30),
-      new A.ActionFrom("up", new Self()),
-      new A.ActionFrom("down", new Self()),
+      [new A.ActionFrom("up", new Self())],
+      [new A.ActionFrom("down", new Self())],
     )
   ]
 }

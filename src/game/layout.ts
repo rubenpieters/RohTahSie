@@ -6,7 +6,7 @@ import { GameState } from "./state";
 import { mkEff, Noop, Anim, Par, TweenTo, mkAccessTarget, Seq, embedEff } from "../app/animation";
 import { hotbarSelectedNode } from "./hotbar";
 import { Display } from "./display";
-import { EnemyTarget, PlayerTarget } from "./definitions/target";
+import { EnemyTarget, PlayerTarget, ConcreteTarget, AbstractTarget, mkSelf } from "./definitions/target";
 import { loadNodeExpl } from "./nodeExpl";
 import { nodeSprite } from "./ability";
 import { Dir, dirToDeg } from "./dir";
@@ -15,6 +15,8 @@ import { showCardSelect } from "./cardSelect";
 import { DirAbility } from "./definitions/dirAbility";
 import { dirAbilitySprite } from "./dirAbility";
 import { wrappedLayout } from "../layout/layout";
+import { Action, MoveDir } from "./definitions/action";
+import { Var, Constant } from "./definitions/var";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
@@ -26,6 +28,10 @@ const nodeAmount = xAmount * yAmount;
 export type Layout = {
   nodes: {
     ability: Ability,
+    condMove?: {
+      cond: Var<boolean, AbstractTarget>,
+      move: Action<AbstractTarget>,
+    },
     direction: DirAbility,
   }[],
   currentIndex: number,
@@ -239,7 +245,7 @@ export function barLocation(
 export function playerInitialLayout(): Layout {
   return {
     nodes: [
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: { cond: new Constant(true), move: new MoveDir("down", mkSelf) }, direction: new DAb.MoveRight() },
       { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
       { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
       { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },

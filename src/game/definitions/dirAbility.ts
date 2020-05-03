@@ -51,8 +51,8 @@ export class MoveDownEssenceLow {
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Conditional(
       V.mkBelow(new V.Resource(mkSelf, "essence"), 30),
-      new A.MoveDir("down", mkSelf),
-      new A.MoveDir("right", mkSelf),
+      [new A.MoveDir("down", mkSelf)],
+      [new A.MoveDir("right", mkSelf)],
     ),
   ]
 }
@@ -62,8 +62,8 @@ export class MoveUpEssenceHigh {
   public readonly actions: Action<AbstractTarget>[] = [
     new A.Conditional(
       V.mkAbove(new V.Resource(mkSelf, "essence"), 80),
-      new A.MoveDir("up", mkSelf),
-      new A.MoveDir("right", mkSelf),
+      [new A.MoveDir("up", mkSelf)],
+      [new A.MoveDir("right", mkSelf)],
     ),
   ]
 }
