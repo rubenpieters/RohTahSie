@@ -7,8 +7,11 @@ import { Ability } from "./definitions/ability";
 import { nodeSprite } from "./ability";
 import { changeLayoutNode, changeDirNode } from "./layout";
 import { DirAbility } from "./definitions/dirAbility";
+import * as DAb from "./definitions/dirAbility";
 import { dirAbilitySprite } from "./dirAbility";
 import { wrappedLayout } from "../layout/layout";
+import { CondCard, FalseCond } from "./definitions/condCard";
+import { condCardSprite } from "./condCard";
 
 const maxCardsX = 4;
 const maxCardsY = 4;
@@ -18,6 +21,13 @@ export type CardDisplay = {
   bg: PIXI.Sprite,
   sprite: PIXI.Sprite,
   ability: Ability | undefined,
+}
+
+export type CondCardDisplay = {
+  cardContainer: PIXI.Container,
+  bg: PIXI.Sprite,
+  sprite: PIXI.Sprite,
+  ability: CondCard | undefined,
 }
 
 export type DirCardDisplay = {
@@ -31,9 +41,14 @@ export type CardSelectDisplay = {
   bg: PIXI.Sprite,
   container: PIXI.Container,
   cards: CardDisplay[],
+  condContainer: PIXI.Container,
+  condBg: PIXI.Sprite,
+  condCards: CondCardDisplay[],
+  condDirCards: DirCardDisplay[],
   dirCards: DirCardDisplay[],
-  nodeIndex: number | undefined,
-  cardSelectIndex: number,
+  nodeIndex: number | undefined, // index of selected node in layout
+  cardSelectIndex: number, // index of scrolling in card select
+  condCardSelectIndex: number, // index of scrolling in cond card select
   cardSelectUpBtn: PIXI.Sprite,
   cardSelectDownBtn: PIXI.Sprite,
 }
@@ -53,7 +68,7 @@ export function initializeCardSelect(
   bg.y = 0;
   bg.tint = 0xFFAE42;
   bg.width = 200;
-  bg.height = 400;
+  bg.height = 450;
   container.addChild(bg);
 
   bg.interactive = true;
@@ -123,6 +138,96 @@ export function initializeCardSelect(
     updateCardSelectCards(state, display, cache);
   });
 
+  // cond container
+  const condContainer = new PIXI.Container();
+  Object.assign(condContainer, { x: 5, y: 210 });
+  condContainer.interactive = true;
+  condContainer.on("pointerdown", () => {
+    const index = display.player.cardSelect.nodeIndex!;
+    if (state.player.layout.nodes[index].condMove === undefined) {
+      state.player.layout.nodes[index].condMove = {
+        cond: new FalseCond(),
+        move: new DAb.MoveRight(),
+      };
+    } else {
+      state.player.layout.nodes[index].condMove = undefined;
+    }
+    updateCondContainer(state, display);
+  });
+  container.addChild(condContainer);
+
+  const condBg = new PIXI.Sprite(PIXI.Texture.WHITE);
+  condBg.x = 0;
+  condBg.y = 0;
+  condBg.tint = 0xFF0000;
+  condBg.width = 190;
+  condBg.height = 190;
+  condContainer.addChild(condBg);
+
+  // create cond card display
+  const condCards: CondCardDisplay[] = wrappedLayout(
+    condContainer,
+    i => {
+      const cardContainer = new PIXI.Container();
+      cardContainer.interactive = true;
+      //cardContainer.on("pointerdown", () => newDirAbilitySelect(state, display, cache, i));
+      cardContainer.width = 42;
+      cardContainer.height = 42;
+
+      return cardContainer;
+    },
+    cardContainer => {
+      const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
+      bg.tint = 0x00AAAA;
+      bg.width = 42;
+      bg.height = 42;
+  
+      const sprite = new PIXI.Sprite();
+      sprite.x = 23;
+      sprite.y = 23;
+      sprite.pivot.set(21, 21);
+  
+      cardContainer.addChild(bg);
+      cardContainer.addChild(sprite);
+
+      return { cardContainer, bg, sprite, ability: undefined };
+    },
+    8,
+    { orientation: "horizontal", spacing: { x: 45, y: 45 }, start: { x: 5, y: 5 }, wrappingLimit: 4, },
+  );
+
+  // create cond move dir card display
+  const condDirCards: DirCardDisplay[] = wrappedLayout(
+    condContainer,
+    i => {
+      const cardContainer = new PIXI.Container();
+      cardContainer.interactive = true;
+      //cardContainer.on("pointerdown", () => newDirAbilitySelect(state, display, cache, i));
+      cardContainer.width = 42;
+      cardContainer.height = 42;
+
+      return cardContainer;
+    },
+    cardContainer => {
+      const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
+      bg.tint = 0x00AAAA;
+      bg.width = 42;
+      bg.height = 42;
+  
+      const sprite = new PIXI.Sprite();
+      sprite.x = 23;
+      sprite.y = 23;
+      sprite.pivot.set(21, 21);
+  
+      cardContainer.addChild(bg);
+      cardContainer.addChild(sprite);
+
+      return { cardContainer, bg, sprite, ability: undefined };
+    },
+    4,
+    { orientation: "horizontal", spacing: { x: 45, y: 45 }, start: { x: 5, y: 140 }, wrappingLimit: 4, },
+  );
+
   // create dir card display
   const dirCards: DirCardDisplay[] = wrappedLayout(
     container,
@@ -151,15 +256,19 @@ export function initializeCardSelect(
 
       return { cardContainer, bg, sprite, ability: undefined };
     },
-    maxCardsX * maxCardsY,
-    { orientation: "horizontal", spacing: { x: 45, y: 45 }, start: { x: 10, y: 210 }, wrappingLimit: 4, },
+    4,
+    { orientation: "horizontal", spacing: { x: 45, y: 45 }, start: { x: 10, y: 400 }, wrappingLimit: 4, },
   );
 
   container.visible = false;
   
   parentContainer.addChild(container);
 
-  return { bg, container, cards, dirCards, cardSelectUpBtn, cardSelectDownBtn, nodeIndex: undefined, cardSelectIndex: 0 };
+  return {
+    bg, container, condContainer, condBg,
+    cards, dirCards, condCards, condDirCards, cardSelectUpBtn, cardSelectDownBtn,
+    nodeIndex: undefined, cardSelectIndex: 0, condCardSelectIndex: 0,
+  };
 }
 
 export function updateCardSelectCards(
@@ -188,21 +297,84 @@ export function updateCardSelectCards(
   }
 }
 
+export function updateCondContainer(
+  state: GameState,
+  display: Display,
+) {
+  const index = display.player.cardSelect.nodeIndex!;
+  if (state.player.layout.nodes[index].condMove === undefined) {
+    display.player.cardSelect.condContainer.alpha = 0.5;
+  } else {
+    display.player.cardSelect.condContainer.alpha = 1;
+  }
+}
+
+export function updateCondSelectCards(
+  state: GameState,
+  display: Display,
+  cache: Cache,
+) {
+  const elementsUnfiltered = state.condCrafts.map(x => {
+    if (x.available === 1) {
+      return x.card;
+    } else {
+      return undefined;
+    }
+  });
+  const min = display.player.cardSelect.condCardSelectIndex;
+  const availableCards = filterUndefined(elementsUnfiltered).slice(min, min + maxCardsX * maxCardsY);
+  for (let i = 0; i < 8; i++) {
+    const card: CondCard | undefined = availableCards[i];
+    if (card === undefined) {
+      display.player.cardSelect.condCards[i].sprite.texture = PIXI.Texture.EMPTY;
+      display.player.cardSelect.condCards[i].ability = undefined;
+    } else {
+      const value = condCardSprite(card);
+      display.player.cardSelect.condCards[i].sprite.texture = cache[value];
+      display.player.cardSelect.condCards[i].ability = card;
+    }
+  }
+}
+
+export function updateCondDirSelectCards(
+  state: GameState,
+  display: Display,
+  cache: Cache,
+) {
+  const dirCards = [
+    new DAb.MoveDown(),
+    new DAb.MoveUp(),
+    new DAb.MoveLeft(),
+    new DAb.MoveRight(),
+  ];
+  for (let i = 0; i < 4; i++) {
+    const card: DirAbility | undefined = dirCards[i];
+    if (card === undefined) {
+      display.player.cardSelect.condDirCards[i].sprite.texture = PIXI.Texture.EMPTY;
+      display.player.cardSelect.condDirCards[i].sprite.angle = 0;
+      display.player.cardSelect.condDirCards[i].ability = undefined;
+    } else {
+      const values = dirAbilitySprite(card);
+      display.player.cardSelect.condDirCards[i].sprite.texture = cache[values.sprite];
+      display.player.cardSelect.condDirCards[i].sprite.angle = values.angle;
+      display.player.cardSelect.condDirCards[i].ability = card;
+    }
+  }
+}
+
 export function updateDirSelectCards(
   state: GameState,
   display: Display,
   cache: Cache,
 ) {
-  const elementsUnfiltered = state.dirCrafts.map(x => {
-    if (x.available === 1) {
-      return x.node;
-    } else {
-      return undefined;
-    }
-  });
-  const availableCards = filterUndefined(elementsUnfiltered).slice(0, maxCardsX * maxCardsY);
-  for (let i = 0; i < maxCardsX * maxCardsY; i++) {
-    const card: DirAbility | undefined = availableCards[i];
+  const dirCards = [
+    new DAb.MoveDown(),
+    new DAb.MoveUp(),
+    new DAb.MoveLeft(),
+    new DAb.MoveRight(),
+  ];
+  for (let i = 0; i < 4; i++) {
+    const card: DirAbility | undefined = dirCards[i];
     if (card === undefined) {
       display.player.cardSelect.dirCards[i].sprite.texture = PIXI.Texture.EMPTY;
       display.player.cardSelect.dirCards[i].sprite.angle = 0;
@@ -227,6 +399,9 @@ export function showCardSelect(
       display.player.cardSelect.container.visible = true;
       display.player.cardSelect.nodeIndex = nodeIndex;
       updateCardSelectCards(state, display, cache);
+      updateCondContainer(state, display);
+      updateCondSelectCards(state, display, cache);
+      updateCondDirSelectCards(state, display, cache);
       updateDirSelectCards(state, display, cache);
     }),
   ]);

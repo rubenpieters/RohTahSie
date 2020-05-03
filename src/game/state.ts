@@ -5,7 +5,7 @@ import { Entity, playerInitialEntity, entityFindStatus, StateStatus, StateTrigge
 import { Hotbar, calcHotbar } from "./hotbar";
 import { GamePhase, Charging, Waiting } from "./definitions/phase";
 import { MenuType } from "../menu/menu";
-import { CardCrafts, allCardCrafts, DirCrafts, allDirCrafts } from "../craft/all";
+import { CardCrafts, allCardCrafts, DirCrafts, allDirCrafts, ConditionCrafts, allConditionCrafts } from "../craft/all";
 import { Zones, allZones } from "../zone/all";
 import { EnemyKey } from "./enemy";
 import { StatusCA } from "./definitions/status";
@@ -34,6 +34,7 @@ export type GameStateBase = {
   idCounter: number,
   menuState: MenuState,
   cardCrafts: CardCrafts,
+  condCrafts: ConditionCrafts,
   dirCrafts: DirCrafts,
   gems: number,
   zones: Zones,
@@ -47,6 +48,7 @@ export type GameState = GameStateBase & {
 export function initializeState(state: GameState): void {
   state.cardCrafts = allCardCrafts();
   state.dirCrafts = allDirCrafts();
+  state.condCrafts = allConditionCrafts();
   state.zones = allZones();
   state.player = {
     entity: playerInitialEntity(),

@@ -2,6 +2,7 @@ import { Ability } from "../game/definitions/ability";
 import * as Ab from "../game/definitions/ability";
 import { DirAbility } from "src/game/definitions/dirAbility";
 import * as DAb from "../game/definitions/dirAbility";
+import { CondCard, TrueCond, FalseCond } from "../game/definitions/condCard";
 
 export type CardCrafts = {
   node: Ability,
@@ -217,4 +218,25 @@ export function allDirCrafts(): DirCrafts {
       cost: 0,
     },
   ];
+}
+
+export type ConditionCrafts = {
+  card: CondCard,
+  available: number,
+  cost: number,
+}[];
+
+export function allConditionCrafts(): ConditionCrafts {
+  return [
+    {
+      card: new TrueCond(),
+      available: 1,
+      cost: 1,
+    },
+    {
+      card: new FalseCond(),
+      available: 1,
+      cost: 1,
+    },
+  ]
 }

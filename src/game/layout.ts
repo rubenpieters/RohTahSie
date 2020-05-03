@@ -17,6 +17,7 @@ import { dirAbilitySprite } from "./dirAbility";
 import { wrappedLayout } from "../layout/layout";
 import { Action, MoveDir } from "./definitions/action";
 import { Var, Constant } from "./definitions/var";
+import { CondCard, TrueCond } from "./definitions/condCard";
 
 // the amount of nodes on the x-axis
 const xAmount = 4;
@@ -28,10 +29,10 @@ const nodeAmount = xAmount * yAmount;
 export type Layout = {
   nodes: {
     ability: Ability,
-    condMove?: {
-      cond: Var<boolean, AbstractTarget>,
-      move: Action<AbstractTarget>,
-    },
+    condMove: {
+      cond: CondCard,
+      move: DirAbility,
+    } | undefined,
     direction: DirAbility,
   }[],
   currentIndex: number,
@@ -245,25 +246,25 @@ export function barLocation(
 export function playerInitialLayout(): Layout {
   return {
     nodes: [
-      { ability: new Ab.Dormant(), condMove: { cond: new Constant(true), move: new MoveDir("down", mkSelf) }, direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: { cond: new TrueCond(), move: new DAb.MoveDown() }, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
 
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
 
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
 
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
-      { ability: new Ab.Dormant(), direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
+      { ability: new Ab.Dormant(), condMove: undefined, direction: new DAb.MoveRight() },
     ],
     currentIndex: 0,
   }

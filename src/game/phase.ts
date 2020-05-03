@@ -18,7 +18,7 @@ export function nextPhase(
       const moveActions = lo.cloneDeep(state.player.layout.nodes[state.player.layout.currentIndex].direction.actions);
       const condMove = state.player.layout.nodes[state.player.layout.currentIndex].condMove;
       const condMoveAction: Action<AbstractTarget>[] = condMove !== undefined ? [new Conditional(
-        lo.cloneDeep(condMove.cond), [lo.cloneDeep(condMove.move)], moveActions
+        lo.cloneDeep(condMove.cond.cond), lo.cloneDeep(condMove.move.actions), moveActions
       )] : moveActions;
       const actions = abilityActions.concat(condMoveAction);
       const actionQueue: ActionInQueue[] = actions.map(x => { return {
@@ -39,7 +39,7 @@ export function nextPhase(
             const moveActions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].direction.actions);
             const condMove = state.player.layout.nodes[state.player.layout.currentIndex].condMove;
             const condMoveAction: Action<AbstractTarget>[] = condMove !== undefined ? [new Conditional(
-              lo.cloneDeep(condMove.cond), [lo.cloneDeep(condMove.move)], moveActions
+              lo.cloneDeep(condMove.cond.cond), lo.cloneDeep(condMove.move.actions), moveActions
             )] : moveActions;
             const actions = abilityActions.concat(condMoveAction);
             const actionQueue: ActionInQueue[] = actions.map(x => { return {
@@ -85,7 +85,7 @@ export function nextPhase(
             const moveActions = lo.cloneDeep(state.enemy.layout.nodes[state.enemy.layout.currentIndex].direction.actions);
             const condMove = state.player.layout.nodes[state.player.layout.currentIndex].condMove;
             const condMoveAction: Action<AbstractTarget>[] = condMove !== undefined ? [new Conditional(
-              lo.cloneDeep(condMove.cond), [lo.cloneDeep(condMove.move)], moveActions
+              lo.cloneDeep(condMove.cond.cond), lo.cloneDeep(condMove.move.actions), moveActions
             )] : moveActions;
             const actions = abilityActions.concat(condMoveAction);
             const actionQueue: ActionInQueue[] = actions.map(x => { return {
