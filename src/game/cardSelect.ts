@@ -141,8 +141,18 @@ export function initializeCardSelect(
   // cond container
   const condContainer = new PIXI.Container();
   Object.assign(condContainer, { x: 5, y: 210 });
-  condContainer.interactive = true;
-  condContainer.on("pointerdown", () => {
+  container.addChild(condContainer);
+
+  const condBg = new PIXI.Sprite(PIXI.Texture.WHITE);
+  condBg.x = 0;
+  condBg.y = 0;
+  condBg.tint = 0xFF0000;
+  condBg.width = 190;
+  condBg.height = 190;
+  condContainer.addChild(condBg);
+  
+  condBg.interactive = true;
+  condBg.on("pointerdown", () => {
     const index = display.player.cardSelect.nodeIndex!;
     if (state.player.layout.nodes[index].condMove === undefined) {
       state.player.layout.nodes[index].condMove = {
@@ -154,15 +164,6 @@ export function initializeCardSelect(
     }
     updateCondContainer(state, display);
   });
-  container.addChild(condContainer);
-
-  const condBg = new PIXI.Sprite(PIXI.Texture.WHITE);
-  condBg.x = 0;
-  condBg.y = 0;
-  condBg.tint = 0xFF0000;
-  condBg.width = 190;
-  condBg.height = 190;
-  condContainer.addChild(condBg);
 
   // create cond card display
   const condCards: CondCardDisplay[] = wrappedLayout(
@@ -170,7 +171,9 @@ export function initializeCardSelect(
     i => {
       const cardContainer = new PIXI.Container();
       cardContainer.interactive = true;
-      //cardContainer.on("pointerdown", () => newDirAbilitySelect(state, display, cache, i));
+      cardContainer.on("pointerdown", () => {
+        newCondAbilitySelect(state, display, cache, i)
+      });
       cardContainer.width = 42;
       cardContainer.height = 42;
 
@@ -202,7 +205,7 @@ export function initializeCardSelect(
     i => {
       const cardContainer = new PIXI.Container();
       cardContainer.interactive = true;
-      //cardContainer.on("pointerdown", () => newDirAbilitySelect(state, display, cache, i));
+      cardContainer.on("pointerdown", () => newCondDirAbilitySelect(state, display, cache, i));
       cardContainer.width = 42;
       cardContainer.height = 42;
 
@@ -416,6 +419,36 @@ export function newAbilitySelect(
   const ability = display.player.cardSelect.cards[i].ability;
   if (ability !== undefined) {
     changeLayoutNode("player", state, display, display.player.cardSelect.nodeIndex!, ability, cache);
+  }
+}
+
+export function newCondAbilitySelect(
+  state: GameState,
+  display: Display,
+  cache: Cache,
+  i: number,
+) {
+  const index = display.player.cardSelect.nodeIndex!;
+  if (state.player.layout.nodes[index].condMove !== undefined) {
+    const ability = display.player.cardSelect.condCards[i].ability;
+    if (ability !== undefined) {
+      state.player.layout.nodes[index].condMove!.cond = ability;
+    }
+  }
+}
+
+export function newCondDirAbilitySelect(
+  state: GameState,
+  display: Display,
+  cache: Cache,
+  i: number,
+) {
+  const index = display.player.cardSelect.nodeIndex!;
+  if (state.player.layout.nodes[index].condMove !== undefined) {
+    const ability = display.player.cardSelect.condDirCards[i].ability;
+    if (ability !== undefined) {
+      state.player.layout.nodes[index].condMove!.move = ability;
+    }
   }
 }
 
