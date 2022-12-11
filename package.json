@@ -37,7 +37,7 @@
   "dependencies": {
     "lodash.clonedeep": "^4.5.0",
     "deep-equal": "^2.0.1",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "pixi.js": "^5.1.5"
   }
 }
